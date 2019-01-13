@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_1.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_3.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_2.jpg">
-<meta property="og:updated_time" content="2019-01-13T13:32:02.259Z">
+<meta property="og:updated_time" content="2019-01-13T14:40:05.579Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】深入剖析slice和array">
 <meta name="twitter:description" content="array 和 slice 看似相似，却有着极大的不同，但他们之间还有着千次万缕的联系 slice 是引用类型、是 array 的引用，相当于动态数组，这些都是 slice 的特性，但是 slice 底层如何表现，内存中是如何分配的，特别是在程序中大量使用 slice 的情况下，怎样可以高效使用 slice？今天借助 Go 的 unsafe 包来探索 array 和 slice 的各种奥妙。">
@@ -195,7 +195,7 @@ var _hmt = _hmt || [];
 
         
         <a href="/201901/go/shen_ru_pou_xi_slice_he_array.html" class="archive-article-date">
-  	<time datetime="2019-01-08T03:36:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-08</time>
+  	<time datetime="2019-01-11T22:36:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-12</time>
 </a>
         
       </header>
@@ -328,7 +328,7 @@ var _hmt = _hmt || [];
 </blockquote>
 <p>从上面的结果可以发现数组和 <code>slice</code> 在1000以内的容量上时性能机会一致，而且都没有内存分配，这应该是编译器对 <code>slice</code> 的特殊优化。<br>从10000~1000000容量时数组的效率就比<code>slice</code>好了一倍有余，主要原因是数组在没有内存分配做了编译优化，而 <code>slice</code> 有内存分配。<br>但是10000000容量往后数组性能大幅度下降，<code>slice</code> 是数组性能的两倍，两个都在运行时做了内存分配，其实这么大的数组还真是不常见，也没有比较做编译器优化了。</p>
 <h2 id="slice-与数组的应用场景总结"><a href="#slice-与数组的应用场景总结" class="headerlink" title="slice 与数组的应用场景总结"></a>slice 与数组的应用场景总结</h2><p><code>slice</code> 和数组有些差别，特别是应用层上，特性差别很大，那什么时间使用数组，什么时间使用切片呢。<br>之前做了性能测试，在1000以内性能几乎一致，只有10000~1000000时才会出现数组性能好于 <code>slice</code>，由于数组在编译时确定长度，也就是再编写程序时必须确认长度，所有往常不会用到更大的数组，大多数都在1000以内的长度。我认为如果在编写程序是就已经确定数据长度，建议用数组，而且竟可能是局部使用的位置建议用数组（避免传递产生值拷贝），比如一天24小时，一小时60分钟，ip是4个 <code>byte</code>这种情况是可以用时数组的。</p>
-<p>为什么推荐用数组，只要能在编写程序是确定数据长度我都会用数组，因为其类型会帮助阅读理解程序，<code>dayHour := [24]Data</code> 一眼就知道是按小时切分数据存储的，如要传递数组时可以考虑传递数组的指针，当然会带来一些操作不方便，往常我使用数组都是不需要传递给其它函数的，可能会在 <code>struct</code> 里面保存数组，然后传递 <code>struct</code> 的指针，或者用 <code>unsafe</code> 来反解析数组指针到新的数组，也不会产生数据拷贝，并且只增加一句转换语句。<code>slice</code> 会比数组多存储三个 <code>int</code> 的属性，每次传递都会对这三个属性进行拷贝，如果可以也可以考虑传递 <code>slice</code> 的指针，指针只有一个 <code>int</code> 的大小。</p>
+<p>为什么推荐用数组，只要能在编写程序是确定数据长度我都会用数组，因为其类型会帮助阅读理解程序，<code>dayHour := [24]Data</code> 一眼就知道是按小时切分数据存储的，如要传递数组时可以考虑传递数组的指针，当然会带来一些操作不方便，往常我使用数组都是不需要传递给其它函数的，可能会在 <code>struct</code> 里面保存数组，然后传递 <code>struct</code> 的指针，或者用 <code>unsafe</code> 来反解析数组指针到新的数组，也不会产生数据拷贝，并且只增加一句转换语句。<code>slice</code> 会比数组多存储三个 <code>int</code> 的属性，而且指针引用会增加 <code>GC</code> 扫描的成本，每次传递都会对这三个属性进行拷贝，如果可以也可以考虑传递 <code>slice</code> 的指针，指针只有一个 <code>int</code> 的大小。</p>
 <p><strong> 对于不确定大小的数据只能用 <code>slice</code>，否则就要自己做扩容很麻烦， 对于确定大小的集合建议使用数组。</strong></p>
 
       
@@ -406,6 +406,17 @@ var _hmt = _hmt || [];
 	</div>
 
       
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
       
 
@@ -603,6 +614,14 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -612,14 +631,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
             
             <div class="clearfix"></div>
