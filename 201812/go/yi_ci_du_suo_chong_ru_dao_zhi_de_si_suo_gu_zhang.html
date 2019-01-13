@@ -6,12 +6,12 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>一次读锁重入导致的死锁故障 | thinkeridea博客</title>
+  <title>【Go】一次读锁重入导致的死锁故障 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。 简述业务背景及代码演进过程我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所">
 <meta name="keywords" content="读写锁,死锁">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一次读锁重入导致的死锁故障">
+<meta property="og:title" content="【Go】一次读锁重入导致的死锁故障">
 <meta property="og:url" content="https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html">
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。 简述业务背景及代码演进过程我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所">
@@ -19,9 +19,9 @@
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011353.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/openfd.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011418.jpg">
-<meta property="og:updated_time" content="2018-12-26T02:17:03.031Z">
+<meta property="og:updated_time" content="2019-01-12T14:47:24.523Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一次读锁重入导致的死锁故障">
+<meta name="twitter:title" content="【Go】一次读锁重入导致的死锁故障">
 <meta name="twitter:description" content="在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。 简述业务背景及代码演进过程我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所">
 <meta name="twitter:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011353.jpg">
   
@@ -188,7 +188,7 @@ var _hmt = _hmt || [];
         
   
     <h1 class="article-title" itemprop="name">
-      一次读锁重入导致的死锁故障
+      【Go】一次读锁重入导致的死锁故障
     </h1>
   
 
@@ -203,10 +203,10 @@ var _hmt = _hmt || [];
       
         <p>在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，<br>这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。</p>
 <h2 id="简述业务背景及代码演进过程"><a href="#简述业务背景及代码演进过程" class="headerlink" title="简述业务背景及代码演进过程"></a>简述业务背景及代码演进过程</h2><p>我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。<br>内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所有数据。<br>业务模块拿到数据后会根据业务需要再做一次筛选，选出N个符合条件的数据（具体多少个由业务模块的规则决定）。</p>
+<a id="more"></a>
 <p>以下是简化的代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cache <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock sync.RWMutex</span><br><span class="line">	data []<span class="keyword">int</span> <span class="comment">// 实际数据比这个复杂很多有很多维度</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">Get</span><span class="params">()</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	c.lock.RLock()</span><br><span class="line">	<span class="keyword">defer</span> c.lock.RUnlock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> res []<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 筛选数据， 简单写一个筛选过程</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> c.data &#123;</span><br><span class="line">		<span class="keyword">if</span> c.data[i] &gt; <span class="number">10</span> &#123;</span><br><span class="line">			res = <span class="built_in">append</span>(res, c.data[i])</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这个方法返回的数据会很多，可实际业务需要的数据只有几个而已，那做一个优化吧，利用 <code>go</code> 的 <code>chan</code> 实现一个迭代生成器，每次只返回一个数据，业务端找到需要的数据后立即终止。</p>
-<a id="more"></a>
 <p>调整后的方法大致像下面这样:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cache <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock sync.RWMutex</span><br><span class="line">	data []<span class="keyword">int</span> <span class="comment">// 实际数据比这个复杂很多有很多维度</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">Get</span><span class="params">(next <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		c.lock.RLock()</span><br><span class="line">		<span class="keyword">defer</span> c.lock.RUnlock()</span><br><span class="line">		<span class="keyword">defer</span> <span class="built_in">close</span>(ch)</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 筛选数据， 简单写一个筛选过程</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> c.data &#123;</span><br><span class="line">			<span class="keyword">if</span> c.data[i] &gt; <span class="number">10</span> &#123;</span><br><span class="line"></span><br><span class="line">				ch &lt;- i</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> _, ok := &lt;-next; !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>调用端的代码类似下面这样：</p>
@@ -331,7 +331,7 @@ var _hmt = _hmt || [];
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html" title="一次读锁重入导致的死锁故障">https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</a>
+    <a href="https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html" title="【Go】一次读锁重入导致的死锁故障">https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明：</strong>
@@ -402,7 +402,7 @@ var _hmt = _hmt || [];
           <a class="facebook share-sns" href="javascript:;" data-type="facebook">
             <i class="icon icon-facebook"></i>
           </a>
-          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=一次读锁重入导致的死锁故障&url=https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html&via=https://blog.thinkeridea.com" target="_blank">
+          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】一次读锁重入导致的死锁故障&url=https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html&via=https://blog.thinkeridea.com" target="_blank">
             <i class="icon icon-twitter"></i>
           </a>
           <a class="google share-sns" href="javascript:;" data-type="google">
@@ -431,6 +431,20 @@ var _hmt = _hmt || [];
 </article>
 
   
+<nav id="article-nav">
+  
+    <a href="/201901/go/shen_ru_pou_xi_slice_he_array.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          【Go】深入剖析slice和array
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -491,7 +505,7 @@ var _hmt = _hmt || [];
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2018 戚银 京ICP备17038866号
+    		&copy; 2019 戚银 京ICP备17038866号
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -554,6 +568,18 @@ var _hmt = _hmt || [];
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
+              </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">读写锁</a>

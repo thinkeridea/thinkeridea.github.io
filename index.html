@@ -174,6 +174,91 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-go/深入剖析slice和array" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/201901/go/shen_ru_pou_xi_slice_he_array.html">【Go】深入剖析slice和array</a>
+    </h1>
+  
+
+        
+        <a href="/201901/go/shen_ru_pou_xi_slice_he_array.html" class="archive-article-date">
+  	<time datetime="2019-01-08T03:36:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>array</code> 和 <code>slice</code> 看似相似，却有着极大的不同，但他们之间还有着千次万缕的联系 <code>slice</code> 是引用类型、是 <code>array</code> 的引用，相当于动态数组，<br>这些都是 <code>slice</code> 的特性，但是 <code>slice</code> 底层如何表现，内存中是如何分配的，特别是在程序中大量使用 <code>slice</code> 的情况下，怎样可以高效使用 <code>slice</code>？<br>今天借助 <code>Go</code> 的 <code>unsafe</code> 包来探索 <code>array</code> 和 <code>slice</code> 的各种奥妙。</p>
+        
+          <a class="article-more-a" href="/201901/go/shen_ru_pou_xi_slice_he_array.html#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">array</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/201901/go/shen_ru_pou_xi_slice_he_array.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-go/一次读锁重入导致的死锁故障" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -181,7 +266,7 @@ var _hmt = _hmt || [];
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html">一次读锁重入导致的死锁故障</a>
+      <a class="article-title" href="/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html">【Go】一次读锁重入导致的死锁故障</a>
     </h1>
   
 
@@ -196,9 +281,6 @@ var _hmt = _hmt || [];
       
         <p>在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，<br>这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。</p>
 <h2 id="简述业务背景及代码演进过程"><a href="#简述业务背景及代码演进过程" class="headerlink" title="简述业务背景及代码演进过程"></a>简述业务背景及代码演进过程</h2><p>我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。<br>内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所有数据。<br>业务模块拿到数据后会根据业务需要再做一次筛选，选出N个符合条件的数据（具体多少个由业务模块的规则决定）。</p>
-<p>以下是简化的代码：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cache <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock sync.RWMutex</span><br><span class="line">	data []<span class="keyword">int</span> <span class="comment">// 实际数据比这个复杂很多有很多维度</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">Get</span><span class="params">()</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	c.lock.RLock()</span><br><span class="line">	<span class="keyword">defer</span> c.lock.RUnlock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> res []<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 筛选数据， 简单写一个筛选过程</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> c.data &#123;</span><br><span class="line">		<span class="keyword">if</span> c.data[i] &gt; <span class="number">10</span> &#123;</span><br><span class="line">			res = <span class="built_in">append</span>(res, c.data[i])</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个方法返回的数据会很多，可实际业务需要的数据只有几个而已，那做一个优化吧，利用 <code>go</code> 的 <code>chan</code> 实现一个迭代生成器，每次只返回一个数据，业务端找到需要的数据后立即终止。</p>
         
           <a class="article-more-a" href="/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html#more">more >></a>
         
@@ -280,7 +362,7 @@ var _hmt = _hmt || [];
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2018 戚银 京ICP备17038866号
+    		&copy; 2019 戚银 京ICP备17038866号
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -343,6 +425,18 @@ var _hmt = _hmt || [];
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
+              </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">读写锁</a>

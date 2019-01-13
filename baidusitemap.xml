@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.thinkeridea.com/201901/go/shen_ru_pou_xi_slice_he_array.html</loc>
+    <lastmod>2019-01-13T13:32:02.259Z</lastmod>
+  </url>  <url>
     <loc>https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</loc>
-    <lastmod>2018-12-26T02:17:03.031Z</lastmod>
+    <lastmod>2019-01-12T14:47:24.523Z</lastmod>
   </url>
 </urlset>
