@@ -6,20 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>【Go】slice的一些使用技巧 | thinkeridea博客</title>
+  <title>thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。 在 Go 语言项目中大量的使用 slice, 我总结三年来对 slice 的一些操作技巧，以方便可以高效的">
-<meta name="keywords" content="slice,go,缓存,内存池">
+  <meta name="description" content="原文链接：https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Go】slice的一些使用技巧">
+<meta property="og:title" content="thinkeridea博客">
 <meta property="og:url" content="https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:description" content="slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。 在 Go 语言项目中大量的使用 slice, 我总结三年来对 slice 的一些操作技巧，以方便可以高效的">
+<meta property="og:description" content="原文链接：https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-24T04:27:13.660Z">
+<meta property="og:updated_time" content="2019-01-24T04:50:40.919Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【Go】slice的一些使用技巧">
-<meta name="twitter:description" content="slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。 在 Go 语言项目中大量的使用 slice, 我总结三年来对 slice 的一些操作技巧，以方便可以高效的">
+<meta name="twitter:title" content="thinkeridea博客">
+<meta name="twitter:description" content="原文链接：https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -180,24 +179,10 @@ var _hmt = _hmt || [];
             <article id="post-go/slice的一些使用技巧" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      【Go】slice的一些使用技巧
-    </h1>
-  
-
-        
-        <a href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html" class="archive-article-date">
-  	<time datetime="2019-01-22T22:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-23</time>
-</a>
-        
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
-        <p><code>slice</code> 是 <code>Go</code> 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 <code>Go</code> 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 <code>Go</code> 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 <code>slice</code> 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。</p>
+        <p>原文链接：<a href="https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html">https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html</a></p>
+<p><code>slice</code> 是 <code>Go</code> 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 <code>Go</code> 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 <code>Go</code> 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 <code>slice</code> 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。</p>
 <p>在 <code>Go</code> 语言项目中大量的使用 <code>slice</code>, 我总结三年来对 <code>slice</code> 的一些操作技巧，以方便可以高效的使用 <code>slice</code>， 并使用 <code>slice</code> 解决一些棘手的问题。</p>
 <h2 id="slice-的基本操作"><a href="#slice-的基本操作" class="headerlink" title="slice 的基本操作"></a>slice 的基本操作</h2><p>先熟悉一些 <code>slice</code> 的基本的操作, 对最常规的 <code>:</code> 操作就可玩出很多花样。</p>
 <ul>
@@ -217,7 +202,7 @@ var _hmt = _hmt || [];
 <li><code>s := make([]int, 0, 0)</code> 、 <code>s=[]int{}</code> 创建无容量空切片</li>
 <li><code>s:= make([]int, 0, 100)</code> 创建有容量空切片</li>
 <li><code>s:=make([]int, 100)</code> 创建零值切片</li>
-<li><code>s:=array[:]</code> 应用数组创建切片</li>
+<li><code>s:=array[:]</code> 引用数组创建切片</li>
 </ul>
 <p><strong>内置函数</strong></p>
 <ul>
@@ -264,6 +249,11 @@ var _hmt = _hmt || [];
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pool *ChanPool)</span> <span class="title">Free</span><span class="params">(mem []<span class="keyword">byte</span>)</span></span> &#123;</span><br><span class="line">	size := <span class="built_in">cap</span>(mem)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(pool.classes); i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> pool.classes[i].size == size &#123;</span><br><span class="line">			pool.classes[i].Push(mem)</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当使用完释放内存时实现的并不是很好，应该判断释放的数据是否是当前内存的一部分，如果不是的就不能放回到内存池中，因为用户未按约定大小使用，导致大量扩容而使得内存池中的数据碎片化，当然用户一旦发生扩容就会导致内存池中的缓存块丢失，导致存在大块内存无法释放，却也没法使用的情况。</p>
 <p>之所以分析这个例子主要是分析其使用 <code>slice</code> 的方法和技巧，并不推荐使用该方法管理内存。</p>
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>更多关于 <code>slice</code> 应用的例子可以参考标准库 <code>bytes</code> 与 <code>bufio</code>， <code>buffer</code> 与 <code>bufio</code> 的使用极其相似，两个包都是使用 <code>slice</code> 来减少内存分配及系统调用来达到实现缓冲和缓存的例子。</p>
+<p><strong>转载：</strong></p>
+<p><strong>本文作者： 戚银（<a href="https://blog.thinkeridea.com/">thinkeridea</a>）</strong></p>
+<p><strong>本文链接： <a href="https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html">https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html</a></strong></p>
+<p><strong>版权声明： 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="noopener">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！</strong></p>
 
       
 
@@ -309,7 +299,7 @@ var _hmt = _hmt || [];
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html" title="【Go】slice的一些使用技巧">https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html</a>
+    <a href="https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html" title="">https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明：</strong>
@@ -320,41 +310,7 @@ var _hmt = _hmt || [];
       
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">缓存</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">内存池</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
 
       
 
@@ -388,7 +344,7 @@ var _hmt = _hmt || [];
           <a class="facebook share-sns" href="javascript:;" data-type="facebook">
             <i class="icon icon-facebook"></i>
           </a>
-          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】slice的一些使用技巧&url=https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html&via=https://blog.thinkeridea.com" target="_blank">
+          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=&url=https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html&via=https://blog.thinkeridea.com" target="_blank">
             <i class="icon icon-twitter"></i>
           </a>
           <a class="google share-sns" href="javascript:;" data-type="google">
@@ -419,6 +375,15 @@ var _hmt = _hmt || [];
   
 <nav id="article-nav">
   
+    <a href="/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          【Go】优雅的读取http请求或响应的数据
+        
+      </div>
+    </a>
+  
   
     <a href="/201901/go/shen_ru_pou_xi_slice_he_array.html" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">【Go】深入剖析slice和array</div>
@@ -448,7 +413,7 @@ var _hmt = _hmt || [];
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#slice-的基本操作"><span class="toc-number">1.</span> <span class="toc-text">slice 的基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个缓冲的简单示例"><span class="toc-number">2.</span> <span class="toc-text">一个缓冲的简单示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#append-与-copy"><span class="toc-number">3.</span> <span class="toc-text">append 与 copy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csv-reader-中的一个例子"><span class="toc-number">4.</span> <span class="toc-text">csv reader 中的一个例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存池"><span class="toc-number">5.</span> <span class="toc-text">内存池</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#slice-的基本操作"><span class="toc-number">1.</span> <span class="toc-text">slice 的基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个缓冲的简单示例"><span class="toc-number">2.</span> <span class="toc-text">一个缓冲的简单示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#append-与-copy"><span class="toc-number">3.</span> <span class="toc-text">append 与 copy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csv-reader-中的一个例子"><span class="toc-number">4.</span> <span class="toc-text">csv reader 中的一个例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存池"><span class="toc-number">5.</span> <span class="toc-text">内存池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拓展"><span class="toc-number">6.</span> <span class="toc-text">拓展</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -560,6 +525,26 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">net.http</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">http</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">pool</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">makeSlice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ioutil</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -569,18 +554,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
               </li>
             
             <div class="clearfix"></div>
