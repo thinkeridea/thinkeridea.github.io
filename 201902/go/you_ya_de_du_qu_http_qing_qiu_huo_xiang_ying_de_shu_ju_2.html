@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
   <title>【Go】优雅的读取http请求或响应的数据-续 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="之前发布 【Go】优雅的读取http请求或响应的数据续 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
+  <meta name="description" content="之前发布 【Go】优雅的读取http请求或响应的数据 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
 <meta name="keywords" content="net.http,http,pool,bytes,buffer,makeSlice,ioutil">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go】优雅的读取http请求或响应的数据-续">
 <meta property="og:url" content="https://blog.thinkeridea.com/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:description" content="之前发布 【Go】优雅的读取http请求或响应的数据续 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
+<meta property="og:description" content="之前发布 【Go】优雅的读取http请求或响应的数据 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-01T12:45:45.057Z">
+<meta property="og:updated_time" content="2019-02-01T13:30:09.683Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】优雅的读取http请求或响应的数据-续">
-<meta name="twitter:description" content="之前发布 【Go】优雅的读取http请求或响应的数据续 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
+<meta name="twitter:description" content="之前发布 【Go】优雅的读取http请求或响应的数据 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -198,14 +198,14 @@ var _hmt = _hmt || [];
 
         
         <a href="/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html" class="archive-article-date">
-  	<time datetime="2019-02-01T12:00:18.202Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-01</time>
+  	<time datetime="2019-02-01T13:30:09.682Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-01</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>之前发布 <a href="https://blog.thinkeridea.com/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html">【Go】优雅的读取http请求或响应的数据续</a> 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，<a href="https://github.com/thinkeridea/example/tree/master/iouitl_readall" target="_blank" rel="noopener">本文源码</a>。</p>
+        <p>之前发布 <a href="https://blog.thinkeridea.com/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html">【Go】优雅的读取http请求或响应的数据</a> 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，<a href="https://github.com/thinkeridea/example/tree/master/iouitl_readall" target="_blank" rel="noopener">本文源码</a>。</p>
 <p>非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 <code>json</code> 序列化的问题。</p>
 <a id="more"></a>
 <p>之前我们优化了两个部分，<code>json</code> 与 <code>ioutil.ReadAll</code>， 先对比 <code>ioutil.ReadAll</code>, 这里测试的代码分成两个部分做对比，一部分单纯对比 <code>ioutil.ReadAll</code> 和 <code>io.Copy</code> + <code>sync.Pool</code>，另一部分增加 <code>jsoniter.Unmarshal</code> 来延迟 <code>pool.Put(buffer)</code> 的执行, <a href="https://github.com/thinkeridea/example/blob/master/iouitl_readall/io.go" target="_blank" rel="noopener">源码</a>。</p>
@@ -531,14 +531,6 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">net.http</a>
               </li>
              
@@ -564,6 +556,14 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ioutil</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
