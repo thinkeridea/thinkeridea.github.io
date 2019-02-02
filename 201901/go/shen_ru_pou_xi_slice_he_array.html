@@ -9,7 +9,7 @@
   <title>【Go】深入剖析slice和array | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="array 和 slice 看似相似，却有着极大的不同，但他们之间还有着千次万缕的联系 slice 是引用类型、是 array 的引用，相当于动态数组，这些都是 slice 的特性，但是 slice 底层如何表现，内存中是如何分配的，特别是在程序中大量使用 slice 的情况下，怎样可以高效使用 slice？今天借助 Go 的 unsafe 包来探索 array 和 slice 的各种奥妙。">
-<meta name="keywords" content="slice,array,unsafe">
+<meta name="keywords" content="unsafe,slice,array">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go】深入剖析slice和array">
 <meta property="og:url" content="https://blog.thinkeridea.com/201901/go/shen_ru_pou_xi_slice_he_array.html">
@@ -399,15 +399,15 @@ var _hmt = _hmt || [];
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">array</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
         		</li>
       		
 		</ul>
@@ -634,6 +634,26 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">go</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">net.http</a>
               </li>
              
@@ -643,10 +663,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">pool</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -670,10 +686,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -687,10 +699,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
               </li>
             
             <div class="clearfix"></div>

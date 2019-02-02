@@ -6,15 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>Archives: 2019/2 | thinkeridea博客</title>
+  <title>【Go】strings.Replace 与 bytes.Replace 调优 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="thinkeridea博客">
-<meta property="og:url" content="https://blog.thinkeridea.com/archives/2019/02/index.html">
+  <meta name="description" content="标准库中函数大多数情况下更通用，性能并非最好的，还是不能过于迷信标准库，最近又有了新发现，strings.Replace 这个函数自身的效率已经很好了，但是在特定情况下效率并不是最好的，分享一下我如何优化的吧。 我的服务中有部分代码使用 strings.Replace 把一个固定的字符串删除或者替换成另一个字符串，它们有几个特点：  旧的字符串大于或等于新字符串 (len(old) &amp;gt;= l">
+<meta name="keywords" content="go,strings,bytes,replace,unsafe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Go】strings.Replace 与 bytes.Replace 调优">
+<meta property="og:url" content="https://blog.thinkeridea.com/201902/go/replcae_you_hua.html">
 <meta property="og:site_name" content="thinkeridea博客">
+<meta property="og:description" content="标准库中函数大多数情况下更通用，性能并非最好的，还是不能过于迷信标准库，最近又有了新发现，strings.Replace 这个函数自身的效率已经很好了，但是在特定情况下效率并不是最好的，分享一下我如何优化的吧。 我的服务中有部分代码使用 strings.Replace 把一个固定的字符串删除或者替换成另一个字符串，它们有几个特点：  旧的字符串大于或等于新字符串 (len(old) &amp;gt;= l">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog.thinkeridea.com/assets/image/201902/0201.jpg">
+<meta property="og:updated_time" content="2019-02-02T12:12:00.455Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="thinkeridea博客">
+<meta name="twitter:title" content="【Go】strings.Replace 与 bytes.Replace 调优">
+<meta name="twitter:description" content="标准库中函数大多数情况下更通用，性能并非最好的，还是不能过于迷信标准库，最近又有了新发现，strings.Replace 这个函数自身的效率已经很好了，但是在特定情况下效率并不是最好的，分享一下我如何优化的吧。 我的服务中有部分代码使用 strings.Replace 把一个固定的字符串删除或者替换成另一个字符串，它们有几个特点：  旧的字符串大于或等于新字符串 (len(old) &amp;gt;= l">
+<meta name="twitter:image" content="https://blog.thinkeridea.com/assets/image/201902/0201.jpg">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -180,36 +187,129 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-go/replcae优化" class="article article-type-post " itemscope="" itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201902/go/replcae_you_hua.html" class="archive-article-date">
-  	<time datetime="2019-02-01T22:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-02</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201902/go/replcae_you_hua.html">【Go】strings.Replace 与 bytes.Replace 调优</a>
+    <h1 class="article-title" itemprop="name">
+      【Go】strings.Replace 与 bytes.Replace 调优
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/201902/go/replcae_you_hua.html" class="archive-article-date">
+  	<time datetime="2019-02-01T22:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>标准库中函数大多数情况下更通用，性能并非最好的，还是不能过于迷信标准库，最近又有了新发现，<code>strings.Replace</code> 这个函数自身的效率已经很好了，但是在特定情况下效率并不是最好的，分享一下我如何优化的吧。</p>
+<p>我的服务中有部分代码使用 <code>strings.Replace</code> 把一个固定的字符串删除或者替换成另一个字符串，它们有几个特点：</p>
+<ul>
+<li>旧的字符串大于或等于新字符串 <code>(len(old) &gt;= len(new)</code></li>
+<li>源字符串的生命周期很短，替换后就不再使用替换前的字符串</li>
+<li>它们都比较大，往往超过 2k~4k</li>
+</ul>
+<p>本博文中使用函数均在 <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener"><strong>go-extend</strong></a> 中，优化后的函数在 <a href="https://github.com/thinkeridea/go-extend/blob/master/exbytes/bytes.go" target="_blank" rel="noopener">exbytes.Replace</a> 中。</p>
+<a id="more"></a>
+<h2 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h2><p>近期使用 <code>pprof</code> 分析内存分配情况，发现 <code>strings.Replace</code> 排在第二，占 <code>7.54%</code>, 分析结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">go tool pprof allocs</span><br><span class="line">File: xxx</span><br><span class="line">Type: alloc_space</span><br><span class="line">Time: Feb 1, 2019 at 9:53pm (CST)</span><br><span class="line">Entering interactive mode (type "help" for commands, "o" for options)</span><br><span class="line">(pprof) top</span><br><span class="line">Showing nodes accounting for 617.29GB, 48.86% of 1263.51GB total</span><br><span class="line">Dropped 778 nodes (cum &lt;= 6.32GB)</span><br><span class="line">Showing top 10 nodes out of 157</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">  138.28GB 10.94% 10.94%   138.28GB 10.94%  logrus.(*Entry).WithFields</span><br><span class="line">   95.27GB  7.54% 18.48%    95.27GB  7.54%  strings.Replace</span><br><span class="line">   67.05GB  5.31% 23.79%   185.09GB 14.65%  v3.(*v3Adapter).parseEncrypt</span><br><span class="line">   57.01GB  4.51% 28.30%    57.01GB  4.51%  bufio.NewWriterSize</span><br><span class="line">   56.63GB  4.48% 32.78%    56.63GB  4.48%  bufio.NewReaderSize</span><br><span class="line">   56.11GB  4.44% 37.23%    56.11GB  4.44%  net/url.unescape</span><br><span class="line">   39.75GB  3.15% 40.37%    39.75GB  3.15%  regexp.(*bitState).reset</span><br><span class="line">   36.11GB  2.86% 43.23%    38.05GB  3.01%  des3_and_base64.(*des3AndBase64).des3Decrypt</span><br><span class="line">   36.01GB  2.85% 46.08%    36.01GB  2.85%  des3_and_base64.(*des3AndBase64).base64Decode</span><br><span class="line">   35.08GB  2.78% 48.86%    35.08GB  2.78%  math/big.nat.make</span><br></pre></td></tr></table></figure>
+<p>标准库中最常用的函数，居然……，不可忍必须优化，先使用 <code>list strings.Replace</code> 看一下源码什么地方分配的内存。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">(pprof) list strings.Replace</span><br><span class="line">Total: 1.23TB</span><br><span class="line">ROUTINE ======================== strings.Replace in /usr/local/go/src/strings/strings.go</span><br><span class="line">   95.27GB    95.27GB (flat, cum)  7.54% of Total</span><br><span class="line">         .          .    858:	&#125; else if n &lt; 0 || m &lt; n &#123;</span><br><span class="line">         .          .    859:		n = m</span><br><span class="line">         .          .    860:	&#125;</span><br><span class="line">         .          .    861:</span><br><span class="line">         .          .    862:	// Apply replacements to buffer.</span><br><span class="line">   47.46GB    47.46GB    863:	t := make([]byte, len(s)+n*(len(new)-len(old)))</span><br><span class="line">         .          .    864:	w := 0</span><br><span class="line">         .          .    865:	start := 0</span><br><span class="line">         .          .    866:	for i := 0; i &lt; n; i++ &#123;</span><br><span class="line">         .          .    867:		j := start</span><br><span class="line">         .          .    868:		if len(old) == 0 &#123;</span><br><span class="line">         .          .    869:			if i &gt; 0 &#123;</span><br><span class="line">         .          .    870:				_, wid := utf8.DecodeRuneInString(s[start:])</span><br><span class="line">         .          .    871:				j += wid</span><br><span class="line">         .          .    872:			&#125;</span><br><span class="line">         .          .    873:		&#125; else &#123;</span><br><span class="line">         .          .    874:			j += Index(s[start:], old)</span><br><span class="line">         .          .    875:		&#125;</span><br><span class="line">         .          .    876:		w += copy(t[w:], s[start:j])</span><br><span class="line">         .          .    877:		w += copy(t[w:], new)</span><br><span class="line">         .          .    878:		start = j + len(old)</span><br><span class="line">         .          .    879:	&#125;</span><br><span class="line">         .          .    880:	w += copy(t[w:], s[start:])</span><br><span class="line">   47.81GB    47.81GB    881:	return string(t[0:w])</span><br><span class="line">         .          .    882:&#125;</span><br></pre></td></tr></table></figure>
+<p>从源码发现首先创建了一个 <code>buffer</code> 来起到缓冲的效果，一次分配足够的内存，这个在之前 <a href="https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html">【Go】slice的一些使用技巧</a> 里面有讲到，另外一个是 <code>string(t[0:w])</code> 类型转换带来的内存拷贝，<code>buffer</code> 能够理解，但是类型转换这个不能忍，就像凭空多出来的一个数拷贝。</p>
+<p>既然类型转换这里有点浪费空间，有没有办法可以零成本转换呢，那就使用 <a href="https://github.com/thinkeridea/go-extend/blob/master/exbytes/convert.go" target="_blank" rel="noopener">go-extend</a> 这个包里面的 <code>exbytes.ToString</code> 方法把 <code>[]byte</code> 转换成 <code>string</code>，这个函数可以零分配转换 <code>[]byte</code> 到 <code>string</code>。 <code>t</code> 是一个临时变量，可以安全的被引用不用担心，一个小技巧节省一倍的内存分配，但是这样真的就够了吗？</p>
+<p>我记得 <code>bytes</code> 标准库里面也有一个 <code>bytes.Replace</code> 方法，如果直接使用这种方法呢就不用重写一个 <code>strings.Replace</code>了，使用 <a href="https://github.com/thinkeridea/go-extend/" target="_blank" rel="noopener">go-extend</a> 里面的两个魔术方法可以一行代码搞定上面的优化效果 <code>s = exbytes.ToString(bytes.Replace(exstrings.UnsafeToBytes(s), []byte{&#39; &#39;}, []byte{&#39;&#39;}, -1))</code>， 虽然是一行代码搞定的，但是有点长，<code>exstrings.UnsafeToBytes</code> 方法可以极小的代价把 <code>string</code> 转成 <code>bytes</code>， 但是 <code>s</code> 不能是标量或常量字符串，必须是运行时产生的字符串否者可能导致程序奔溃。</p>
+<p>这样确实减少了一倍的内存分配，即使只有 <code>47.46GB</code> 的分配也足以排到前十了，不满意这个结果，分析代码看看能不能更进一步减少内存分配吧。</p>
+<h2 id="分析代码"><a href="#分析代码" class="headerlink" title="分析代码"></a>分析代码</h2><p>使用火焰图看看究竟什么函数在调用 <code>strings.Replace</code> 呢：</p>
+<p><img src="/assets/image/201902/0201.jpg" alt="image-20190202184040233"></p>
+<p>这里主要是两个方法在使用，当然我记得还有几个地方有使用，看来不在火焰图中应该影响比较低 ，看一下代码吧（简化的代码不一定完全合理）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一部分</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v2 *v2Adapter)</span> <span class="title">parse</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(*AdRequest, error)</span></span> &#123;</span><br><span class="line">	s = strings.Replace(s, <span class="string">" "</span>, <span class="string">""</span>, <span class="number">-1</span>)</span><br><span class="line">	requestJSON, err := v2.paramCrypto.Decrypt([]<span class="keyword">byte</span>(s))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	request := v2.getDefaultAdRequest()</span><br><span class="line">	<span class="keyword">if</span> err := request.UnmarshalJSON(requestJSON); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> request, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二部分</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v3 *v3Adapter)</span> <span class="title">parseEncrypt</span><span class="params">(s []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">    ss := strings.Replace(<span class="keyword">string</span>(s), <span class="string">" "</span>, <span class="string">""</span>, <span class="number">-1</span>)</span><br><span class="line">    requestJSON, err := v3.paramCrypto.Decrypt([]<span class="keyword">byte</span>(ss))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, error</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> requestJSON, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过搜索找到的第三部分</span></span><br><span class="line"><span class="keyword">type</span> LogItems []<span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LogItemsToBytes</span><span class="params">(items []<span class="keyword">string</span>, sep, newline <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> items &#123;</span><br><span class="line">		items[i] = strings.Replace(items[i], sep, <span class="string">" "</span>, <span class="number">-1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	str := strings.Replace(strings.Join(items, sep), newline, <span class="string">" "</span>, <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> []<span class="keyword">byte</span>(str + newline)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过分析我们发现前两个主要是为了删除一个字符串，第三个是为了把一个字符串替换为另一个字符串，并且源数据的生命周期很短暂，在执行替换之后就不再使用了，能不能原地替换字符串呢，原地替换的就会变成零分配了，尝试一下吧。</p>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>先写一个函数简单实现原地替换，输入的 <code>len(old) &lt; len(new)</code> 就直接调用 <code>bytes.Replace</code> 来实现就好了 。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Replace</span><span class="params">(s, old, <span class="built_in">new</span> []<span class="keyword">byte</span>, n <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> s</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(old) &lt; <span class="built_in">len</span>(<span class="built_in">new</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> bytes.Replace(s, old, <span class="built_in">new</span>, n)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</span><br><span class="line">		n = <span class="built_in">len</span>(s)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> wid, i, j <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> i, j = <span class="number">0</span>, <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s) &amp;&amp; j &lt; n; j++ &#123;</span><br><span class="line">		wid = bytes.Index(s[i:], old)</span><br><span class="line">		<span class="keyword">if</span> wid &lt; <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		i += wid</span><br><span class="line">		i += <span class="built_in">copy</span>(s[i:], <span class="built_in">new</span>)</span><br><span class="line">		s = <span class="built_in">append</span>(s[:i], s[i+<span class="built_in">len</span>(old)-<span class="built_in">len</span>(<span class="built_in">new</span>):]...)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写个性能测试看一下效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go test -bench="." -run=nil -benchmem</span><br><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: github.com/thinkeridea/go-extend/exbytes/benchmark</span><br><span class="line">BenchmarkReplace-8                	  500000	      3139 ns/op	     416 B/op	       1 allocs/op</span><br><span class="line">BenchmarkBytesReplace-8           	 1000000	      2032 ns/op	     736 B/op	       2 allocs/op</span><br></pre></td></tr></table></figure>
+<p>使用这个新的函数和 <code>bytes.Replace</code> 对比，内存分配是少了，但是性能却下降了那么多，崩溃…. 啥情况呢，对比 <code>bytes.Replace</code> 的源码发现我这个代码里面 <code>s = append(s[:i], s[i+len(old)-len(new):]...)</code> 每次都会移动剩余的数据导致性能差异很大，可以使用 <code>go test -bench=&quot;.&quot; -run=nil -benchmem  -cpuprofile cpu.out -memprofile mem.out</code> 的方式来生成 <code>pprof</code> 数据，然后分析具体有问题的地方。</p>
+<p>找到问题就好了，移动 <code>wid</code> 之前的数据，这样每次移动就很少了，和 <code>bytes.Replace</code> 的原理类似。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Replace</span><span class="params">(s, old, <span class="built_in">new</span> []<span class="keyword">byte</span>, n <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> s</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(old) &lt; <span class="built_in">len</span>(<span class="built_in">new</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> bytes.Replace(s, old, <span class="built_in">new</span>, n)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</span><br><span class="line">		n = <span class="built_in">len</span>(s)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> wid, i, j, w <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> i, j = <span class="number">0</span>, <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s) &amp;&amp; j &lt; n; j++ &#123;</span><br><span class="line">		wid = bytes.Index(s[i:], old)</span><br><span class="line">		<span class="keyword">if</span> wid &lt; <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		w += <span class="built_in">copy</span>(s[w:], s[i:i+wid])</span><br><span class="line">		w += <span class="built_in">copy</span>(s[w:], <span class="built_in">new</span>)</span><br><span class="line">		i += wid + <span class="built_in">len</span>(old)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	w += <span class="built_in">copy</span>(s[w:], s[i:])</span><br><span class="line">	<span class="keyword">return</span> s[<span class="number">0</span>:w]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在运行一下性能测试吧：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go test -bench="." -run=nil -benchmem</span><br><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: github.com/thinkeridea/go-extend/exbytes/benchmark</span><br><span class="line">BenchmarkReplace-8                	 1000000	      2149 ns/op	     416 B/op	       1 allocs/op</span><br><span class="line">BenchmarkBytesReplace-8           	 1000000	      2231 ns/op	     736 B/op	       2 allocs/op</span><br></pre></td></tr></table></figure>
+<p>运行性能差不多，而且更好了，内存分配也减少，不是说是零分配吗，为啥有一次分配呢？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> replaces <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> replaceb []<span class="keyword">byte</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	replaces = strings.Repeat(<span class="string">"A BC"</span>, <span class="number">100</span>)</span><br><span class="line">	replaceb = bytes.Repeat([]<span class="keyword">byte</span>(<span class="string">"A BC"</span>), <span class="number">100</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkReplace</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">		exbytes.Replace([]<span class="keyword">byte</span>(replaces), []<span class="keyword">byte</span>(<span class="string">" "</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkBytesReplace</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">		bytes.Replace([]<span class="keyword">byte</span>(replaces), []<span class="keyword">byte</span>(<span class="string">" "</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到使用了 <code>[]byte(replaces)</code> 做了一次类型转换，因为优化的这个函数是原地替换，执行过一次之后后面就发现不用替换了，所以为了公平公正两个方法每次都转换一个类型产生一个新的内存地址，所以实际优化后是没有内存分配了。</p>
+<p>之前说写一个优化 <code>strings.Replace</code> 函数，减少一次内存分配，这里也写一个这样函数，然后增加两个性能测试函数，对比一下效率 <a href="https://github.com/thinkeridea/go-extend/blob/master/exbytes/benchmark/bytes_test.go" target="_blank" rel="noopener">性能测试代码</a>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go test -bench="." -run=nil -benchmem</span><br><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: github.com/thinkeridea/go-extend/exbytes/benchmark</span><br><span class="line">BenchmarkReplace-8                	 1000000	      2149 ns/op	     416 B/op	       1 allocs/op</span><br><span class="line">BenchmarkBytesReplace-8           	 1000000	      2231 ns/op	     736 B/op	       2 allocs/op</span><br><span class="line">BenchmarkStringsReplace-8         	 1000000	      2260 ns/op	    1056 B/op	       3 allocs/op</span><br><span class="line">BenchmarkUnsafeStringsReplace-8   	 1000000	      2522 ns/op	     736 B/op	       2 allocs/op</span><br><span class="line">PASS</span><br><span class="line">ok  	github.com/thinkeridea/go-extend/exbytes/benchmark	10.260s</span><br></pre></td></tr></table></figure>
+<p>运行效率上都相当，优化之后的 <code>UnsafeStringsReplace</code> 函数减少了一次内存分配只有一次，和 <code>bytes.Replace</code> 相当。</p>
+<h2 id="修改代码"><a href="#修改代码" class="headerlink" title="修改代码"></a>修改代码</h2><p>有了优化版的 <code>Replace</code> 函数就替换到项目中吧：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一部分</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v2 *v2Adapter)</span> <span class="title">parse</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(*AdRequest, error)</span></span> &#123;</span><br><span class="line">	b := exbytes.Replace(exstrings.UnsafeToBytes(s), []<span class="keyword">byte</span>(<span class="string">" "</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>)</span><br><span class="line">	requestJSON, err := v2.paramCrypto.Decrypt(b)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	request := v2.getDefaultAdRequest()</span><br><span class="line">	<span class="keyword">if</span> err := request.UnmarshalJSON(requestJSON); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> request, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二部分</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v3 *v3Adapter)</span> <span class="title">parseEncrypt</span><span class="params">(s []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	s = exbytes.Replace(s, []<span class="keyword">byte</span>(<span class="string">" "</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>)</span><br><span class="line">	requestJSON, err := v3.paramCrypto.Decrypt(s)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> requestJSON, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第三部分</span></span><br><span class="line"><span class="keyword">type</span> LogItems []<span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LogItemsToBytes</span><span class="params">(items []<span class="keyword">string</span>, sep, newline <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> items &#123;</span><br><span class="line">		items[i] = exbytes.ToString(exbytes.Replace(exstrings.UnsafeToBytes(items[i]), []<span class="keyword">byte</span>(sep), []<span class="keyword">byte</span>(<span class="string">" "</span>), <span class="number">-1</span>))</span><br><span class="line">	&#125;</span><br><span class="line">	b := exbytes.Replace(exstrings.UnsafeToBytes(strings.Join(items, sep)), []<span class="keyword">byte</span>(newline), []<span class="keyword">byte</span>(<span class="string">" "</span>), <span class="number">-1</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>(b, newline...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="上线后性能分析"><a href="#上线后性能分析" class="headerlink" title="上线后性能分析"></a>上线后性能分析</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go tool pprof allocs2</span><br><span class="line">File: xx</span><br><span class="line">Type: alloc_space</span><br><span class="line">Time: Feb 2, 2019 at 5:33pm (CST)</span><br><span class="line">Entering interactive mode (type "help" for commands, "o" for options)</span><br><span class="line">(pprof) top exbytes.Replace</span><br><span class="line">Focus expression matched no samples</span><br><span class="line">Active filters:</span><br><span class="line">   focus=exbytes.Replace</span><br><span class="line">Showing nodes accounting for 0, 0% of 864.21GB total</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">(pprof)</span><br></pre></td></tr></table></figure>
+<p>居然在 <code>allocs</code> 上居然找不到了，确实是零分配。</p>
+<p>优化前 <code>profile</code> ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go tool pprof profile</span><br><span class="line">File: xx</span><br><span class="line">Type: cpu</span><br><span class="line">Time: Feb 1, 2019 at 9:54pm (CST)</span><br><span class="line">Duration: 30.08s, Total samples = 12.23s (40.65%)</span><br><span class="line">Entering interactive mode (type "help" for commands, "o" for options)</span><br><span class="line">(pprof) top strings.Replace</span><br><span class="line">Active filters:</span><br><span class="line">   focus=strings.Replace</span><br><span class="line">Showing nodes accounting for 0.08s, 0.65% of 12.23s total</span><br><span class="line">Showing top 10 nodes out of 27</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">     0.03s  0.25%  0.25%      0.08s  0.65%  strings.Replace</span><br><span class="line">     0.02s  0.16%  0.41%      0.02s  0.16%  countbody</span><br><span class="line">     0.01s 0.082%  0.49%      0.01s 0.082%  indexbytebody</span><br><span class="line">     0.01s 0.082%  0.57%      0.01s 0.082%  memeqbody</span><br><span class="line">     0.01s 0.082%  0.65%      0.01s 0.082%  runtime.scanobject</span><br></pre></td></tr></table></figure>
+<p>优化后 <code>profile</code> ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go tool pprof profile2</span><br><span class="line">File: xx</span><br><span class="line">Type: cpu</span><br><span class="line">Time: Feb 2, 2019 at 5:33pm (CST)</span><br><span class="line">Duration: 30.16s, Total samples = 14.68s (48.68%)</span><br><span class="line">Entering interactive mode (type "help" for commands, "o" for options)</span><br><span class="line">(pprof) top exbytes.Replace</span><br><span class="line">Active filters:</span><br><span class="line">   focus=exbytes.Replace</span><br><span class="line">Showing nodes accounting for 0.06s, 0.41% of 14.68s total</span><br><span class="line">Showing top 10 nodes out of 18</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">     0.03s   0.2%   0.2%      0.03s   0.2%  indexbytebody</span><br><span class="line">     0.02s  0.14%  0.34%      0.05s  0.34%  bytes.Index</span><br><span class="line">     0.01s 0.068%  0.41%      0.06s  0.41%  github.com/thinkeridea/go-extend/exbytes.Replace</span><br></pre></td></tr></table></figure>
+<p>通过 <code>profile</code> 来分配发现性能也有一定的提升，本次 <code>strings.Replace</code> 和 <code>bytes.Replace</code> 优化圆满结束。</p>
+<p>本博文中使用函数均在 <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener">go-extend</a> 中，优化后的函数在 <a href="https://github.com/thinkeridea/go-extend/blob/master/exbytes/bytes.go" target="_blank" rel="noopener">exbytes.Replace</a> 中。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/alipay.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+            <ul class="post-copyright">
+  <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      <a href="https://blog.thinkeridea.com">戚银（thinkeridea）</a>
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://blog.thinkeridea.com/201902/go/replcae_you_hua.html" title="【Go】strings.Replace 与 bytes.Replace 调优">https://blog.thinkeridea.com/201902/go/replcae_you_hua.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明：</strong>
+    本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -237,7 +337,7 @@ var _hmt = _hmt || [];
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -250,90 +350,131 @@ var _hmt = _hmt || [];
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】strings.Replace 与 bytes.Replace 调优&url=https://blog.thinkeridea.com/201902/go/replcae_you_hua.html&via=https://blog.thinkeridea.com" target="_blank">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://qr.liantu.com/api.php?text=https://blog.thinkeridea.com/201902/go/replcae_you_hua.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html" class="archive-article-date">
-  	<time datetime="2019-02-01T13:30:09.682Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-01</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【Go】优雅的读取http请求或响应的数据-续</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html">【Go】优雅的读取http请求或响应的数据-续</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net.http</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">http</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">pool</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">buffer</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">makeSlice</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">ioutil</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#发现问题"><span class="toc-number">1.</span> <span class="toc-text">发现问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析代码"><span class="toc-number">2.</span> <span class="toc-text">分析代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-number">3.</span> <span class="toc-text">优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改代码"><span class="toc-number">4.</span> <span class="toc-text">修改代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#上线后性能分析"><span class="toc-number">5.</span> <span class="toc-text">上线后性能分析</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
   
-    </div></section>
   
 
-    
+  
+  <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
+<div id="SOHUCS" sid="go/replcae优化"></div>
+<script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
+<script type="text/javascript">
+    window.changyan.api.config({
+        appid: "cyu42lsth",
+        conf: "66c028491c16910acbd930a5f4482bb2"
+    });
+</script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cyu42lsth"></script>
+
+  
+
+  
+
+  
 
 
           </div>
@@ -357,8 +498,8 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
