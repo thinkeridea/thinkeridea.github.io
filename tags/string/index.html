@@ -6,24 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>【Go】一次读锁重入导致的死锁故障 | thinkeridea博客</title>
+  <title>Tag: string | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。 简述业务背景及代码演进过程我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所">
-<meta name="keywords" content="读写锁,死锁">
-<meta property="og:type" content="article">
-<meta property="og:title" content="【Go】一次读锁重入导致的死锁故障">
-<meta property="og:url" content="https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="thinkeridea博客">
+<meta property="og:url" content="https://blog.thinkeridea.com/tags/string/index.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:description" content="在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。 简述业务背景及代码演进过程我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011353.jpg">
-<meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/openfd.jpg">
-<meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011418.jpg">
-<meta property="og:updated_time" content="2019-01-12T14:47:24.523Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【Go】一次读锁重入导致的死锁故障">
-<meta name="twitter:description" content="在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。 简述业务背景及代码演进过程我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所">
-<meta name="twitter:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011353.jpg">
+<meta name="twitter:title" content="thinkeridea博客">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -189,183 +180,60 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/一次读锁重入导致的死锁故障" class="article article-type-post " itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      【Go】一次读锁重入导致的死锁故障
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2019" class="archive-year">2019</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/201902/go/string_ye_shi_yin_yong_lei_xing.html" class="archive-article-date">
+  	<time datetime="2019-02-22T22:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-23</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/201902/go/string_ye_shi_yin_yong_lei_xing.html">【Go】string 也是引用类型</a>
     </h1>
   
 
-        
-        <a href="/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html" class="archive-article-date">
-  	<time datetime="2018-12-25T14:30:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，<br>这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。</p>
-<h2 id="简述业务背景及代码演进过程"><a href="#简述业务背景及代码演进过程" class="headerlink" title="简述业务背景及代码演进过程"></a>简述业务背景及代码演进过程</h2><p>我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。<br>内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所有数据。<br>业务模块拿到数据后会根据业务需要再做一次筛选，选出N个符合条件的数据（具体多少个由业务模块的规则决定）。</p>
-<a id="more"></a>
-<p>以下是简化的代码：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cache <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock sync.RWMutex</span><br><span class="line">	data []<span class="keyword">int</span> <span class="comment">// 实际数据比这个复杂很多有很多维度</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">Get</span><span class="params">()</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	c.lock.RLock()</span><br><span class="line">	<span class="keyword">defer</span> c.lock.RUnlock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> res []<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 筛选数据， 简单写一个筛选过程</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> c.data &#123;</span><br><span class="line">		<span class="keyword">if</span> c.data[i] &gt; <span class="number">10</span> &#123;</span><br><span class="line">			res = <span class="built_in">append</span>(res, c.data[i])</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个方法返回的数据会很多，可实际业务需要的数据只有几个而已，那做一个优化吧，利用 <code>go</code> 的 <code>chan</code> 实现一个迭代生成器，每次只返回一个数据，业务端找到需要的数据后立即终止。</p>
-<p>调整后的方法大致像下面这样:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cache <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock sync.RWMutex</span><br><span class="line">	data []<span class="keyword">int</span> <span class="comment">// 实际数据比这个复杂很多有很多维度</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">Get</span><span class="params">(next <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		c.lock.RLock()</span><br><span class="line">		<span class="keyword">defer</span> c.lock.RUnlock()</span><br><span class="line">		<span class="keyword">defer</span> <span class="built_in">close</span>(ch)</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 筛选数据， 简单写一个筛选过程</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> c.data &#123;</span><br><span class="line">			<span class="keyword">if</span> c.data[i] &gt; <span class="number">10</span> &#123;</span><br><span class="line"></span><br><span class="line">				ch &lt;- i</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> _, ok := &lt;-next; !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用端的代码类似下面这样：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">data := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">c := Cache&#123;&#125;</span><br><span class="line">next := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line"><span class="keyword">for</span> i := <span class="keyword">range</span> c.Get(next) &#123;</span><br><span class="line">    data = <span class="built_in">append</span>(data, i)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(data) &gt;= <span class="number">10</span> &#123;</span><br><span class="line">        <span class="built_in">close</span>(next)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    next &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样调整后查看程序的内存分配显著降低，而且平安无事在生产环境运行了半个月^_^，当然截止当前还不会出现死锁的情况。<br>有一天业务调整了，在 <code>cache</code> 模块有另外一个方法，公用这个锁（实际我缓存模块为了统一，都使用一个锁，方便管理），下面的代码也写到这个 <code>cache</code> 组件里面。</p>
-<p>以下代码只增加了改变的部分，<code>....</code> 保持原来的代码不变。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cache <span class="keyword">struct</span> &#123;</span><br><span class="line">	....</span><br><span class="line">	x <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">XX</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">	c.lock.RLock()</span><br><span class="line">	<span class="keyword">defer</span> c.lock.RUnlock()</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">if</span>  i &gt;c.x &#123;</span><br><span class="line">		<span class="keyword">return</span> i</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">....</span><br></pre></td></tr></table></figure>
-<p>添加一个方法怎么就导致死锁了呢，主要是调用端的业务代码也发生变化了，更改如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">data := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">c := Cache&#123;&#125;</span><br><span class="line">next := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line"><span class="keyword">for</span> i := <span class="keyword">range</span> c.Get(next) &#123;</span><br><span class="line">    data = <span class="built_in">append</span>(data, i)</span><br><span class="line">    <span class="keyword">if</span> c.XX(i) != i  &#123; <span class="comment">// 在这里调用了缓存模块的另一个方法</span></span><br><span class="line">        <span class="built_in">close</span>(next)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    next &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>修改后的代码上线存活了5天就挂了，实际是当时业务订单需求很少，只是有很多流量请求，并没有频繁访问这个方法，否者会在极短的时间导致死锁，<br>通过这块简化的代码，也很难分析出会导致死锁，真实的业务代码很多，而且调用关系比较复杂，我们通过代码审核并没有发现任何问题。</p>
-<h2 id="事故现场分析排查问题"><a href="#事故现场分析排查问题" class="headerlink" title="事故现场分析排查问题"></a>事故现场分析排查问题</h2><p>上线5天后突然接到服务无法响应的报警，事故发生立即查看了 <code>grafana</code> 的监控数据，发现在极段时间内服务器资源消耗极速增长，然后就立即没有响应了</p>
-<p><img src="/assets/image/20181225/20181219-011353.jpg" alt=""></p>
-<p>通过业务监控发现服务在极端的时间打开近10万个 <code>goroutine</code> 之后持续了很长一段时间，<br><code>cpu</code> 占用和 <code>gc</code> 都很正常， 内存方面可以看出短时间内分配了很多内存，但是没有被释放，<code>gc</code> 没法回收说明一直被占用，</p>
-<p>看到这里我心里在想可能是有个 <code>goroutine</code> 因为什么原因导致无法结束造成的事故吧，<br>然后我再往下看（实际页面是在需要滚动屏幕，第一屏只显示了上面6个模块），发现 open files 和 <code>goroutine</code> 的情况一致，并且之后的数据突然中断，<br>中断是因为服务无法影响，也就无法采集服务的信息了。</p>
-<p><img src="/assets/image/20181225/openfd.jpg" alt=""></p>
-<p><code>goroutine</code> 并不会占用 open files，一个http服务导致这种情况大概只能是网络连接过多，我们遭受攻击了吗……<br>显然是没有的不然cpu不能很正常，那就是有可能请求无法响应，什么原因导致呢？</p>
-<p>使用 <code>lsof -n | grep dsp | wc -l</code> 命令去服务器查找服务打开文件数，确实在六万五千多，<br>通过 <code>cat /proc/30717/limits</code> 发现 <code>Max open files            65535                65535                files</code>，<br>配置的最大打开文件数只有 65535，使用 <code>lsof -n | grep dsp |grep TCP | wc -l</code> 发现数据和之前接近，只小了几个，那是日志文件占用的。</p>
-<p>查看日志发现大量 <code>http: Accept error: accept tcp 172.17.191.231:8090: accept4: too many open files; retrying in 1s</code> 错误。</p>
-<p>这些数据帮助我快速定位确实是有请求发送到服务器，服务器无法响应导致短时间内占用很多文件打开数，导致系统限制无法建立新的连接。<br>这里要说一下，即使客户端断开连接了，服务器连接还是没有办法关闭，因为 <code>goroutine</code> 没有办法关闭， 除非自己退出。</p>
-<p>找到原因了，服务没法响应，没法通过现场查找问题了，先重新启动一下服务，恢复业务在查找代码问题。</p>
-<p>接下来就是查找代码问题了，期间又出现了一次故障，立即重启服务，恢复业务。</p>
-<h2 id="分析解决问题"><a href="#分析解决问题" class="headerlink" title="分析解决问题"></a>分析解决问题</h2><p>通过几个小时分析代码逻辑，终于有了进展，发现上面的示例代码逻辑块导致读锁重入，存在死锁风险，这种死锁的碰撞概率非常低，<br>之前说过我们的缓存是读多写少的场景，如果只是读取数据，上面的代码不会有任何问题，我们一天刷新缓存的次数也不过百余次而已。</p>
-<p>看一下究竟发生了什么导致的死锁吧：</p>
-<ul>
-<li>程序执行 <code>cache.Get</code> 获取一个 <code>chan</code>, 在 <code>cache.Get</code> 里面有一个 <code>goroutine</code> 读取数据只有加了读写锁，只有 <code>goroutine</code> 关闭才会释放</li>
-<li><code>for i := range c.Get(next) {</code> 遍历 <code>chan</code> 时 <code>goroutine</code> 不会结束，也就说读锁没有被释放</li>
-<li>遍历时执行了 <code>c.XX(i)</code> 方法，在该方面里面也加了读锁， 形成了读锁重入的场景，但是该放执行周期很短，执行完就会马上释放</li>
-</ul>
-<p>好吧，这样的流程并没有形成死锁，什么情况下导致的死锁呢，接着看一下一个场景：</p>
-<ul>
-<li>程序执行 <code>cache.Get</code> 获取一个 <code>chan</code>, 在 <code>cache.Get</code> 里面有一个 <code>goroutine</code> 读取数据只有加了读写锁，只有 <code>goroutine</code> 关闭才会释放</li>
-<li><code>for i := range c.Get(next) {</code> 遍历 <code>chan</code> 时 <code>goroutine</code> 不会结束，也就说读锁没有被释放</li>
-<li>数据发生了改变，触发了缓存刷新，申请独占锁（写锁），等待所有读锁释放</li>
-<li>遍历时执行 <code>c.XX(i)</code> 方法，该方法申请读锁，因为写锁在等待，所以任何读锁都将等待写锁释放后才能添加成功</li>
-<li>for 循环被阻塞， <code>cache.Get</code> 里面的 <code>goroutine</code> 无法退出，无法释放读锁</li>
-<li>写锁等待所有读锁释放</li>
-<li><code>c.XX(i)</code> 等待写锁释放</li>
-<li>….</li>
-</ul>
-<p>重点看第三步，这里是关键，因为在两个嵌套的读锁中间申请写锁，导致死锁发生，找到原因修复起来很简单的，</p>
-<p>调整 <code>cache.Get</code> 加锁的方法，把 <code>c.data</code> 赋值给一个临时变量 <code>data</code>, 在这段代码前后加锁和释放锁，锁的代码块更小，时间更短</p>
-<p><code>c.data</code> 单独拷贝是安全的，那怕是指针数据，因为每次刷新缓存都会给 <code>c.data</code> 重新赋值，分配新的内存空间。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cache</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Cache <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock sync.RWMutex</span><br><span class="line">	data []<span class="keyword">int</span> <span class="comment">// 实际数据比这个复杂很多有很多维度</span></span><br><span class="line">	x <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">XX</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">    c.lock.RLock()</span><br><span class="line">    <span class="keyword">defer</span> c.lock.RUnlock()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>  i &gt;c.x &#123;</span><br><span class="line">        <span class="keyword">return</span> i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cache)</span> <span class="title">Get</span><span class="params">(next <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> <span class="built_in">close</span>(ch)</span><br><span class="line"></span><br><span class="line">		c.lock.RLock()</span><br><span class="line">		data := c.data</span><br><span class="line">		c.lock.RUnlock()</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 筛选数据， 简单写一个筛选过程</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> data &#123;</span><br><span class="line">			<span class="keyword">if</span> data[i] &gt; <span class="number">10</span> &#123;</span><br><span class="line"></span><br><span class="line">				ch &lt;- i</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> _, ok := &lt;-next; !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>修复之后的业务状态：</p>
-<p><img src="/assets/image/20181225/20181219-011418.jpg" alt=""></p>
-<h2 id="复现问题"><a href="#复现问题" class="headerlink" title="复现问题"></a>复现问题</h2><p>用程序复现一下上面的场景可以吗，好像有点难，我写了一个简单的复现代码，如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"runtime"</span></span><br><span class="line">	<span class="string">"sync"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> l = sync.RWMutex&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	wg.Add(<span class="number">2</span>)</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		l.RLock() <span class="comment">// 读锁1</span></span><br><span class="line">		<span class="keyword">defer</span> l.RUnlock()</span><br><span class="line">		fmt.Println(<span class="number">1</span>)</span><br><span class="line">		c &lt;- <span class="number">1</span></span><br><span class="line">		fmt.Println(<span class="number">2</span>)</span><br><span class="line">		runtime.Gosched()</span><br><span class="line">		fmt.Println(<span class="number">3</span>)</span><br><span class="line">		b()</span><br><span class="line">		fmt.Println(<span class="number">4</span>)</span><br><span class="line">		wg.Done()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="number">5</span>)</span><br><span class="line">		&lt;-c</span><br><span class="line">		fmt.Println(<span class="number">6</span>)</span><br><span class="line">		l.Lock()</span><br><span class="line">		fmt.Println(<span class="number">7</span>)</span><br><span class="line">		fmt.Println(<span class="number">8</span>)</span><br><span class="line">		<span class="keyword">defer</span> l.Unlock()</span><br><span class="line">		fmt.Println(<span class="number">9</span>)</span><br><span class="line">		wg.Done()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		i := <span class="number">1</span></span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			i++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">b</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="number">10</span>)</span><br><span class="line">	l.RLock() <span class="comment">// 读锁2</span></span><br><span class="line">	fmt.Println(<span class="number">11</span>)</span><br><span class="line">	<span class="keyword">defer</span> l.RUnlock()</span><br><span class="line">	fmt.Println(<span class="number">12</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这段程序的输出(受 <code>goroutine</code> 运行时影响在输出数字3之前会有些许差异)：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">10</span><br></pre></td></tr></table></figure>
-<p>分析一下这个运行流程吧:</p>
-<ul>
-<li>首先加上读锁1，就是 <code>fmt.Println(1)</code> 之前， 状态加读锁1</li>
-<li>另外一个 <code>goroutine</code> 启动，<code>fmt.Println(5)</code>， 状态加读锁1</li>
-<li>发送数据 <code>c &lt;- 1</code> ， 状态加读锁1</li>
-<li>接受到数据 <code>&lt;-c</code> <code>fmt.Println(6)</code>， 状态加读锁1</li>
-<li>输出 2 <code>fmt.Println(2)</code>， 状态加读锁1</li>
-<li>暂停当前 <code>goroutine</code> <code>runtime.Gosched()</code> ， 状态加读锁1</li>
-<li>申请写锁 <code>l.Lock()</code>， 等待读锁1释放， 状态加读锁1、写锁等待</li>
-<li>切换 <code>goroutine</code> 执行 <code>fmt.Println(3)</code> 与 <code>b()</code>， 状态加读锁1、写锁等待</li>
-<li>输出10 <code>fmt.Println(10)</code>， 申请读锁2，等待写锁释放， 状态加读锁1、写锁等待、读锁2等待</li>
-<li>支持程序永久阻塞……</li>
-</ul>
-<h2 id="分析读写锁实现"><a href="#分析读写锁实现" class="headerlink" title="分析读写锁实现"></a>分析读写锁实现</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">RLock</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		_ = rw.w.state</span><br><span class="line">		race.Disable()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> atomic.AddInt32(&amp;rw.readerCount, <span class="number">1</span>) &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="comment">// A writer is pending, wait for it.</span></span><br><span class="line">		runtime_SemacquireMutex(&amp;rw.readerSem, <span class="literal">false</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		race.Enable()</span><br><span class="line">		race.Acquire(unsafe.Pointer(&amp;rw.readerSem))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>申请写锁时会在 <code>rw.readerCount</code> 读数量变量上自增加 1，如果结果小于 0，当前读锁进入修改等待读锁唤醒信号，<br>单独看着一个方法会比较懵，为啥读的数量会小于0呢，接着看写锁。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">Lock</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		_ = rw.w.state</span><br><span class="line">		race.Disable()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// First, resolve competition with other writers.</span></span><br><span class="line">	rw.w.Lock()</span><br><span class="line">	<span class="comment">// Announce to readers there is a pending writer.</span></span><br><span class="line">	r := atomic.AddInt32(&amp;rw.readerCount, -rwmutexMaxReaders) + rwmutexMaxReaders</span><br><span class="line">	<span class="comment">// Wait for active readers.</span></span><br><span class="line">	<span class="keyword">if</span> r != <span class="number">0</span> &amp;&amp; atomic.AddInt32(&amp;rw.readerWait, r) != <span class="number">0</span> &#123;</span><br><span class="line">		runtime_SemacquireMutex(&amp;rw.writerSem, <span class="literal">false</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		race.Enable()</span><br><span class="line">		race.Acquire(unsafe.Pointer(&amp;rw.readerSem))</span><br><span class="line">		race.Acquire(unsafe.Pointer(&amp;rw.writerSem))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>申请写锁时会先加上互斥锁，也就是有其它写的客户端的话会等待写锁释放才能加上，具体实现看互斥锁的代码，<br>然后在 <code>rw.readerCount</code> 上自增一个极大的负数 <code>1 &lt;&lt; 30</code> ， 读写锁这里也就限制了我们的同时读的进程不能超过这个值。<br>然后在结果上加上 <code>rwmutexMaxReaders</code> 也就是 <code>atomic.AddInt32(&amp;rw.readerCount, -rwmutexMaxReaders) + rwmutexMaxReaders</code> 得到实际读客户端的数量<br>如果读的客户端不等于0，就在 <code>rw.readerWait</code> 自增读客户端的数量，之后陷入睡眠，等待 <code>rw.writerSem</code> 唤醒。</p>
-<p>分析了这两段代码我们就能明白，写锁等待或者添加时，读锁没法添加上</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">RUnlock</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		_ = rw.w.state</span><br><span class="line">		race.ReleaseMerge(unsafe.Pointer(&amp;rw.writerSem))</span><br><span class="line">		race.Disable()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> r := atomic.AddInt32(&amp;rw.readerCount, <span class="number">-1</span>); r &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> r+<span class="number">1</span> == <span class="number">0</span> || r+<span class="number">1</span> == -rwmutexMaxReaders &#123;</span><br><span class="line">			race.Enable()</span><br><span class="line">			throw(<span class="string">"sync: RUnlock of unlocked RWMutex"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// A writer is pending.</span></span><br><span class="line">		<span class="keyword">if</span> atomic.AddInt32(&amp;rw.readerWait, <span class="number">-1</span>) == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="comment">// The last reader unblocks the writer.</span></span><br><span class="line">			runtime_Semrelease(&amp;rw.writerSem, <span class="literal">false</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		race.Enable()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>释放读锁，先在 <code>rw.readerCount</code> 减 1，然后检查读客户端是否小于0，如果小于0说明有写锁在等待，<br>在 <code>rw.readerWait</code> 上减1，这个变量记录的是写等待读客户端的数量，如果没有需要等待的读客户端了，就通知 <code>rw.writerSem</code> 唤醒写锁</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rw *RWMutex)</span> <span class="title">Unlock</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		_ = rw.w.state</span><br><span class="line">		race.Release(unsafe.Pointer(&amp;rw.readerSem))</span><br><span class="line">		race.Disable()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Announce to readers there is no active writer.</span></span><br><span class="line">	r := atomic.AddInt32(&amp;rw.readerCount, rwmutexMaxReaders)</span><br><span class="line">	<span class="keyword">if</span> r &gt;= rwmutexMaxReaders &#123;</span><br><span class="line">		race.Enable()</span><br><span class="line">		throw(<span class="string">"sync: Unlock of unlocked RWMutex"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Unblock blocked readers, if any.</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="keyword">int</span>(r); i++ &#123;</span><br><span class="line">		runtime_Semrelease(&amp;rw.readerSem, <span class="literal">false</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Allow other writers to proceed.</span></span><br><span class="line">	rw.w.Unlock()</span><br><span class="line">	<span class="keyword">if</span> race.Enabled &#123;</span><br><span class="line">		race.Enable()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>写锁在释放时会给 <code>rw.readerCount</code> 自增 <code>rwmutexMaxReaders</code> 还原真实读客户端数量。<br><code>for i := 0; i &lt; int(r); i++ {</code> 用来唤醒所有的读客户端，因为在写锁的时候，申请读锁的客户端会被计数，但是都会陷入睡眠状态。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以前特别强调过读锁重入导致死锁的问题，而且这个问题非常难在业务代码里面复现，触发几率很低，<br>编译和运行时都无法检测这种情况，所以千万不能陷入读锁重入的嵌套使用的情况，否者问题非常难以排查。</p>
-<p>关于加锁的几个小经验：</p>
-<ul>
-<li>运行时离开当前逻辑就释放锁。</li>
-<li>锁的粒度越小越好，加锁后尽快释放锁。</li>
-<li>尽量不用 <code>defer</code> 释放锁。</li>
-<li>读锁不要嵌套。</li>
-</ul>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    <div class="reward-box-item">
-                      <img class="reward-img" src="/assets/alipay.jpg">
-                      <span class="reward-type">支付宝</span>
-                    </div>
-                    
-                    
-                    <div class="reward-box-item">
-                      <img class="reward-img" src="/assets/weixin.jpg">
-                      <span class="reward-type">微信</span>
-                    </div>
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-            <ul class="post-copyright">
-  <li class="post-copyright-author">
-      <strong>本文作者：</strong>
-      <a href="https://blog.thinkeridea.com">戚银（thinkeridea）</a>
-  </li>
-  <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html" title="【Go】一次读锁重入导致的死锁故障">https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>版权声明：</strong>
-    本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-
-      
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">读写锁</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">死锁</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">string</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -378,135 +246,17 @@ var _hmt = _hmt || [];
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】一次读锁重入导致的死锁故障&url=https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html&via=https://blog.thinkeridea.com" target="_blank">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="http://qr.liantu.com/api.php?text=https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/201901/go/shen_ru_pou_xi_slice_he_array.html" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          【Go】深入剖析slice和array
-        
-      </div>
-    </a>
   
   
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简述业务背景及代码演进过程"><span class="toc-number">1.</span> <span class="toc-text">简述业务背景及代码演进过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事故现场分析排查问题"><span class="toc-number">2.</span> <span class="toc-text">事故现场分析排查问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析解决问题"><span class="toc-number">3.</span> <span class="toc-text">分析解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复现问题"><span class="toc-number">4.</span> <span class="toc-text">复现问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析读写锁实现"><span class="toc-number">5.</span> <span class="toc-text">分析读写锁实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-  <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
-<div id="SOHUCS" sid="go/一次读锁重入导致的死锁故障"></div>
-<script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
-<script type="text/javascript">
-    window.changyan.api.config({
-        appid: "cyu42lsth",
-        conf: "66c028491c16910acbd930a5f4482bb2"
-    });
-</script>
-<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cyu42lsth"></script>
-
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -530,9 +280,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

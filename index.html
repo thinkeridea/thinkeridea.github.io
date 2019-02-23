@@ -182,6 +182,111 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-go/string也是引用类型" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/201902/go/string_ye_shi_yin_yong_lei_xing.html">【Go】string 也是引用类型</a>
+    </h1>
+  
+
+        
+        <a href="/201902/go/string_ye_shi_yin_yong_lei_xing.html" class="archive-article-date">
+  	<time datetime="2019-02-22T22:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>初学 <code>Go</code> 语言的朋友总会在传 <code>[]byte</code> 和 <code>string</code> 之间有着很多纠结，实际上是没有了解 <code>string</code> 与 <code>slice</code> 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"bytes"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xxx"</span></span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(xx([]<span class="keyword">byte</span>(s)))</span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(bytes.Replace([]<span class="keyword">byte</span>(s), []<span class="keyword">byte</span>(<span class="string">"x"</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然这样的代码并不是来自真实的项目，但是确实有人这样设计，单从设计上看就很糟糕了，这样设计的原因很多人说：“<code>slice</code> 是引用类型，传递引用类型效率高呀”，主要原因不了解两者的本质，加上文档上说 <code>Go</code> 的引用类型有两种：<code>slice</code> 和 <code>map</code> ，这个在面试中也是经常遇到的吧。</p>
+<p>上面这个例子如果觉得有点基础和可爱，下面这个例子貌似并不那么容易说明其存在的问题了吧。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s *<span class="keyword">string</span>)</span> *<span class="title">string</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xx"</span></span><br><span class="line">    </span><br><span class="line">    s = *xx(&amp;s)</span><br><span class="line">    </span><br><span class="line">    ss :=[]*<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    ss = <span class="built_in">append</span>(ss, &amp;s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>指针效率高，我就用指针多好，可以减少内存分配呀，设计函数都接收指针变量，程序性能会有很大提升，在实际的项目中这种例子也不少见，我想通过这篇文档来帮助初学者走出误区，减少适得其反的优化技巧。</p>
+        
+          <a class="article-more-a" href="/201902/go/string_ye_shi_yin_yong_lei_xing.html#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">string</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/201902/go/string_ye_shi_yin_yong_lei_xing.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-go/replcae优化" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -958,6 +1063,10 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>
