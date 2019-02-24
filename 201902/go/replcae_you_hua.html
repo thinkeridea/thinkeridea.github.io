@@ -17,7 +17,7 @@
 <meta property="og:description" content="标准库中函数大多数情况下更通用，性能并非最好的，还是不能过于迷信标准库，最近又有了新发现，strings.Replace 这个函数自身的效率已经很好了，但是在特定情况下效率并不是最好的，分享一下我如何优化的吧。 我的服务中有部分代码使用 strings.Replace 把一个固定的字符串删除或者替换成另一个字符串，它们有几个特点：  旧的字符串大于或等于新字符串 (len(old) &amp;gt;= l">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/201902/0201.jpg">
-<meta property="og:updated_time" content="2019-02-02T12:12:00.455Z">
+<meta property="og:updated_time" content="2019-02-24T12:54:05.247Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】strings.Replace 与 bytes.Replace 调优">
 <meta name="twitter:description" content="标准库中函数大多数情况下更通用，性能并非最好的，还是不能过于迷信标准库，最近又有了新发现，strings.Replace 这个函数自身的效率已经很好了，但是在特定情况下效率并不是最好的，分享一下我如何优化的吧。 我的服务中有部分代码使用 strings.Replace 把一个固定的字符串删除或者替换成另一个字符串，它们有几个特点：  旧的字符串大于或等于新字符串 (len(old) &amp;gt;= l">
@@ -187,7 +187,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/replcae优化" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190202-replcae优化" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -417,7 +417,7 @@ var _hmt = _hmt || [];
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          【Go】string 也是引用类型
+          【Go】string 优化误区及建议
         
       </div>
     </a>
@@ -468,7 +468,7 @@ var _hmt = _hmt || [];
 
   
   <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
-<div id="SOHUCS" sid="go/replcae优化"></div>
+<div id="SOHUCS" sid="go/20190202-replcae优化"></div>
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -610,6 +610,10 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -623,10 +627,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>

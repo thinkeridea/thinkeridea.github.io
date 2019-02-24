@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。 在 Go 语言项目中大量的使用 slice, 我总结三年来对 slice 的一些操作技巧，以方便可以高效的">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-26T12:01:42.402Z">
+<meta property="og:updated_time" content="2019-02-24T12:53:49.161Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】slice的一些使用技巧">
 <meta name="twitter:description" content="slice 是 Go 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 Go 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 Go 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 slice 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。 在 Go 语言项目中大量的使用 slice, 我总结三年来对 slice 的一些操作技巧，以方便可以高效的">
@@ -185,7 +185,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/slice的一些使用技巧" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190123-slice的一些使用技巧" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -483,7 +483,7 @@ var _hmt = _hmt || [];
 
   
   <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
-<div id="SOHUCS" sid="go/slice的一些使用技巧"></div>
+<div id="SOHUCS" sid="go/20190123-slice的一些使用技巧"></div>
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -625,6 +625,10 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -638,10 +642,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>

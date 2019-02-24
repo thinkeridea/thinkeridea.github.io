@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011353.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/openfd.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20181225/20181219-011418.jpg">
-<meta property="og:updated_time" content="2019-01-12T14:47:24.523Z">
+<meta property="og:updated_time" content="2019-02-24T12:53:42.492Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】一次读锁重入导致的死锁故障">
 <meta name="twitter:description" content="在两天前第一次遇到自己的程序出现死锁， 我一直非常的小心使用锁，了解死锁导致的各种可能性，这次的经历让我未来会更加小心，下面来回顾一下死锁发生的过程与代码演进的过程吧。 简述业务背景及代码演进过程我的程序中有一块缓存，数据会组织好放到内存中，会根据数据源（MySQL）更新而刷新缓存，是读多写少的应用场景。内存中有一个很大数据列表，缓存模块会按数据维度进行分组，每次访问根据维度查找到这个列表里面的所">
@@ -189,7 +189,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/一次读锁重入导致的死锁故障" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20181225-一次读锁重入导致的死锁故障" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -491,7 +491,7 @@ var _hmt = _hmt || [];
 
   
   <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
-<div id="SOHUCS" sid="go/一次读锁重入导致的死锁故障"></div>
+<div id="SOHUCS" sid="go/20181225-一次读锁重入导致的死锁故障"></div>
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -633,6 +633,10 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -646,10 +650,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>

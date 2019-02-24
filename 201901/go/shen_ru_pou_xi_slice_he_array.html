@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_1.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_3.jpg">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_2.jpg">
-<meta property="og:updated_time" content="2019-01-13T14:40:05.579Z">
+<meta property="og:updated_time" content="2019-02-24T12:53:45.782Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】深入剖析slice和array">
 <meta name="twitter:description" content="array 和 slice 看似相似，却有着极大的不同，但他们之间还有着千次万缕的联系 slice 是引用类型、是 array 的引用，相当于动态数组，这些都是 slice 的特性，但是 slice 底层如何表现，内存中是如何分配的，特别是在程序中大量使用 slice 的情况下，怎样可以高效使用 slice？今天借助 Go 的 unsafe 包来探索 array 和 slice 的各种奥妙。">
@@ -190,7 +190,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/深入剖析slice和array" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190112-深入剖析slice和array" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -544,7 +544,7 @@ var _hmt = _hmt || [];
 
   
   <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
-<div id="SOHUCS" sid="go/深入剖析slice和array"></div>
+<div id="SOHUCS" sid="go/20190112-深入剖析slice和array"></div>
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -686,6 +686,10 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -699,10 +703,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>

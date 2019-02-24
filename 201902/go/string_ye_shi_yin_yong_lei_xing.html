@@ -6,21 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>【Go】string 也是引用类型 | thinkeridea博客</title>
+  <title>【Go】string 优化误区及建议 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很多纠结，实际上是没有了解 string 与 slice 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结： 1234567891011121314151617package mainimport &quot;bytes&quot;func xx(s []byte) []b">
+  <meta name="description" content="本文原标题为 《string 也是引用类型》，经过 郝林 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。  初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很">
 <meta name="keywords" content="go,bytes,unsafe,string">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Go】string 也是引用类型">
+<meta property="og:title" content="【Go】string 优化误区及建议">
 <meta property="og:url" content="https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:description" content="初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很多纠结，实际上是没有了解 string 与 slice 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结： 1234567891011121314151617package mainimport &quot;bytes&quot;func xx(s []byte) []b">
+<meta property="og:description" content="本文原标题为 《string 也是引用类型》，经过 郝林 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。  初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_1.jpg">
-<meta property="og:updated_time" content="2019-02-23T12:57:51.248Z">
+<meta property="og:updated_time" content="2019-02-24T13:00:10.820Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【Go】string 也是引用类型">
-<meta name="twitter:description" content="初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很多纠结，实际上是没有了解 string 与 slice 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结： 1234567891011121314151617package mainimport &quot;bytes&quot;func xx(s []byte) []b">
+<meta name="twitter:title" content="【Go】string 优化误区及建议">
+<meta name="twitter:description" content="本文原标题为 《string 也是引用类型》，经过 郝林 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。  初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很">
 <meta name="twitter:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
@@ -187,14 +187,14 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/string也是引用类型" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190223-string优化误区及建议" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      【Go】string 也是引用类型
+      【Go】string 优化误区及建议
     </h1>
   
 
@@ -207,9 +207,12 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>初学 <code>Go</code> 语言的朋友总会在传 <code>[]byte</code> 和 <code>string</code> 之间有着很多纠结，实际上是没有了解 <code>string</code> 与 <code>slice</code> 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结：</p>
+        <blockquote>
+<p> 本文原标题为 《string 也是引用类型》，经过 <strong>郝林</strong> 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。</p>
+</blockquote>
+<p>初学 <code>Go</code> 语言的朋友总会在传 <code>[]byte</code> 和 <code>string</code> 之间有着很多纠结，实际上是没有了解 <code>string</code> 与 <code>slice</code> 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"bytes"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xxx"</span></span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(xx([]<span class="keyword">byte</span>(s)))</span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(bytes.Replace([]<span class="keyword">byte</span>(s), []<span class="keyword">byte</span>(<span class="string">"x"</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>虽然这样的代码并不是来自真实的项目，但是确实有人这样设计，单从设计上看就很糟糕了，这样设计的原因很多人说：“<code>slice</code> 是引用类型，传递引用类型效率高呀”，主要原因不了解两者的本质，加上文档上说 <code>Go</code> 的引用类型有两种：<code>slice</code> 和 <code>map</code> ，这个在面试中也是经常遇到的吧。</p>
+<p>虽然这样的代码并不是来自真实的项目，但是确实有人这样设计，单从设计上看就很糟糕了，这样设计的原因很多人说：“<code>slice</code> 是引用类型，传递引用类型效率高呀”，主要原因不了解两者的本质。</p>
 <p>上面这个例子如果觉得有点基础和可爱，下面这个例子貌似并不那么容易说明其存在的问题了吧。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s *<span class="keyword">string</span>)</span> *<span class="title">string</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xx"</span></span><br><span class="line">    </span><br><span class="line">    s = *xx(&amp;s)</span><br><span class="line">    </span><br><span class="line">    ss :=[]*<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    ss = <span class="built_in">append</span>(ss, &amp;s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>指针效率高，我就用指针多好，可以减少内存分配呀，设计函数都接收指针变量，程序性能会有很大提升，在实际的项目中这种例子也不少见，我想通过这篇文档来帮助初学者走出误区，减少适得其反的优化技巧。</p>
@@ -222,7 +225,7 @@ var _hmt = _hmt || [];
 <p>那么字符串呢，计算机中我们处理的大多数问题都和字符串有关，难道传递字符串真的需要那么高的成本，需要借助 <code>slice</code> 和指针来减少内存开销吗。</p>
 <h2 id="string-的定义"><a href="#string-的定义" class="headerlink" title="string 的定义"></a>string 的定义</h2><p><code>reflect</code> 包里面也定义了一个 <code>StringHeader</code> 看一下吧：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> StringHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">	Data <span class="keyword">uintptr</span></span><br><span class="line">	Len  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>字符串只包含了两个 <code>int</code> 类型的数据，其中一个是指针，一个是字符串的长度，从定义上来看 <code>string</code> 也是引用类型。</p>
+<p>字符串只包含了两个 <code>int</code> 类型的数据，其中一个是指针，一个是字符串的长度，从 <code>StringHeader</code> 定义来看 <code>string</code> 并不会发生拷贝的，传递 <code>string</code> 只会拷贝 <code>StringHeader</code> 而已。</p>
 <p>借助 <code>unsafe</code> 来分析一下情况是不是这样吧：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line">	<span class="string">"unsafe"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/davecgh/go-spew/spew"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	sh := *(*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	spew.Dump(sh)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">"xx"</span></span><br><span class="line"></span><br><span class="line">	sh := *(*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	spew.Dump(sh)</span><br><span class="line"></span><br><span class="line">	xx(s)</span><br><span class="line">	xx(s[:<span class="number">1</span>])</span><br><span class="line">	xx(s[<span class="number">1</span>:])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面这段代码的输出如下：</p>
@@ -318,7 +321,7 @@ var _hmt = _hmt || [];
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html" title="【Go】string 也是引用类型">https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html</a>
+    <a href="https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html" title="【Go】string 优化误区及建议">https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明：</strong>
@@ -397,7 +400,7 @@ var _hmt = _hmt || [];
           <a class="facebook share-sns" href="javascript:;" data-type="facebook">
             <i class="icon icon-facebook"></i>
           </a>
-          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】string 也是引用类型&url=https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html&via=https://blog.thinkeridea.com" target="_blank">
+          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】string 优化误区及建议&url=https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html&via=https://blog.thinkeridea.com" target="_blank">
             <i class="icon icon-twitter"></i>
           </a>
           <a class="google share-sns" href="javascript:;" data-type="google">
@@ -474,7 +477,7 @@ var _hmt = _hmt || [];
 
   
   <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
-<div id="SOHUCS" sid="go/string也是引用类型"></div>
+<div id="SOHUCS" sid="go/20190223-string优化误区及建议"></div>
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -616,6 +619,10 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slice</a>
               </li>
              
@@ -629,10 +636,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>
