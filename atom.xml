@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.thinkeridea.com/"/>
-  <updated>2019-03-19T00:34:37.400Z</updated>
+  <updated>2019-03-19T00:38:29.449Z</updated>
   <id>https://blog.thinkeridea.com/</id>
   
   <author>
@@ -21,17 +21,16 @@
     <link href="https://blog.thinkeridea.com/201903/go/selection_of_numerical_types.html"/>
     <id>https://blog.thinkeridea.com/201903/go/selection_of_numerical_types.html</id>
     <published>2019-03-18T23:34:57.000Z</published>
-    <updated>2019-03-19T00:34:37.400Z</updated>
+    <updated>2019-03-19T00:38:29.449Z</updated>
     
-    <content type="html"><![CDATA[<p><code>Go</code> 内置很多种数值类型，往往初学者不知道编写程序如何选择，使用哪种数值类型更有优势。</p><p>内置的数值类型有：<code>uint8</code>、 <code>uint16</code>、 <code>uint32</code>、 <code>uint64</code>、 <code>uint</code>、 <code>int8</code>、 <code>int16</code>、 <code>int32</code>、 <code>int64</code>、 <code>int</code>。</p><p>从类型名称上可以很好了解到类型的大小，这个非常直观，<code>uint</code> 和 <code>int</code> 这两种类型是不带大小的，那么它们的大小会根据编译参数 <code>GOARCH=amd64</code> 平台决定的。</p><p>我最早设计的一个go的项目，当时设计系统使用采用最小类型原则，几乎使用了大多数数值类型，很少使用 <code>uint</code> 和 <code>int</code> 类型，后来遇到很多问题，标准库和三方库函数都接收 <code>int</code>、 <code>uint</code>、 <code>int64</code>、<code>uint64</code>, 一些代码生成工具, 比如 <code>protobuf</code> 生成类型是 <code>int32</code>，一些三方系统大多数也是 <code>int</code> 类型，这时候与其它组件件的交互就需要 <span style="color:red">类型转换</span>, 类型转换成本是很高的，导致程序性能并没有预期的好。</p><p>上面一个小故事(事故)警醒大家不要一味的根据数据的大小选择数值类型，而要考虑数值的用来做什么，后面会有哪些交互，需要调用哪些函数等等，是不是选择数值具体使用什么类型很复杂呢？并不是这样，考虑的越少，选择越简单，下面有一些近些年的总结。</p><ul><li>需要原子操作的数值根据数据大小选择 <code>int32</code>、 <code>int64</code>、 <code>uint32</code>、<code>uint64</code>。因为原子类型的操作包天生支持这些类型。</li><li>需要与代码生成的交互的数据，可以看生成的代码具体使用哪种类型，做一下参考。</li><li>需要调用大多数标准库函数进行处理，选这个 <code>int</code> (我们的程序大多数跑在64位系统上，如果运行在32系统，且类型可能会超过 <code>int32</code> 可以选择 <code>int64</code>) 。</li><li>有些时候可能我们需要一个无符号数据且比较大优先选用 <code>uint</code> 和 <code>uint64</code> 。</li><li>只和自己的函数交互以及一些不关注具体类型的包(<code>json</code>、<code>fmt</code>)交互式时，按数值使用范围选择最小类型。</li></ul><p>我现在写代码一些特殊场景如原子操作会针对使用的包选择具体类型，偶尔会使用<code>uint64</code>，往往是一些按位做一些复杂计算的数据，也都局限在局部逻辑上，与其它模块或者系统交互的都会使用 <code>int</code> 类型，这样可以大幅度降低数值类型的类型转换问题，从而从空间换取时间，获得更好的程序性能。</p><p>不得不说说 <code>Go</code> 语言神奇的 <code>int</code> 类型，为什么需要这样一个编程是无法确定具体长度的类型呢，而需要在编译时确定呢，有什么好处呢。</p><p>往往我们写程序是不太关注数值类型的，或者说我们程序中很多数值不会超过 <code>int32</code> 的最大值（往往我们的程序运行在 32 或 64位平台上），这个时候很多三方库都可以使用 <code>int</code> 作为交互类型，不用把一个函数为每种类型数值都写一遍，能简化标准库。我们也能写出更容易维护、简洁的系统。</p>]]></content>
+    <content type="html"><![CDATA[<p><code>Go</code> 内置很多种数值类型，往往初学者不知道编写程序如何选择，使用哪种数值类型更有优势。</p><p>内置的数值类型有：<code>uint8</code>、 <code>uint16</code>、 <code>uint32</code>、 <code>uint64</code>、 <code>uint</code>、 <code>int8</code>、 <code>int16</code>、 <code>int32</code>、 <code>int64</code>、 <code>int</code>。</p><p>从类型名称上可以很好了解到类型的大小，这个非常直观，<code>uint</code> 和 <code>int</code> 这两种类型是不带大小的，那么它们的大小会根据编译参数 <code>GOARCH=amd64</code> 平台决定的。</p><p>我最早设计的一个go的项目，当时设计系统使用采用最小类型原则，几乎使用了大多数数值类型，很少使用 <code>uint</code> 和 <code>int</code> 类型，后来遇到很多问题，标准库和三方库函数都接收 <code>int</code>、 <code>uint</code>、 <code>int64</code>、<code>uint64</code>, 一些代码生成工具, 比如 <code>protobuf</code> 生成类型是 <code>int32</code>，一些三方系统大多数也是 <code>int</code> 类型，这时候与其它组件件的交互就需要 <span style="color:red">类型转换</span>, 类型转换成本是很高的，导致程序性能并没有预期的好。</p><a id="more"></a><p>上面一个小故事(事故)警醒大家不要一味的根据数据的大小选择数值类型，而要考虑数值的用来做什么，后面会有哪些交互，需要调用哪些函数等等，是不是选择数值具体使用什么类型很复杂呢？并不是这样，考虑的越少，选择越简单，下面有一些近些年的总结。</p><ul><li>需要原子操作的数值根据数据大小选择 <code>int32</code>、 <code>int64</code>、 <code>uint32</code>、<code>uint64</code>。因为原子类型的操作包天生支持这些类型。</li><li>需要与代码生成的交互的数据，可以看生成的代码具体使用哪种类型，做一下参考。</li><li>需要调用大多数标准库函数进行处理，选这个 <code>int</code> (我们的程序大多数跑在64位系统上，如果运行在32系统，且类型可能会超过 <code>int32</code> 可以选择 <code>int64</code>) 。</li><li>有些时候可能我们需要一个无符号数据且比较大优先选用 <code>uint</code> 和 <code>uint64</code> 。</li><li>只和自己的函数交互以及一些不关注具体类型的包(<code>json</code>、<code>fmt</code>)交互式时，按数值使用范围选择最小类型。</li></ul><p>我现在写代码一些特殊场景如原子操作会针对使用的包选择具体类型，偶尔会使用<code>uint64</code>，往往是一些按位做一些复杂计算的数据，也都局限在局部逻辑上，与其它模块或者系统交互的都会使用 <code>int</code> 类型，这样可以大幅度降低数值类型的类型转换问题，从而从空间换取时间，获得更好的程序性能。</p><p>不得不说说 <code>Go</code> 语言神奇的 <code>int</code> 类型，为什么需要这样一个编程是无法确定具体长度的类型呢，而需要在编译时确定呢，有什么好处呢。</p><p>往往我们写程序是不太关注数值类型的，或者说我们程序中很多数值不会超过 <code>int32</code> 的最大值（往往我们的程序运行在 32 或 64位平台上），这个时候很多三方库都可以使用 <code>int</code> 作为交互类型，不用把一个函数为每种类型数值都写一遍，能简化标准库。我们也能写出更容易维护、简洁的系统。</p>]]></content>
     
     <summary type="html">
     
-      
-      
-        &lt;p&gt;&lt;code&gt;Go&lt;/code&gt; 内置很多种数值类型，往往初学者不知道编写程序如何选择，使用哪种数值类型更有优势。&lt;/p&gt;
-&lt;p&gt;内置的数值类型有：&lt;code&gt;uint8&lt;/code&gt;、 &lt;code&gt;uint16&lt;/code&gt;、 &lt;code&gt;uint32&lt;/code&gt;、 &lt;c
-      
+      &lt;p&gt;&lt;code&gt;Go&lt;/code&gt; 内置很多种数值类型，往往初学者不知道编写程序如何选择，使用哪种数值类型更有优势。&lt;/p&gt;
+&lt;p&gt;内置的数值类型有：&lt;code&gt;uint8&lt;/code&gt;、 &lt;code&gt;uint16&lt;/code&gt;、 &lt;code&gt;uint32&lt;/code&gt;、 &lt;code&gt;uint64&lt;/code&gt;、 &lt;code&gt;uint&lt;/code&gt;、 &lt;code&gt;int8&lt;/code&gt;、 &lt;code&gt;int16&lt;/code&gt;、 &lt;code&gt;int32&lt;/code&gt;、 &lt;code&gt;int64&lt;/code&gt;、 &lt;code&gt;int&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;从类型名称上可以很好了解到类型的大小，这个非常直观，&lt;code&gt;uint&lt;/code&gt; 和 &lt;code&gt;int&lt;/code&gt; 这两种类型是不带大小的，那么它们的大小会根据编译参数 &lt;code&gt;GOARCH=amd64&lt;/code&gt; 平台决定的。&lt;/p&gt;
+&lt;p&gt;我最早设计的一个go的项目，当时设计系统使用采用最小类型原则，几乎使用了大多数数值类型，很少使用 &lt;code&gt;uint&lt;/code&gt; 和 &lt;code&gt;int&lt;/code&gt; 类型，后来遇到很多问题，标准库和三方库函数都接收 &lt;code&gt;int&lt;/code&gt;、 &lt;code&gt;uint&lt;/code&gt;、 &lt;code&gt;int64&lt;/code&gt;、&lt;code&gt;uint64&lt;/code&gt;, 一些代码生成工具, 比如 &lt;code&gt;protobuf&lt;/code&gt; 生成类型是 &lt;code&gt;int32&lt;/code&gt;，一些三方系统大多数也是 &lt;code&gt;int&lt;/code&gt; 类型，这时候与其它组件件的交互就需要 &lt;span style=&quot;color:red&quot;&gt;类型转换&lt;/span&gt;, 类型转换成本是很高的，导致程序性能并没有预期的好。&lt;/p&gt;
     
     </summary>
     
