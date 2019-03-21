@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.thinkeridea.com/"/>
-  <updated>2019-03-19T00:38:29.449Z</updated>
+  <updated>2019-03-21T00:59:54.452Z</updated>
   <id>https://blog.thinkeridea.com/</id>
   
   <author>
@@ -17,11 +17,49 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>【Go】go Get 自动代理</title>
+    <link href="https://blog.thinkeridea.com/201903/go/go_get_proxy.html"/>
+    <id>https://blog.thinkeridea.com/201903/go/go_get_proxy.html</id>
+    <published>2019-03-20T23:34:57.000Z</published>
+    <updated>2019-03-21T00:59:54.452Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近发现技术交流群里很多人在询问 go get 墙外包失败的问题，大家给了很多解决方案：</p><ul><li>从 Github 的代码库 clone</li><li>设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=<a href="https://goproxy.io" target="_blank" rel="noopener">https://goproxy.io</a></li><li>配置命令行代理，https_proxy 环境变量</li><li>使用 go mod replace</li><li>使用 Gopm 类似的工具</li><li>……</li></ul><p>Go 的社区很活跃，国内 gopher 对 Go 的热情不会因为墙的存在而减少，从社区想到这么多翻墙方案就能看出来了。</p><p>上面的方法都是可行的，但是总有一些不尽人意，社区也一直在找更好的方法，我一直使用自动代理的方式获取墙外的包，可以支持所有 Go 原生拉取包操作，比如 go get、go mod、dep、godep、glide 等各种方法，只需要配置一次，只有在任何原生命令前加前缀运行命令即可，效率很高。</p><a id="more"></a><h2 id="实战操作"><a href="#实战操作" class="headerlink" title="实战操作"></a>实战操作</h2><p>工具类就先不讲原理，想直接获取方法的同学看这一部分即可，想了解原理的同学可以看后面的<a href="#原理篇">原理部分</a>。</p><h4 id="你需要准备如下工具："><a href="#你需要准备如下工具：" class="headerlink" title="你需要准备如下工具："></a>你需要准备如下工具：</h4><ul><li>一个 http 代理</li><li>Git</li><li>Github 账号设置好 ssh</li><li>其它 git 相关服务设置好 ssh (例如自建 gitlab)</li><li>一个可以运行shell的环境 (linux、Mac、windows 可以使用 git bash)</li></ul><h4 id="具体步骤"><a href="#具体步骤" class="headerlink" title="具体步骤"></a>具体步骤</h4><ul><li><p>首先通过 git 设置需要不代理的网站，以 Github 为例，执行 <code>git config --global url.git@github.com:.insteadof https://github.com/</code> 从 https 转到 ssh 协议，这样会使我们设置的 https 代理不作用在 ssh 协议上，如果有自建的服务只要更换地址就可以了。</p></li><li><p>新建一个脚本 (proxy)，修改里面的代理地址为自己的代理地址，如下：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/usr/bin/env bash </span><br><span class="line"><span class="meta">#</span> 如果你的系统没有bash，或者没有 /usr/bin/env ，请修改上一行指令为你的环境</span><br><span class="line">export http_proxy=http://127.0.0.1:1087  # 代理地址需要换成自己的</span><br><span class="line">export https_proxy=http://127.0.0.1:1087</span><br><span class="line">export ftp_proxy=http://127.0.0.1:1087</span><br><span class="line"></span><br><span class="line">exec $&#123;@:1&#125;</span><br></pre></td></tr></table></figure></li><li><p>给 shell 脚本设置可执行权限，然后放到 path 环境变量路径下。</p></li><li><p>测试 <code>proxy curl https://www.google.com</code> 和 <code>curl https://www.google.com</code> 第一个命令可以获取到结果，第二个命令不可以。</p></li><li><p>测试 <code>proxy go get -v golang.org/x/text/…</code> 可以正常下载包，其它任何拉取包命令都可以添加 <code>proxy</code> 前缀执行 ，比如 <code>proxy dep ensure -v</code></p></li></ul><p>截止当前你就配置了一个 <code>go get</code> 自动代理的环境，以后需要翻墙操作的指令运行时加 <code>proxy</code> 就可以了，该方法并不只适用于 <code>go get</code>，任何需要命令行代理都可以使用。</p><h2 id="原理篇"><a href="#原理篇" class="headerlink" title="原理篇"></a>原理篇</h2><p>实际原理简单，找到这种方法也是一种巧合，在入坑 Go 之前我经常用 linux，当时有一些需求需要命令行翻墙，找到了三个环境变量 <code>http_proxy</code>、<code>https_proxy</code>、<code>ftp_proxy</code>，但是全局设置导致很多请求变慢，如果在一个窗口临时设置就导致需要记住那个窗口设置了代理，切换窗口成本也比较高，后来根据 shell 的特性，任何一个脚本都有自己独立的环境变量，所以用一个脚本设置代理环境变量，<code>exec ${@:1}</code> 可以执行脚本后面的指令，也就是我们实际需要运行的指令，这样在需要代理的命令前就加上这个脚本前缀就好了，单行命令代理就这么简单的配置好了。</p><p>前期我使用 go 的时候遇到下载不了的包时，就会在 <code>go get</code> 前加上 <code>proxy</code> 指令，但是我发现拉取 Github 包的效率非常低，本身国内现在访问 Github 已经很快了。也是一个巧合，当时我公司 Go 项目迁移到 Github 上，所有项目全部是私有项目，有同事提供了一个 git https 转 ssh 协议的操作，<code>git config --global url.git@….:.insteadof https://…./</code>，这个操作让我看到一个隐性福利，之前的代理只会代理 https 并不能代理 ssh 协议，那么使用这个指令把不需要代理的网站全部转成 ssh 协议，然后加上 <code>proxy</code> 运行 <code>go get</code> 就成了自动代理了，尝试之后确实效率很高，至此一直使用到今天。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近发现技术交流群里很多人在询问 go get 墙外包失败的问题，大家给了很多解决方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;从 Github 的代码库 clone&lt;/li&gt;
+&lt;li&gt;设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=&lt;a href=&quot;https://goproxy.io&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://goproxy.io&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;配置命令行代理，https_proxy 环境变量&lt;/li&gt;
+&lt;li&gt;使用 go mod replace&lt;/li&gt;
+&lt;li&gt;使用 Gopm 类似的工具&lt;/li&gt;
+&lt;li&gt;……&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Go 的社区很活跃，国内 gopher 对 Go 的热情不会因为墙的存在而减少，从社区想到这么多翻墙方案就能看出来了。&lt;/p&gt;
+&lt;p&gt;上面的方法都是可行的，但是总有一些不尽人意，社区也一直在找更好的方法，我一直使用自动代理的方式获取墙外的包，可以支持所有 Go 原生拉取包操作，比如 go get、go mod、dep、godep、glide 等各种方法，只需要配置一次，只有在任何原生命令前加前缀运行命令即可，效率很高。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="go" scheme="https://blog.thinkeridea.com/categories/go/"/>
+    
+    
+      <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
+    
+      <category term="proxy" scheme="https://blog.thinkeridea.com/tags/proxy/"/>
+    
+      <category term="git" scheme="https://blog.thinkeridea.com/tags/git/"/>
+    
+      <category term="shell" scheme="https://blog.thinkeridea.com/tags/shell/"/>
+    
+  </entry>
+  
+  <entry>
     <title>【Go】那么多数值类型，应该选哪个？</title>
     <link href="https://blog.thinkeridea.com/201903/go/selection_of_numerical_types.html"/>
     <id>https://blog.thinkeridea.com/201903/go/selection_of_numerical_types.html</id>
     <published>2019-03-18T23:34:57.000Z</published>
-    <updated>2019-03-19T00:38:29.449Z</updated>
+    <updated>2019-03-19T01:00:46.558Z</updated>
     
     <content type="html"><![CDATA[<p><code>Go</code> 内置很多种数值类型，往往初学者不知道编写程序如何选择，使用哪种数值类型更有优势。</p><p>内置的数值类型有：<code>uint8</code>、 <code>uint16</code>、 <code>uint32</code>、 <code>uint64</code>、 <code>uint</code>、 <code>int8</code>、 <code>int16</code>、 <code>int32</code>、 <code>int64</code>、 <code>int</code>。</p><p>从类型名称上可以很好了解到类型的大小，这个非常直观，<code>uint</code> 和 <code>int</code> 这两种类型是不带大小的，那么它们的大小会根据编译参数 <code>GOARCH=amd64</code> 平台决定的。</p><p>我最早设计的一个go的项目，当时设计系统使用采用最小类型原则，几乎使用了大多数数值类型，很少使用 <code>uint</code> 和 <code>int</code> 类型，后来遇到很多问题，标准库和三方库函数都接收 <code>int</code>、 <code>uint</code>、 <code>int64</code>、<code>uint64</code>, 一些代码生成工具, 比如 <code>protobuf</code> 生成类型是 <code>int32</code>，一些三方系统大多数也是 <code>int</code> 类型，这时候与其它组件件的交互就需要 <span style="color:red">类型转换</span>, 类型转换成本是很高的，导致程序性能并没有预期的好。</p><a id="more"></a><p>上面一个小故事(事故)警醒大家不要一味的根据数据的大小选择数值类型，而要考虑数值的用来做什么，后面会有哪些交互，需要调用哪些函数等等，是不是选择数值具体使用什么类型很复杂呢？并不是这样，考虑的越少，选择越简单，下面有一些近些年的总结。</p><ul><li>需要原子操作的数值根据数据大小选择 <code>int32</code>、 <code>int64</code>、 <code>uint32</code>、<code>uint64</code>。因为原子类型的操作包天生支持这些类型。</li><li>需要与代码生成的交互的数据，可以看生成的代码具体使用哪种类型，做一下参考。</li><li>需要调用大多数标准库函数进行处理，选这个 <code>int</code> (我们的程序大多数跑在64位系统上，如果运行在32系统，且类型可能会超过 <code>int32</code> 可以选择 <code>int64</code>) 。</li><li>有些时候可能我们需要一个无符号数据且比较大优先选用 <code>uint</code> 和 <code>uint64</code> 。</li><li>只和自己的函数交互以及一些不关注具体类型的包(<code>json</code>、<code>fmt</code>)交互式时，按数值使用范围选择最小类型。</li></ul><p>我现在写代码一些特殊场景如原子操作会针对使用的包选择具体类型，偶尔会使用<code>uint64</code>，往往是一些按位做一些复杂计算的数据，也都局限在局部逻辑上，与其它模块或者系统交互的都会使用 <code>int</code> 类型，这样可以大幅度降低数值类型的类型转换问题，从而从空间换取时间，获得更好的程序性能。</p><p>不得不说说 <code>Go</code> 语言神奇的 <code>int</code> 类型，为什么需要这样一个编程是无法确定具体长度的类型呢，而需要在编译时确定呢，有什么好处呢。</p><p>往往我们写程序是不太关注数值类型的，或者说我们程序中很多数值不会超过 <code>int32</code> 的最大值（往往我们的程序运行在 32 或 64位平台上），这个时候很多三方库都可以使用 <code>int</code> 作为交互类型，不用把一个函数为每种类型数值都写一遍，能简化标准库。我们也能写出更容易维护、简洁的系统。</p>]]></content>
     
@@ -77,9 +115,9 @@
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
     
-      <category term="string" scheme="https://blog.thinkeridea.com/tags/string/"/>
-    
       <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
+    
+      <category term="string" scheme="https://blog.thinkeridea.com/tags/string/"/>
     
   </entry>
   
@@ -112,11 +150,11 @@
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
     
-      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
-    
       <category term="strings" scheme="https://blog.thinkeridea.com/tags/strings/"/>
     
       <category term="replace" scheme="https://blog.thinkeridea.com/tags/replace/"/>
+    
+      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
   </entry>
   
