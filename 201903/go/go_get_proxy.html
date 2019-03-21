@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="最近发现技术交流群里很多人在询问 go get 墙外包失败的问题，大家给了很多解决方案：  从 Github 的代码库 clone 设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=https://goproxy.io 配置命令行代理，https_proxy 环境变量 使用 go mod replace 使用 Gopm 类似的工具 ……  Go 的社区很活跃，国内 gopher 对">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-21T00:59:54.452Z">
+<meta property="og:updated_time" content="2019-03-21T01:04:08.088Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】go Get 自动代理">
 <meta name="twitter:description" content="最近发现技术交流群里很多人在询问 go get 墙外包失败的问题，大家给了很多解决方案：  从 Github 的代码库 clone 设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=https://goproxy.io 配置命令行代理，https_proxy 环境变量 使用 go mod replace 使用 Gopm 类似的工具 ……  Go 的社区很活跃，国内 gopher 对">
@@ -215,7 +215,7 @@ var _hmt = _hmt || [];
 <li>……</li>
 </ul>
 <p>Go 的社区很活跃，国内 gopher 对 Go 的热情不会因为墙的存在而减少，从社区想到这么多翻墙方案就能看出来了。</p>
-<p>上面的方法都是可行的，但是总有一些不尽人意，社区也一直在找更好的方法，我一直使用自动代理的方式获取墙外的包，可以支持所有 Go 原生拉取包操作，比如 go get、go mod、dep、godep、glide 等各种方法，只需要配置一次，只有在任何原生命令前加前缀运行命令即可，效率很高。</p>
+<p>上面的方法都是可行的，但是总有一些不尽人意，社区也一直在找更好的方法，我一直使用自动代理的方式获取墙外的包，可以支持所有 Go 原生拉取包操作，比如 go get、go mod、dep、godep、glide 等各种方法，只需要配置一次，只要在任何原生命令前加前缀运行命令即可，效率很高。</p>
 <a id="more"></a>
 <h2 id="实战操作"><a href="#实战操作" class="headerlink" title="实战操作"></a>实战操作</h2><p>工具类就先不讲原理，想直接获取方法的同学看这一部分即可，想了解原理的同学可以看后面的<a href="#原理篇">原理部分</a>。</p>
 <h4 id="你需要准备如下工具："><a href="#你需要准备如下工具：" class="headerlink" title="你需要准备如下工具："></a>你需要准备如下工具：</h4><ul>
@@ -229,7 +229,7 @@ var _hmt = _hmt || [];
 <li><p>首先通过 git 设置需要不代理的网站，以 Github 为例，执行 <code>git config --global url.git@github.com:.insteadof https://github.com/</code> 从 https 转到 ssh 协议，这样会使我们设置的 https 代理不作用在 ssh 协议上，如果有自建的服务只要更换地址就可以了。</p>
 </li>
 <li><p>新建一个脚本 (proxy)，修改里面的代理地址为自己的代理地址，如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/usr/bin/env bash </span><br><span class="line"><span class="meta">#</span> 如果你的系统没有bash，或者没有 /usr/bin/env ，请修改上一行指令为你的环境</span><br><span class="line">export http_proxy=http://127.0.0.1:1087  # 代理地址需要换成自己的</span><br><span class="line">export https_proxy=http://127.0.0.1:1087</span><br><span class="line">export ftp_proxy=http://127.0.0.1:1087</span><br><span class="line"></span><br><span class="line">exec $&#123;@:1&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env bash </span></span><br><span class="line"><span class="comment"># 如果你的系统没有bash，或者没有 /usr/bin/env ，请修改上一行指令为你的环境</span></span><br><span class="line">export http_proxy=http://<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">1087</span>  <span class="comment"># 代理地址需要换成自己的</span></span><br><span class="line">export https_proxy=http://<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">1087</span></span><br><span class="line">export ftp_proxy=http://<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">1087</span></span><br><span class="line"></span><br><span class="line">exec $&#123;@:<span class="number">1</span>&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>给 shell 脚本设置可执行权限，然后放到 path 环境变量路径下。</p>
 </li>
@@ -596,11 +596,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -608,7 +604,11 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
