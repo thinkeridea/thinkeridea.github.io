@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.thinkeridea.com/201903/go/ip2long.html</loc>
+    <lastmod>2019-03-25T00:27:37.704Z</lastmod>
+  </url>  <url>
     <loc>https://blog.thinkeridea.com/201903/go/go_get_proxy.html</loc>
-    <lastmod>2019-03-21T02:14:31.718Z</lastmod>
+    <lastmod>2019-03-22T02:15:33.706Z</lastmod>
   </url>  <url>
     <loc>https://blog.thinkeridea.com/201903/go/selection_of_numerical_types.html</loc>
     <lastmod>2019-03-19T01:00:46.558Z</lastmod>

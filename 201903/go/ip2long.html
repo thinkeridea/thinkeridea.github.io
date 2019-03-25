@@ -6,15 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>Tag: http | thinkeridea博客</title>
+  <title>【Go】IP地址转换：数字与字符串之间的转换 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="thinkeridea博客">
-<meta property="og:url" content="https://blog.thinkeridea.com/tags/http/index.html">
+  <meta name="description" content="IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。 针对这一个问题我在 exnet 扩展包里面实现可两者的转换的快捷方法：  func IP2Long(ip net.IP) (uint, error)  IP2Long 把 net.IP 转为数值 func Long2IP">
+<meta name="keywords" content="go,ip,net,ip2long,ip2numner">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Go】IP地址转换：数字与字符串之间的转换">
+<meta property="og:url" content="https://blog.thinkeridea.com/201903/go/ip2long.html">
 <meta property="og:site_name" content="thinkeridea博客">
+<meta property="og:description" content="IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。 针对这一个问题我在 exnet 扩展包里面实现可两者的转换的快捷方法：  func IP2Long(ip net.IP) (uint, error)  IP2Long 把 net.IP 转为数值 func Long2IP">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-25T00:27:37.704Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="thinkeridea博客">
+<meta name="twitter:title" content="【Go】IP地址转换：数字与字符串之间的转换">
+<meta name="twitter:description" content="IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。 针对这一个问题我在 exnet 扩展包里面实现可两者的转换的快捷方法：  func IP2Long(ip net.IP) (uint, error)  IP2Long 把 net.IP 转为数值 func Long2IP">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -180,72 +185,134 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-go/20190325-IP地址转换：数字与字符串之间的转换" class="article article-type-post " itemscope="" itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html" class="archive-article-date">
-  	<time datetime="2019-02-01T08:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-01</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html">【Go】优雅的读取http请求或响应的数据-续</a>
+    <h1 class="article-title" itemprop="name">
+      【Go】IP地址转换：数字与字符串之间的转换
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/201903/go/ip2long.html" class="archive-article-date">
+  	<time datetime="2019-03-24T23:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。</p>
+<p>针对这一个问题我在 <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 扩展包里面实现可两者的转换的快捷方法：</p>
+<ul>
+<li><code>func IP2Long(ip net.IP) (uint, error)</code>  IP2Long 把 net.IP 转为数值</li>
+<li><code>func Long2IP(i uint) (net.IP, error)</code>  Long2IP 把数值转为 net.IP</li>
+<li><code>func IPString2Long(ip string) (uint, error)</code> IPString2Long 把 ip 字符串转为数值</li>
+<li><code>func Long2IPString(i uint) (string, error)</code> Long2IPString 把数值转为 ip 字符串</li>
+</ul>
+<p>使用示例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/thinkeridea/go-extend/exnet"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ip := <span class="string">"192.168.1.1"</span></span><br><span class="line"></span><br><span class="line">	n, _ := exnet.IPString2Long(ip)</span><br><span class="line">	s, _ := exnet.Long2IPString(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, s == ip)</span><br><span class="line"></span><br><span class="line">	Ip1 := net.ParseIP(ip) <span class="comment">// 会得到一个16字节的byte，主要为了兼容ipv6</span></span><br><span class="line">	n, _ = exnet.IP2Long(Ip1)</span><br><span class="line"></span><br><span class="line">	Ip2, _ := exnet.Long2IP(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, reflect.DeepEqual(Ip1[<span class="number">12</span>:], Ip2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>那么是如何将点分十进制的IP地址转为数字？<br>IPv4 地址有4个字节，样式如下：<br>MSB————–LSB<br>b4 b3 b2 b1</p>
+<p>每个字节表示的范围：</p>
+<ul>
+<li>byte4: 4294967296(1&lt;&lt;32)</li>
+<li>byte3: 16777216(1&lt;&lt;24)</li>
+<li>byte2: 65536(1&lt;&lt;16)</li>
+<li>byte1: 256(1&lt;&lt;8)</li>
+</ul>
+<p>通用公式：<code>b4&lt;&lt;24 | b3&lt;&lt;16 | b2&lt;&lt;16 | b1</code><br>例如，222.173.108.86<br>转换方法：<code>222&lt;&lt;24 | 173&lt;&lt;16 | 108&lt;&lt;8 | 86 = 3735907414</code><br>再例如，1.0.1.1<br>转换方法：<code>1&lt;&lt;24 | 0&lt;&lt;16 | 1&lt;&lt;8 | 1 = 16777473</code></p>
+<p> <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 中实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IPString2Long 把ip字符串转为数值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IPString2Long</span><span class="params">(ip <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">uint</span>, error)</span></span> &#123;</span><br><span class="line">	b := net.ParseIP(ip).To4()</span><br><span class="line">	<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"invalid ipv4 format"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">uint</span>(b[<span class="number">3</span>]) | <span class="keyword">uint</span>(b[<span class="number">2</span>])&lt;&lt;<span class="number">8</span> | <span class="keyword">uint</span>(b[<span class="number">1</span>])&lt;&lt;<span class="number">16</span> | <span class="keyword">uint</span>(b[<span class="number">0</span>])&lt;&lt;<span class="number">24</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>把数值转换为字符串的逻辑翻转过来即可， <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 中实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Long2IPString 把数值转为ip字符串</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Long2IPString</span><span class="params">(i <span class="keyword">uint</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> i &gt; math.MaxUint32 &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span>, errors.New(<span class="string">"beyond the scope of ipv4"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip := <span class="built_in">make</span>(net.IP, net.IPv4len)</span><br><span class="line">	ip[<span class="number">0</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">24</span>)</span><br><span class="line">	ip[<span class="number">1</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">16</span>)</span><br><span class="line">	ip[<span class="number">2</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">8</span>)</span><br><span class="line">	ip[<span class="number">3</span>] = <span class="keyword">byte</span>(i)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ip.String(), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/alipay.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+            <ul class="post-copyright">
+  <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      <a href="https://blog.thinkeridea.com">戚银（thinkeridea）</a>
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://blog.thinkeridea.com/201903/go/ip2long.html" title="【Go】IP地址转换：数字与字符串之间的转换">https://blog.thinkeridea.com/201903/go/ip2long.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明：</strong>
+    本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net.http</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">http</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ip</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">pool</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ip2long</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">buffer</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">makeSlice</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">ioutil</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">ip2numner</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -258,90 +325,131 @@ var _hmt = _hmt || [];
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】IP地址转换：数字与字符串之间的转换&url=https://blog.thinkeridea.com/201903/go/ip2long.html&via=https://blog.thinkeridea.com" target="_blank">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://qr.liantu.com/api.php?text=https://blog.thinkeridea.com/201903/go/ip2long.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html" class="archive-article-date">
-  	<time datetime="2019-01-26T08:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-26</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/201903/go/go_get_proxy.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【Go】go get 自动代理</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html">【Go】优雅的读取http请求或响应的数据</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net.http</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">http</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">pool</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">buffer</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">makeSlice</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">ioutil</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    目录，不存在的…
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
   
-    </div></section>
   
 
-    
+  
+  <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
+<div id="SOHUCS" sid="go/20190325-IP地址转换：数字与字符串之间的转换"></div>
+<script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
+<script type="text/javascript">
+    window.changyan.api.config({
+        appid: "cyu42lsth",
+        conf: "66c028491c16910acbd930a5f4482bb2"
+    });
+</script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cyu42lsth"></script>
+
+  
+
+  
+
+  
 
 
           </div>
@@ -365,9 +473,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
