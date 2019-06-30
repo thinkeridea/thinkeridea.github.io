@@ -9,7 +9,7 @@
   <title>【Go】获取用户真实的ip地址 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="用户请求到达提供服务的服务器中间有很多的环节，导致服务获取用户真实的 ip 非常困难，大多数的框架及工具库都会封装各种获取用户真实 ip 的方法，在  exnet 包中也封装了各种 ip 相关的操作，其中就包含获取客户端 ip 的方法，比较实用的方法如下：  func ClientIP(r *http.Request) string ClientIP 尽最大努力实现获取客户端 IP 的算法。 解析">
-<meta name="keywords" content="go,ip,client,net,RemoteAddr">
+<meta name="keywords" content="go,ip,net,client,RemoteAddr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go】获取用户真实的ip地址">
 <meta property="og:url" content="https://blog.thinkeridea.com/201903/go/get_client_ip.html">
@@ -304,11 +304,11 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">client</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">client</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -393,6 +393,15 @@ var _hmt = _hmt || [];
 
   
 <nav id="article-nav">
+  
+    <a href="/201906/go/compress_file_io_optimization1.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          【Go】使用压缩文件优化io (一)
+        
+      </div>
+    </a>
   
   
     <a href="/201903/go/ip2long.html" id="article-nav-older" class="article-nav-link-wrap">
@@ -534,6 +543,18 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">int</a>
               </li>
              
@@ -550,27 +571,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">client</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">net</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -582,11 +583,27 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+                <a href="javascript:void(0)" class="js-tag color2">client</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
+                <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -602,10 +619,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">buffer</a>
               </li>
              
@@ -618,19 +631,15 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">string</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -643,6 +652,18 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">内存池</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">compress</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">压缩</a>
               </li>
              
               <li class="article-tag-list-item">
