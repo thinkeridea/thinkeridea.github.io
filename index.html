@@ -87,10 +87,6 @@ var _hmt = _hmt || [];
 				
 					<a class="github" target="_blank" href="https://github.com/thinkeridea" title="github"><i class="icon-github"></i></a>
 		        
-					<a class="weibo" target="_blank" href="https://weibo.com/u/6979988847" title="weibo"><i class="icon-weibo"></i></a>
-		        
-					<a class="jianshu" target="_blank" href="https://www.jianshu.com/u/d46fcca6d888" title="jianshu"><i class="icon-jianshu"></i></a>
-		        
 					<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/thinkeridea/posts" title="zhihu"><i class="icon-zhihu"></i></a>
 		        
 					<a class="segmentfault" target="_blank" href="https://segmentfault.com/u/thinkeridea" title="segmentfault"><i class="icon-segmentfault"></i></a>
@@ -140,10 +136,6 @@ var _hmt = _hmt || [];
 					
 						<a class="github" target="_blank" href="https://github.com/thinkeridea" title="github"><i class="icon-github"></i></a>
 			        
-						<a class="weibo" target="_blank" href="https://weibo.com/u/6979988847" title="weibo"><i class="icon-weibo"></i></a>
-			        
-						<a class="jianshu" target="_blank" href="https://www.jianshu.com/u/d46fcca6d888" title="jianshu"><i class="icon-jianshu"></i></a>
-			        
 						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/thinkeridea/posts" title="zhihu"><i class="icon-zhihu"></i></a>
 			        
 						<a class="segmentfault" target="_blank" href="https://segmentfault.com/u/thinkeridea" title="segmentfault"><i class="icon-segmentfault"></i></a>
@@ -182,7 +174,7 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-go/20190527-使用压缩文件优化io（一）" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190630-使用压缩文件优化io（一）" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -202,7 +194,8 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式做了优化，效果十分显著，整理篇文章记录一下。</p>
+        <p>go,lzo,压缩文件,io,io优化</p>
+<p>最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式做了优化，效果十分显著，整理篇文章记录一下。</p>
         
           <a class="article-more-a" href="/201906/go/compress_file_io_optimization1.html#more">more >></a>
         
@@ -277,6 +270,7 @@ var _hmt = _hmt || [];
         
     </div>
 </aside>
+
 
 
 
@@ -388,6 +382,7 @@ var _hmt = _hmt || [];
         
     </div>
 </aside>
+
 
 
 
@@ -505,6 +500,7 @@ var _hmt = _hmt || [];
 
 
 
+
   
     <article id="post-go/20190321-go get自动代理" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
@@ -615,6 +611,7 @@ var _hmt = _hmt || [];
 
 
 
+
   
     <article id="post-go/20190319-那么多数值类型，应该选哪个" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
@@ -714,6 +711,7 @@ var _hmt = _hmt || [];
         
     </div>
 </aside>
+
 
 
 
@@ -826,6 +824,7 @@ var _hmt = _hmt || [];
 
 
 
+
   
     <article id="post-go/20190202-replcae优化" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
@@ -875,11 +874,11 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">strings</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">strings</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -937,6 +936,7 @@ var _hmt = _hmt || [];
 
 
 
+
   
     <article id="post-go/20190201-优雅的读取http请求或响应的数据2" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
@@ -976,10 +976,6 @@ var _hmt = _hmt || [];
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net.http</a>
         		</li>
       		 
@@ -989,6 +985,10 @@ var _hmt = _hmt || [];
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">pool</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -1050,6 +1050,7 @@ var _hmt = _hmt || [];
 
 
 
+
   
     <article id="post-go/20190126-优雅的读取http请求或响应的数据" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
@@ -1088,10 +1089,6 @@ var _hmt = _hmt || [];
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net.http</a>
         		</li>
       		 
@@ -1101,6 +1098,10 @@ var _hmt = _hmt || [];
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">pool</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -1158,6 +1159,7 @@ var _hmt = _hmt || [];
         
     </div>
 </aside>
+
 
 
 
@@ -1273,6 +1275,7 @@ var _hmt = _hmt || [];
 
 
 
+
   
   
     <nav id="page-nav">
@@ -1357,18 +1360,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">int</a>
               </li>
              
@@ -1405,19 +1396,23 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1433,6 +1428,10 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">buffer</a>
               </li>
              
@@ -1445,15 +1444,15 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
+                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1482,6 +1481,10 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>

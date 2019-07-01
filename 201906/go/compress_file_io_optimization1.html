@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
   <title>【Go】使用压缩文件优化io (一) | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式做了优化，效果十分显著，整理篇文章记录一">
+  <meta name="description" content="go,lzo,压缩文件,io,io优化 最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式">
 <meta name="keywords" content="go,compress,io,压缩">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go】使用压缩文件优化io (一)">
 <meta property="og:url" content="https://blog.thinkeridea.com/201906/go/compress_file_io_optimization1.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:description" content="最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式做了优化，效果十分显著，整理篇文章记录一">
+<meta property="og:description" content="go,lzo,压缩文件,io,io优化 最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-30T14:10:55.595Z">
+<meta property="og:updated_time" content="2019-06-30T14:24:41.342Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】使用压缩文件优化io (一)">
-<meta name="twitter:description" content="最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式做了优化，效果十分显著，整理篇文章记录一">
+<meta name="twitter:description" content="go,lzo,压缩文件,io,io优化 最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -92,10 +92,6 @@ var _hmt = _hmt || [];
 				
 					<a class="github" target="_blank" href="https://github.com/thinkeridea" title="github"><i class="icon-github"></i></a>
 		        
-					<a class="weibo" target="_blank" href="https://weibo.com/u/6979988847" title="weibo"><i class="icon-weibo"></i></a>
-		        
-					<a class="jianshu" target="_blank" href="https://www.jianshu.com/u/d46fcca6d888" title="jianshu"><i class="icon-jianshu"></i></a>
-		        
 					<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/thinkeridea/posts" title="zhihu"><i class="icon-zhihu"></i></a>
 		        
 					<a class="segmentfault" target="_blank" href="https://segmentfault.com/u/thinkeridea" title="segmentfault"><i class="icon-segmentfault"></i></a>
@@ -145,10 +141,6 @@ var _hmt = _hmt || [];
 					
 						<a class="github" target="_blank" href="https://github.com/thinkeridea" title="github"><i class="icon-github"></i></a>
 			        
-						<a class="weibo" target="_blank" href="https://weibo.com/u/6979988847" title="weibo"><i class="icon-weibo"></i></a>
-			        
-						<a class="jianshu" target="_blank" href="https://www.jianshu.com/u/d46fcca6d888" title="jianshu"><i class="icon-jianshu"></i></a>
-			        
 						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/thinkeridea/posts" title="zhihu"><i class="icon-zhihu"></i></a>
 			        
 						<a class="segmentfault" target="_blank" href="https://segmentfault.com/u/thinkeridea" title="segmentfault"><i class="icon-segmentfault"></i></a>
@@ -185,7 +177,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/20190527-使用压缩文件优化io（一）" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190630-使用压缩文件优化io（一）" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -205,7 +197,8 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式做了优化，效果十分显著，整理篇文章记录一下。</p>
+        <p>go,lzo,压缩文件,io,io优化</p>
+<p>最近遇到一个日志备份 io 过高的问题，业务日志每十分钟备份一次，本来是用 Python 写一个根据规则扫描备份日志问题不大，但是随着业务越来越多，单机上的日志文件越来越大，文件数量也越来越多，导致每每备份的瞬间 io 阻塞严重， CPU 和 load 异常的高，好在备份速度很快，对业务影响不是很大，这个问题会随着业务增长，越来越明显，这段时间抽空对备份方式做了优化，效果十分显著，整理篇文章记录一下。</p>
 <a id="more"></a>
 <h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><blockquote>
 <p>服务器配置：4 核  8G； 磁盘：500G</p>
@@ -484,26 +477,30 @@ var _hmt = _hmt || [];
 
 
 
-  
-  
+
   
 
   
-  <div id="cyEmoji" role="cylabs" data-use="emoji" style="max-width: 980px"></div>
-<div id="SOHUCS" sid="go/20190527-使用压缩文件优化io（一）"></div>
-<script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js"></script>
-<script type="text/javascript">
-    window.changyan.api.config({
-        appid: "cyu42lsth",
-        conf: "66c028491c16910acbd930a5f4482bb2"
-    });
+
+  
+
+  
+  <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+var gitalk = new Gitalk({
+  clientID: 'ab68110ba3fd03446617',
+  clientSecret: 'e5670d61cc887297ef20daef384d51c27d8c042c',
+  repo: 'thinkeridea.github.io',
+  owner: 'thinkeridea',
+  admin: ['thinkeridea'],
+  id: 'https://blog.thinkeridea.com/201906/go/compress_file_io_optimization1.html',
+  distractionFreeMode: true
+})
+
+gitalk.render('gitalk-container')
 </script>
-<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cyu42lsth"></script>
-
-  
-
-  
 
   
 
@@ -584,18 +581,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">int</a>
               </li>
              
@@ -632,19 +617,23 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -660,6 +649,10 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">bytes</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">buffer</a>
               </li>
              
@@ -672,15 +665,15 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
+                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -709,6 +702,10 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
             
             <div class="clearfix"></div>
