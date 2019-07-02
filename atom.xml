@@ -222,9 +222,9 @@
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
     
-      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
-    
       <category term="string" scheme="https://blog.thinkeridea.com/tags/string/"/>
+    
+      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
   </entry>
   
@@ -257,11 +257,11 @@
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
     
+      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
+    
       <category term="strings" scheme="https://blog.thinkeridea.com/tags/strings/"/>
     
       <category term="replace" scheme="https://blog.thinkeridea.com/tags/replace/"/>
-    
-      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
   </entry>
   
