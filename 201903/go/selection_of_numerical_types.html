@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.8.0">
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
@@ -177,7 +177,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/20190319-那么多数值类型，应该选哪个" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190319-那么多数值类型，应该选哪个" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -202,6 +202,7 @@ var _hmt = _hmt || [];
 <p>从类型名称上可以很好了解到类型的大小，这个非常直观，<code>uint</code> 和 <code>int</code> 这两种类型是不带大小的，那么它们的大小会根据编译参数 <code>GOARCH=amd64</code> 平台决定的。</p>
 <p>我最早设计的一个go的项目，当时设计系统使用采用最小类型原则，几乎使用了大多数数值类型，很少使用 <code>uint</code> 和 <code>int</code> 类型，后来遇到很多问题，标准库和三方库函数都接收 <code>int</code>、 <code>uint</code>、 <code>int64</code>、<code>uint64</code>, 一些代码生成工具, 比如 <code>protobuf</code> 生成类型是 <code>int32</code>，一些三方系统大多数也是 <code>int</code> 类型，这时候与其它组件件的交互就需要 <span style="color:red">类型转换</span>, 类型转换成本是很高的，导致程序性能并没有预期的好。</p>
 <a id="more"></a>
+
 <p>上面一个小故事(事故)警醒大家不要一味的根据数据的大小选择数值类型，而要考虑数值的用来做什么，后面会有哪些交互，需要调用哪些函数等等，是不是选择数值具体使用什么类型很复杂呢？并不是这样，考虑的越少，选择越简单，下面有一些近些年的总结。</p>
 <ul>
 <li>需要原子操作的数值根据数据大小选择 <code>int32</code>、 <code>int64</code>、 <code>uint32</code>、<code>uint64</code>。因为原子类型的操作包天生支持这些类型。</li>
@@ -422,6 +423,41 @@ var _hmt = _hmt || [];
 
   
 
+  
+  <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<script>
+
+var host = "window.location.host";
+var clientID = "";
+var clientSecret = "";
+
+if (host == "blog.thinkeridea.com") {
+  clientID = "b8fca21d422014fd7188";
+  clientSecret = "8eb706695ec3ce6048336dcfc9777a33ad6d2ca0";
+}else if (host == "thinkeridea.github.io"){
+  clientID = "ab68110ba3fd03446617";
+  clientSecret = "e5670d61cc887297ef20daef384d51c27d8c042c";
+}
+
+if (clientID != "" && clientSecret != ""){
+  var gitalk = new Gitalk({
+    clientID: clientID,
+    clientSecret: clientSecret,
+    repo: 'test',
+    owner: 'thinkeridea',
+    admin: ['0'],
+    id: '2ea80096d707d216a97c40ba0fdcb7b4'
+  })
+
+  gitalk.render('gitalk-container')
+}
+</script>
+
+  
+
 
           </div>
         </div>
@@ -511,6 +547,18 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -524,18 +572,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">

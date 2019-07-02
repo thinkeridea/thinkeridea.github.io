@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.8.0">
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
@@ -174,7 +174,7 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-go/20190630-使用压缩文件优化io（一）" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190630-使用压缩文件优化io（一）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -274,7 +274,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190328-获取用户真实的ip地址" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190328-获取用户真实的ip地址" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -384,7 +384,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190325-IP地址转换：数字与字符串之间的转换" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190325-IP地址转换：数字与字符串之间的转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -496,7 +496,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190321-go get自动代理" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190321-go get自动代理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -605,7 +605,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190319-那么多数值类型，应该选哪个" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190319-那么多数值类型，应该选哪个" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -707,7 +707,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190223-string优化误区及建议" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190223-string优化误区及建议" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -732,9 +732,11 @@ var _hmt = _hmt || [];
 </blockquote>
 <p>初学 <code>Go</code> 语言的朋友总会在传 <code>[]byte</code> 和 <code>string</code> 之间有着很多纠结，实际上是没有了解 <code>string</code> 与 <code>slice</code> 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"bytes"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xxx"</span></span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(xx([]<span class="keyword">byte</span>(s)))</span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(bytes.Replace([]<span class="keyword">byte</span>(s), []<span class="keyword">byte</span>(<span class="string">"x"</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>虽然这样的代码并不是来自真实的项目，但是确实有人这样设计，单从设计上看就很糟糕了，这样设计的原因很多人说：“<code>slice</code> 是引用类型，传递引用类型效率高呀”，主要原因不了解两者的本质。</p>
 <p>上面这个例子如果觉得有点基础和可爱，下面这个例子貌似并不那么容易说明其存在的问题了吧。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s *<span class="keyword">string</span>)</span> *<span class="title">string</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xx"</span></span><br><span class="line">    </span><br><span class="line">    s = *xx(&amp;s)</span><br><span class="line">    </span><br><span class="line">    ss :=[]*<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    ss = <span class="built_in">append</span>(ss, &amp;s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>指针效率高，我就用指针多好，可以减少内存分配呀，设计函数都接收指针变量，程序性能会有很大提升，在实际的项目中这种例子也不少见，我想通过这篇文档来帮助初学者走出误区，减少适得其反的优化技巧。</p>
         
           <a class="article-more-a" href="/201902/go/string_ye_shi_yin_yong_lei_xing.html#more">more >></a>
@@ -814,7 +816,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190202-replcae优化" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190202-replcae优化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -924,7 +926,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190201-优雅的读取http请求或响应的数据2" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190201-优雅的读取http请求或响应的数据2" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1036,7 +1038,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190126-优雅的读取http请求或响应的数据" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190126-优雅的读取http请求或响应的数据" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1147,7 +1149,7 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190123-slice的一些使用技巧" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-go/20190123-slice的一些使用技巧" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1178,6 +1180,7 @@ var _hmt = _hmt || [];
 </ul>
 <p>下标索引操作的一些误区 <code>s[i:l:c]</code> <code>i</code> 是起始偏移的起始位置，<code>l</code> 是起始偏移的长度结束位置， <code>l-i</code> 就是新 <code>slice</code> 的长度， <code>c</code> 是起始偏移的容量结束位置，<code>c-i</code> 就是新 <code>slice</code> 的容量。其中 <code>i</code> 、<code>l</code> 、<code>c</code> 并不是当前 <code>slice</code> 的索引，而是引用底层数组相对当前 <code>slice</code> 起始位置的偏移量，所以是可超出当前 <code>slice</code> 的长度的， 但不能超出当前 <code>slice</code> 的容量，如下操作是合法的：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	s[<span class="number">20</span>] = <span class="number">100</span></span><br><span class="line">	s1 := s[<span class="number">10</span>:<span class="number">10</span>]</span><br><span class="line">	s2 := s1[<span class="number">10</span>:<span class="number">20</span>]</span><br><span class="line">	fmt.Println(s1)</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>其中 <code>s1</code> 是 <code>[]</code>；<code>s2</code> 是 <code>[100 0 0 0 0 0 0 0 0 0]</code>, 这里并不会发生下标越界的情况，一个更好的例子在 <a href="#csv-reader-中的一个例子">csv reader 中的一个例子</a></p>
         
           <a class="article-more-a" href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html#more">more >></a>
@@ -1352,6 +1355,18 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -1365,18 +1380,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">

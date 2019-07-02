@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.8.0">
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
@@ -177,7 +177,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/20190325-IP地址转换：数字与字符串之间的转换" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190325-IP地址转换：数字与字符串之间的转换" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -207,7 +207,9 @@ var _hmt = _hmt || [];
 </ul>
 <p>使用示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/thinkeridea/go-extend/exnet"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ip := <span class="string">"192.168.1.1"</span></span><br><span class="line"></span><br><span class="line">	n, _ := exnet.IPString2Long(ip)</span><br><span class="line">	s, _ := exnet.Long2IPString(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, s == ip)</span><br><span class="line"></span><br><span class="line">	Ip1 := net.ParseIP(ip) <span class="comment">// 会得到一个16字节的byte，主要为了兼容ipv6</span></span><br><span class="line">	n, _ = exnet.IP2Long(Ip1)</span><br><span class="line"></span><br><span class="line">	Ip2, _ := exnet.Long2IP(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, reflect.DeepEqual(Ip1[<span class="number">12</span>:], Ip2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <a id="more"></a>
+
 <p>那么是如何将点分十进制的IP地址转为数字？<br>IPv4 地址有4个字节，样式如下：<br>MSB————–LSB<br>b4 b3 b2 b1</p>
 <p>每个字节表示的范围：</p>
 <ul>
@@ -219,8 +221,10 @@ var _hmt = _hmt || [];
 <p>通用公式：<code>b4&lt;&lt;24 | b3&lt;&lt;16 | b2&lt;&lt;8 | b1</code><br>例如，222.173.108.86<br>转换方法：<code>222&lt;&lt;24 | 173&lt;&lt;16 | 108&lt;&lt;8 | 86 = 3735907414</code><br>再例如，1.0.1.1<br>转换方法：<code>1&lt;&lt;24 | 0&lt;&lt;16 | 1&lt;&lt;8 | 1 = 16777473</code></p>
 <p> <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 中实现如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IPString2Long 把ip字符串转为数值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IPString2Long</span><span class="params">(ip <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">uint</span>, error)</span></span> &#123;</span><br><span class="line">	b := net.ParseIP(ip).To4()</span><br><span class="line">	<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"invalid ipv4 format"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">uint</span>(b[<span class="number">3</span>]) | <span class="keyword">uint</span>(b[<span class="number">2</span>])&lt;&lt;<span class="number">8</span> | <span class="keyword">uint</span>(b[<span class="number">1</span>])&lt;&lt;<span class="number">16</span> | <span class="keyword">uint</span>(b[<span class="number">0</span>])&lt;&lt;<span class="number">24</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>把数值转换为字符串的逻辑翻转过来即可， <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 中实现如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Long2IPString 把数值转为ip字符串</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Long2IPString</span><span class="params">(i <span class="keyword">uint</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> i &gt; math.MaxUint32 &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span>, errors.New(<span class="string">"beyond the scope of ipv4"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip := <span class="built_in">make</span>(net.IP, net.IPv4len)</span><br><span class="line">	ip[<span class="number">0</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">24</span>)</span><br><span class="line">	ip[<span class="number">1</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">16</span>)</span><br><span class="line">	ip[<span class="number">2</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">8</span>)</span><br><span class="line">	ip[<span class="number">3</span>] = <span class="keyword">byte</span>(i)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ip.String(), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
       
 
@@ -434,6 +438,41 @@ var _hmt = _hmt || [];
 
   
 
+  
+  <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<script>
+
+var host = "window.location.host";
+var clientID = "";
+var clientSecret = "";
+
+if (host == "blog.thinkeridea.com") {
+  clientID = "b8fca21d422014fd7188";
+  clientSecret = "8eb706695ec3ce6048336dcfc9777a33ad6d2ca0";
+}else if (host == "thinkeridea.github.io"){
+  clientID = "ab68110ba3fd03446617";
+  clientSecret = "e5670d61cc887297ef20daef384d51c27d8c042c";
+}
+
+if (clientID != "" && clientSecret != ""){
+  var gitalk = new Gitalk({
+    clientID: clientID,
+    clientSecret: clientSecret,
+    repo: 'test',
+    owner: 'thinkeridea',
+    admin: ['0'],
+    id: '848dc387f0b93e3b7f9da810aaf2aba9'
+  })
+
+  gitalk.render('gitalk-container')
+}
+</script>
+
+  
+
 
           </div>
         </div>
@@ -523,6 +562,18 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -536,18 +587,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">

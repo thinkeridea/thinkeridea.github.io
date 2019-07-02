@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.8.0">
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
@@ -177,7 +177,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/20190321-go get自动代理" class="article article-type-post " itemscope="" itemprop="blogPost">
+            <article id="post-go/20190321-go get自动代理" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -209,6 +209,7 @@ var _hmt = _hmt || [];
 <p>Go 的社区很活跃，国内 gopher 对 Go 的热情不会因为墙的存在而减少，从社区想到这么多翻墙方案就能看出来了。</p>
 <p>上面的方法都是可行的，但是总有一些不尽人意，社区也一直在找更好的方法，我一直使用自动代理的方式获取墙外的包，可以支持所有 Go 原生拉取包操作，比如 go get、go mod、dep、godep、glide 等各种方法，只需要配置一次，只要在任何原生命令前加前缀运行命令即可，效率很高。</p>
 <a id="more"></a>
+
 <h2 id="实战操作"><a href="#实战操作" class="headerlink" title="实战操作"></a>实战操作</h2><p>工具类就先不讲原理，想直接获取方法的同学看这一部分即可，想了解原理的同学可以看后面的<a href="#原理篇">原理部分</a>。</p>
 <h4 id="你需要准备如下工具："><a href="#你需要准备如下工具：" class="headerlink" title="你需要准备如下工具："></a>你需要准备如下工具：</h4><ul>
 <li>一个 http 代理</li>
@@ -426,7 +427,7 @@ var _hmt = _hmt || [];
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#实战操作"><span class="toc-number">1.</span> <span class="toc-text">实战操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#你需要准备如下工具："><span class="toc-number">1.0.1.</span> <span class="toc-text">你需要准备如下工具：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#具体步骤"><span class="toc-number">1.0.2.</span> <span class="toc-text">具体步骤</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#原理篇"><span class="toc-number">2.</span> <span class="toc-text">原理篇</span></a></li>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#实战操作"><span class="toc-number">1.</span> <span class="toc-text">实战操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#你需要准备如下工具："><span class="toc-number">1.0.1.</span> <span class="toc-text">你需要准备如下工具：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#具体步骤"><span class="toc-number">1.0.2.</span> <span class="toc-text">具体步骤</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理篇"><span class="toc-number">2.</span> <span class="toc-text">原理篇</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -439,6 +440,41 @@ var _hmt = _hmt || [];
   
 
   
+
+  
+
+  
+  <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<script>
+
+var host = "window.location.host";
+var clientID = "";
+var clientSecret = "";
+
+if (host == "blog.thinkeridea.com") {
+  clientID = "b8fca21d422014fd7188";
+  clientSecret = "8eb706695ec3ce6048336dcfc9777a33ad6d2ca0";
+}else if (host == "thinkeridea.github.io"){
+  clientID = "ab68110ba3fd03446617";
+  clientSecret = "e5670d61cc887297ef20daef384d51c27d8c042c";
+}
+
+if (clientID != "" && clientSecret != ""){
+  var gitalk = new Gitalk({
+    clientID: clientID,
+    clientSecret: clientSecret,
+    repo: 'test',
+    owner: 'thinkeridea',
+    admin: ['0'],
+    id: '136f1d52c18813fc3cf5435b4d549e66'
+  })
+
+  gitalk.render('gitalk-container')
+}
+</script>
 
   
 
@@ -531,6 +567,18 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -544,18 +592,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
