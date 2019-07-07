@@ -6,15 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>Tag: net | thinkeridea博客</title>
+  <title>【Go】使用压缩文件优化io (二) | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="thinkeridea博客">
-<meta property="og:url" content="https://blog.thinkeridea.com/tags/net/index.html">
+  <meta name="description" content="上一篇文章《使用压缩文件优化io (一)》中记录了日志备份 io 优化方案，使用文件流数据压缩方案优化 io 性能，效果十分显著。这篇文章记录数据分析前置清洗、格式化数据的 io 优化方案，我们有一台专用的日志前置处理服务器，所有业务日志通过这台机器从 OSS 拉取回来清洗、格式化，最后进入到数据仓储中便于后续的分析。 随着业务扩展这台服务器压力越来越大，高峰时数据延迟越来越厉害，早期也是使用 P">
+<meta name="keywords" content="go,compress,io,压缩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Go】使用压缩文件优化io (二)">
+<meta property="og:url" content="https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html">
 <meta property="og:site_name" content="thinkeridea博客">
+<meta property="og:description" content="上一篇文章《使用压缩文件优化io (一)》中记录了日志备份 io 优化方案，使用文件流数据压缩方案优化 io 性能，效果十分显著。这篇文章记录数据分析前置清洗、格式化数据的 io 优化方案，我们有一台专用的日志前置处理服务器，所有业务日志通过这台机器从 OSS 拉取回来清洗、格式化，最后进入到数据仓储中便于后续的分析。 随着业务扩展这台服务器压力越来越大，高峰时数据延迟越来越厉害，早期也是使用 P">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-07T12:25:11.383Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="thinkeridea博客">
+<meta name="twitter:title" content="【Go】使用压缩文件优化io (二)">
+<meta name="twitter:description" content="上一篇文章《使用压缩文件优化io (一)》中记录了日志备份 io 优化方案，使用文件流数据压缩方案优化 io 性能，效果十分显著。这篇文章记录数据分析前置清洗、格式化数据的 io 优化方案，我们有一台专用的日志前置处理服务器，所有业务日志通过这台机器从 OSS 拉取回来清洗、格式化，最后进入到数据仓储中便于后续的分析。 随着业务扩展这台服务器压力越来越大，高峰时数据延迟越来越厉害，早期也是使用 P">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -172,36 +177,185 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-go/20190707-使用压缩文件优化io（二）" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201903/go/get_client_ip.html" class="archive-article-date">
-  	<time datetime="2019-03-27T23:02:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-28</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201903/go/get_client_ip.html">【Go】获取用户真实的ip地址</a>
+    <h1 class="article-title" itemprop="name">
+      【Go】使用压缩文件优化io (二)
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/201907/go/compress_file_io_optimization2.html" class="archive-article-date">
+  	<time datetime="2019-07-07T09:32:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://blog.thinkeridea.com/201906/go/compress_file_io_optimization1.html">上一篇文章《使用压缩文件优化io (一)》</a>中记录了日志备份 io 优化方案，使用文件流数据压缩方案优化 io 性能，效果十分显著。这篇文章记录数据分析前置清洗、格式化数据的 io 优化方案，我们有一台专用的日志前置处理服务器，所有业务日志通过这台机器从 OSS 拉取回来清洗、格式化，最后进入到数据仓储中便于后续的分析。</p>
+<p>随着业务扩展这台服务器压力越来越大，高峰时数据延迟越来越厉害，早期也是使用 Python 脚本 + awk 以及一些 shell 命令完成相关工作，在数据集不是很大的时候这种方案很好，效率也很高，随着数据集变大，发现服务器负载很高，经过分析是还是 io 阻塞，依旧采用对数据流进行处理的方案优化io，以下记录优化的过程。</p>
+<a id="more"></a>
+
+<h2 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h2><blockquote>
+<p>服务器配置：4 核 8G； 磁盘：1T</p>
+</blockquote>
+<p>分析前置服务会根据业务不同分为十分钟、一小时两个阶段拉取分析日志，每隔一个阶段会去 OSS 拉取日志回到服务器进行处理，处理过程因 io 阻塞，导致 CPU 和 load 异常高，且处理效率严重下降，这次优化主要就是降低 io 阻塞，提升 CPU 利用率 (处理业务逻辑而不是等待 io) 和处理效率。</p>
+<p>后文中会详细描述优化前后的方案，并用 go 编写测试，使用一台 2 核4G的服务器进行测试，测试数据集大小为：</p>
+<ul>
+<li>文件数量：432个</li>
+<li>压缩文件：17G</li>
+<li>解压后文件：63G </li>
+<li>压缩方案：lzo</li>
+<li>Goroutine 数量：20</li>
+</ul>
+<h2 id="优化前"><a href="#优化前" class="headerlink" title="优化前"></a>优化前</h2><p>优化前日志处理流程：</p>
+<ul>
+<li>获取待处理文件列表</li>
+<li>拉取 OSS 日志到本地磁盘 (压缩文件)</li>
+<li>解压缩日志文件</li>
+<li>读取日志数据</li>
+<li>业务处理……</li>
+<li>导入到数据仓储中</li>
+</ul>
+<p>导致 io 阻塞的部分主要是： 拉取 OSS 日志、解压缩日志文件及读取日志数据，优化也主要从这三块着手。</p>
+<p>这里有一段公共的日志读取方法，该方法接收一个 <code>io.Reader</code>， 并按行读取日志，并简单切分日志字段，并没有实质的处理日志数据，后面的优化方案也将使用这个方法读取日志。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"bytes"</span></span><br><span class="line">	<span class="string">"io"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/thinkeridea/go-extend/exbytes"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Read</span><span class="params">(r io.Reader)</span></span> &#123;</span><br><span class="line">	rawBuffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">512</span>)</span><br><span class="line">	buf := bufio.NewReader(r)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok, err := readLine(buf, rawBuffer)</span><br><span class="line">		<span class="keyword">if</span> err == io.EOF &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(<span class="literal">nil</span>)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> ok &#123;</span><br><span class="line">			rawBuffer = line</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		c := bytes.Count(line, []<span class="keyword">byte</span>&#123;<span class="string">'\x01'</span>&#125;)</span><br><span class="line">		<span class="keyword">if</span> c != <span class="number">65</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(<span class="string">"无效的行"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readLine</span><span class="params">(r *bufio.Reader, rawBuffer []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, <span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> ok <span class="keyword">bool</span></span><br><span class="line">	line, err := r.ReadSlice(<span class="string">'\n'</span>)</span><br><span class="line">	<span class="keyword">if</span> (err == bufio.ErrBufferFull || <span class="built_in">len</span>(line) &lt; <span class="number">3</span> || exbytes.ToString(line[<span class="built_in">len</span>(line)<span class="number">-3</span>:]) != <span class="string">"\r\r\n"</span>) &amp;&amp; err != io.EOF &#123;</span><br><span class="line">		rawBuffer = <span class="built_in">append</span>(rawBuffer[:<span class="number">0</span>], line...)</span><br><span class="line">		<span class="keyword">for</span> (err == bufio.ErrBufferFull || <span class="built_in">len</span>(line) &lt; <span class="number">3</span> || exbytes.ToString(line[<span class="built_in">len</span>(line)<span class="number">-3</span>:]) != <span class="string">"\r\r\n"</span>) &amp;&amp; err != io.EOF &#123;</span><br><span class="line">			line, err = r.ReadSlice(<span class="string">'\n'</span>)</span><br><span class="line">			rawBuffer = <span class="built_in">append</span>(rawBuffer, line...)</span><br><span class="line">		&#125;</span><br><span class="line">		line = rawBuffer</span><br><span class="line">		ok = <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(line) &gt; <span class="number">0</span> &amp;&amp; err == io.EOF &#123;</span><br><span class="line">		err = <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> line, ok, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>日志按 <code>\r\r\n</code> 分隔行，使用 <code>\x01</code> 切分字段，读取方法使用 <code>bufio.ReadSlice</code> 方法，避免内存分配，且当 <code>bufio</code> 缓冲区满之后使用 <code>rwaBuffer</code> 作为本地可扩展缓冲，每次扩展之后会保留最大的扩展空间，因为业务日志每行大小差不多，这样可以极大的减少内存分配，效率是 <code>bufio.ReadLine</code> 方法的好几倍。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"os/exec"</span></span><br><span class="line">	<span class="string">"path/filepath"</span></span><br><span class="line">	<span class="string">"strings"</span></span><br><span class="line">	<span class="string">"sync"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">".../pkg/aliyun_oss"</span> <span class="comment">// 虚假的包</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> oss *aliyun_oss.AliyunOSS <span class="comment">// 对接阿里云 OSS，需要自行封装</span></span><br><span class="line">	files := list()               <span class="comment">// 这是一个虚构的方法，用来获取待处理的文件列表</span></span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"待处理文件数量：%d\n"</span>, <span class="built_in">len</span>(files))</span><br><span class="line"></span><br><span class="line">	start := time.Now()</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(t time.Time)</span></span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"共耗时：%0.6f\n"</span>, time.Now().Sub(t).Seconds())</span><br><span class="line">	&#125;(start)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 下载日志文件</span></span><br><span class="line">	n := <span class="number">20</span></span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	wg.Add(n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			<span class="keyword">for</span> &#123;</span><br><span class="line">				f, ok := &lt;-c</span><br><span class="line">				<span class="keyword">if</span> !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> _, err := os.Stat(f); err == <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125; <span class="keyword">else</span> <span class="keyword">if</span> !os.IsNotExist(err) &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				dir := filepath.Dir(f)</span><br><span class="line">				err := os.MkdirAll(dir, <span class="number">0755</span>)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				err = oss.GetObjectToFile(f, f)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, f := <span class="keyword">range</span> files &#123;</span><br><span class="line">		c &lt;- f</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">close</span>(c)</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"下载文件耗时：%0.6f\n"</span>, time.Now().Sub(start).Seconds())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 解压日志文件</span></span><br><span class="line">	start = time.Now()</span><br><span class="line">	shell := exec.Command(<span class="string">"/bin/bash"</span>, <span class="string">"-c"</span>, <span class="string">"lzop -df logs/*/*/*/*/*/*.lzo"</span>)</span><br><span class="line">	err := shell.Run()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"解压文件耗时：%0.6f\n"</span>, time.Now().Sub(start).Seconds())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 读取日志文件</span></span><br><span class="line">	start = time.Now()</span><br><span class="line">	c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	wg.Add(n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			<span class="keyword">for</span> &#123;</span><br><span class="line">				file, ok := &lt;-c</span><br><span class="line">				<span class="keyword">if</span> !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">				f, err := os.Open(file)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				Read(f)</span><br><span class="line">				f.Close()</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, f := <span class="keyword">range</span> files &#123;</span><br><span class="line">		c &lt;- strings.TrimRight(f, <span class="string">".lzo"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">close</span>(c)</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"读取文件耗时：%0.6f\n"</span>, time.Now().Sub(start).Seconds())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行程序输出如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">待处理文件数量：<span class="number">432</span></span><br><span class="line">下载文件耗时：<span class="number">303.562865</span></span><br><span class="line">解压文件耗时：<span class="number">611.236232</span></span><br><span class="line">读取文件耗时：<span class="number">460.371245</span></span><br><span class="line">共耗时：<span class="number">1375.187261</span></span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>iostat -m -x 5 10000</code> 分析各个阶段结果如下：</p>
+<ul>
+<li>下载时：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">		   7.85    0.00   16.44   11.24    0.00   64.48</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     0.00   80.40    7.80     8.98     0.04   209.36     0.40    4.57    4.64    3.77   0.50   4.44</span><br><span class="line">vdb               1.40   761.20  247.60  264.00    14.70    60.92   302.72     9.17   17.92   10.36   25.00   0.52  26.52</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>解压时：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">		   8.54    0.00    8.33   68.39    0.00   14.74</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.20    3.40   11.80     0.01     0.05     8.95     0.30   20.03    0.41   25.68   0.55   0.84</span><br><span class="line">vdb               0.00 22037.80  107.80  243.20    26.45   107.01   778.71    83.52  236.68   74.31  308.65   2.52  88.54</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>读取时：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">		   2.74    0.00    5.07   92.19    0.00    0.00</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     2.40    3.80   23.60     0.01     0.14    11.85     0.12    4.48    1.95    4.89   0.33   0.90</span><br><span class="line">vdb               1.80     4.60  347.20    6.20   139.97     0.08   811.60   126.62  358.04  360.79  203.48   2.83 100.00</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>iostat</code> 结果可以看出，在解压和读取日志时 <code>io</code> 阻塞比较严重，且运行时间较长，下载时 <code>io</code> 阻塞也存在，但还可以接受，通过下面两个方案逐渐消除掉 <code>io</code>。</p>
+<h2 id="优化方案一"><a href="#优化方案一" class="headerlink" title="优化方案一"></a>优化方案一</h2><p>优化前的方案反应出在解压和读取日志时 <code>io</code> 阻塞比较严重，那么是否可以通过读取 <code>lzo</code> 压缩文件，以此来消除解压缩日志耗时太大、<code>io</code> 太高的问题呢？并且读取 <code>lzo</code> 压缩文件远比解压后文件小，来降低读取日志耗时太大、<code>io</code> 太高的问题呢？</p>
+<p>优化后日志处理流程：</p>
+<ul>
+<li>获取待处理文件列表</li>
+<li>拉取 OSS 日志到本地磁盘 (压缩文件)</li>
+<li>读取压缩日志数据</li>
+<li>业务处理……</li>
+<li>导入到数据仓储中</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"path/filepath"</span></span><br><span class="line">	<span class="string">"sync"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">".../pkg/aliyun_oss"</span> <span class="comment">// 虚假的包</span></span><br><span class="line">	<span class="string">"github.com/cyberdelia/lzo"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> oss *aliyun_oss.AliyunOSS <span class="comment">// 对接阿里云 OSS，需要自行封装</span></span><br><span class="line">	files := list()               <span class="comment">// 这是一个虚构的方法，用来获取待处理的文件列表</span></span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"待处理文件数量：%d\n"</span>, <span class="built_in">len</span>(files))</span><br><span class="line">	start := time.Now()</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(t time.Time)</span></span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"共耗时：%0.6f\n"</span>, time.Now().Sub(t).Seconds())</span><br><span class="line">	&#125;(start)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 下载日志文件</span></span><br><span class="line">	n := <span class="number">20</span></span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	wg.Add(n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			<span class="keyword">for</span> &#123;</span><br><span class="line">				f, ok := &lt;-c</span><br><span class="line">				<span class="keyword">if</span> !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> _, err := os.Stat(f); err == <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125; <span class="keyword">else</span> <span class="keyword">if</span> !os.IsNotExist(err) &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				dir := filepath.Dir(f)</span><br><span class="line">				err := os.MkdirAll(dir, <span class="number">0755</span>)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				err = oss.GetObjectToFile(f, f)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, f := <span class="keyword">range</span> files &#123;</span><br><span class="line">		c &lt;- f</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">close</span>(c)</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"下载文件耗时：%0.6f\n"</span>, time.Now().Sub(start).Seconds())</span><br><span class="line"></span><br><span class="line">	start = time.Now()</span><br><span class="line">	c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	wg.Add(n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			<span class="keyword">for</span> &#123;</span><br><span class="line">				file, ok := &lt;-c</span><br><span class="line">				<span class="keyword">if</span> !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">				f, err := os.Open(file)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				r, err := lzo.NewReader(f)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				Read(r)</span><br><span class="line">				r.Close()</span><br><span class="line">				f.Close()</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, f := <span class="keyword">range</span> files &#123;</span><br><span class="line">		c &lt;- f</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">close</span>(c)</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"读取文件耗时：%0.6f\n"</span>, time.Now().Sub(start).Seconds())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方案消除了解压缩日志，并且直接读取压缩日志，使用 <code>github.com/cyberdelia/lzo</code> 包对压缩文件数据流进行边读取边解压，这次不用单独封装新的方法了，直接使用 <code>lzo</code> 包中的接口即可。</p>
+<p>程序运行结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">待处理文件数量：432</span><br><span class="line">下载文件耗时：286.146603</span><br><span class="line">读取文件耗时：132.787345</span><br><span class="line">共耗时：418.942862</span><br></pre></td></tr></table></figure>
+
+<p>这个方案效果非常明显，总耗时从 <code>1375.187261</code> 降低到 <code>418.942862</code> 提升了 3 倍的效率，不仅消除了压缩的时间，还大大缩短了读取文件耗时，成果显著。</p>
+<p>通过 <code>iostat -m -x 5 10000</code> 分析各个阶段结果如下：</p>
+<p>下载时：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">		   5.08    0.00   13.24   29.34    0.00   52.33</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     2.80    1.40   11.80     0.01     0.07    12.00     0.02    1.85    1.14    1.93   0.18   0.24</span><br><span class="line">vdb               0.00 17207.60    0.60  212.40     0.00    75.06   721.74    55.81  236.34   84.33  236.77   2.49  53.14</span><br></pre></td></tr></table></figure>
+
+<p>读取时：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">		  80.66    0.00    4.83   14.50    0.00    0.00</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     0.00    6.20    0.20     0.06     0.00    20.00     0.01    1.69    1.71    1.00   0.62   0.40</span><br><span class="line">vdb               0.00     6.80  390.40   19.20   118.78     0.23   595.04    74.87  190.55  197.95   40.08   1.85  75.90</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>iostat</code> 结果分析，下载时 <code>io</code> 阻塞和优化前波动不是很大，读取时的 <code>io</code> 优化已经非常好了，<code>iowait</code> 从 <code>92.19%</code> 降低到 <code>14.5%</code> ，CPU 更多的任务用来处理解压缩日志，而不是处理 <code>io</code> 阻塞。</p>
+<h2 id="优化方案二"><a href="#优化方案二" class="headerlink" title="优化方案二"></a>优化方案二</h2><p>本来优化到上面的效果已经非常满意了，不过既然开始做优化就不能草草结束了，仔细思考业务场景，需要 本地 <code>lzo</code> 文件？重新处理日志的频率高吗？本地 <code>lzo</code> 日志清理方便吗？</p>
+<p>通过上面的几个问题发现，除非程序出现问题或者数据存储出现故障，否者极少需要重新处理日志，一年里面这种情况也是极少的，甚至不会发生。</p>
+<p>那么思考一下，不下载日志，直接读取网络数据流，实现边下边解压边读取，这样岂不是没有 <code>io</code> 了吗?</p>
+<p>优化后日志处理流程：</p>
+<ul>
+<li>获取待处理文件列表</li>
+<li>拉取 OSS 日志，在内存中解压并读取分析日志</li>
+<li>业务处理……</li>
+<li>导入到数据仓储中</li>
+</ul>
+<p>具体实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"sync"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">".../pkg/aliyun_oss"</span> <span class="comment">// 虚假的包</span></span><br><span class="line">	<span class="string">"github.com/cyberdelia/lzo"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> oss *aliyun_oss.AliyunOSS <span class="comment">// 对接阿里云 OSS，需要自行封装</span></span><br><span class="line">	files := list()               <span class="comment">// 这是一个虚构的方法，用来获取待处理的文件列表</span></span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"待处理文件数量：%d\n"</span>, <span class="built_in">len</span>(files))</span><br><span class="line"></span><br><span class="line">	start := time.Now()</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(t time.Time)</span></span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"共耗时：%0.6f\n"</span>, time.Now().Sub(t).Seconds())</span><br><span class="line">	&#125;(start)</span><br><span class="line"></span><br><span class="line">	n := <span class="number">20</span></span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	wg.Add(n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			<span class="keyword">for</span> &#123;</span><br><span class="line">				f, ok := &lt;-c</span><br><span class="line">				<span class="keyword">if</span> !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				r1, err := oss.GetObject(f)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				r, err := lzo.NewReader(r1)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				Read(r)</span><br><span class="line">				r.Close()</span><br><span class="line">				r1.Close()</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, f := <span class="keyword">range</span> files &#123;</span><br><span class="line">		c &lt;- f</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">close</span>(c)</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">"读取文件耗时：%0.6f\n"</span>, time.Now().Sub(start).Seconds())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>优化后只有一个流程了，代码简洁了不少，看看效率如何吧！</p>
+<p>程序运行结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">待处理文件数量：432</span><br><span class="line">读取文件耗时：285.993661</span><br><span class="line">共耗时：285.993717</span><br></pre></td></tr></table></figure>
+
+<p>天啊发生了什么，我使劲擦了擦眼睛，太不可思议了，居然只消耗了下载日志的耗时，较上一个方案总耗时从 <code>418.942862</code> 降低到 <code>285.993717</code>，提升了近 2 倍的效率，让我们看看上个方案下载文件耗时 <code>286.146603</code> ，而新方案总耗时是 <code>285.993717</code> 居然只用了上个优化版本的下载时间，究竟发生了什么？</p>
+<p>通过 <code>iostat -m -x 5 10000</code> 分析结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">		  43.73    0.00    9.64    0.31    0.00   46.32</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.20    4.40    3.80     0.02     0.03    10.93     0.01    1.49    0.59    2.53   0.71   0.58</span><br><span class="line">vdb               0.00     6.80    0.00   24.60     0.00     0.27    22.83     0.02    0.84    0.00    0.84   0.28   0.68</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>iostat</code> 结果分析，在程序运行期间没有任何 <code>io</code> 开销，CPU 居然还有一半的空闲，前面两个版本 CPU 是没有空闲的啊，由此看来之前 CPU 更多的消耗在 <code>io</code> 阻塞上了，并没有用来处理业务逻辑。</p>
+<p>由此来看也就不足为奇了，为啥优化后只需要下载日志的时间就能处理完所有日志了，没有了 <code>io</code> 阻塞，CPU 更多了用来处理业务，把之前下载时写文件 <code>io</code> 的耗时，用来解压缩数据，读取数据，且还有更多的空闲，跑出这样的结果也就很正常了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从优化前耗时 <code>1375.187261</code> 秒到 <code>285.993717</code> 秒，性能提升 80%， 从 <code>iowait</code> <code>92.19%</code> 到 <code>0.31%</code> 提升近 <code>100%</code>，从没有任何 CPU 空闲到有一半空闲，这个过程中有很多值得总结的事情。</p>
+<p><code>io</code> 对性能的影响非常大，对 CPU 占用非常严重，导致 CPU 处理业务逻辑的时间片非常少。从  <code>io</code> 转移到 CPU 对性能提升非常明显。CPU 计算效率十分的高，从 <code>io</code> 密集到密集计算，只要符合业务场景，往往能给我们带来意想不到的效果。</p>
+<p>往往优化业务并不需要十分高大上的技术，只是转变一下思路，不仅代码更少，且程序更简短、好维护、逻辑更清晰。</p>
+<p>一定要结合实际业务场景进行思考，减少理所当然和业务无关的中间环节，往往就可以极大的提升程序效率。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/alipay.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+            <ul class="post-copyright">
+  <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      <a href="https://blog.thinkeridea.com">戚银（thinkeridea）</a>
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html" title="【Go】使用压缩文件优化io (二)">https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明：</strong>
+    本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -211,25 +365,21 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ip</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">compress</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">io</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">client</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">RemoteAddr</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">压缩</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -242,82 +392,150 @@ var _hmt = _hmt || [];
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】使用压缩文件优化io (二)&url=https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html&via=https://blog.thinkeridea.com" target="_blank">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://qr.liantu.com/api.php?text=https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201903/go/ip2long.html" class="archive-article-date">
-  	<time datetime="2019-03-24T23:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-25</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/201906/go/compress_file_io_optimization1.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【Go】使用压缩文件优化io (一)</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201903/go/ip2long.html">【Go】IP地址转换：数字与字符串之间的转换</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ip</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ip2long</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">ip2number</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景介绍"><span class="toc-number">1.</span> <span class="toc-text">背景介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化前"><span class="toc-number">2.</span> <span class="toc-text">优化前</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化方案一"><span class="toc-number">3.</span> <span class="toc-text">优化方案一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化方案二"><span class="toc-number">4.</span> <span class="toc-text">优化方案二</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
+        
+    </div>
+</aside>
+
+
   
 
-    
+  
+
+  
+
+  
+  <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<script>
+
+var host = window.location.host;
+var clientID = "";
+var clientSecret = "";
+
+if (host == "blog.thinkeridea.com") {
+  clientID = "b8fca21d422014fd7188";
+  clientSecret = "8eb706695ec3ce6048336dcfc9777a33ad6d2ca0";
+}else if (host == "thinkeridea.github.io"){
+  clientID = "ab68110ba3fd03446617";
+  clientSecret = "e5670d61cc887297ef20daef384d51c27d8c042c";
+}
+
+if (clientID != "" && clientSecret != ""){
+  var gitalk = new Gitalk({
+    clientID: clientID,
+    clientSecret: clientSecret,
+    repo: 'thinkeridea.github.io',
+    owner: 'thinkeridea',
+    admin: ['thinkeridea'],
+    id: 'fa4dee1bd2f81838eaeaded34b65f890'
+  })
+
+  gitalk.render('gitalk-container')
+}else{
+  console.log(host)
+}
+</script>
+
+  
 
 
           </div>
@@ -341,9 +559,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

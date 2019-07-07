@@ -174,6 +174,117 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-go/20190123-slice的一些使用技巧" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html">【Go】slice的一些使用技巧</a>
+    </h1>
+  
+
+        
+        <a href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html" class="archive-article-date">
+  	<time datetime="2019-01-22T22:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>slice</code> 是 <code>Go</code> 语言十分重要的数据类型，它承载着很多使命，从语言层面来看是 <code>Go</code> 语言的内置数据类型，从数据结构来看是动态长度的顺序链表，由于 <code>Go</code> 不能直接操作内存（通过系统调用可以实现，但是语言本身并不支持），往往 <code>slice</code> 也可以用来帮助开发者申请大块内存实现缓冲、缓存等功能。</p>
+<p>在 <code>Go</code> 语言项目中大量的使用 <code>slice</code>, 我总结三年来对 <code>slice</code> 的一些操作技巧，以方便可以高效的使用 <code>slice</code>， 并使用 <code>slice</code> 解决一些棘手的问题。</p>
+<h2 id="slice-的基本操作"><a href="#slice-的基本操作" class="headerlink" title="slice 的基本操作"></a>slice 的基本操作</h2><p>先熟悉一些 <code>slice</code> 的基本的操作, 对最常规的 <code>:</code> 操作就可玩出很多花样。</p>
+<ul>
+<li><code>s=ss[:]</code> 引用一个切片或数组</li>
+<li><code>s=s[:0]</code> 清空切片</li>
+<li><code>s=s[:10]</code> <code>s=s[10:]</code> <code>s=s[10:20]</code> 截取接片</li>
+<li><code>s=ss[0:10:20]</code> 从切片或数组引用指定长度和容量的切片</li>
+</ul>
+<p>下标索引操作的一些误区 <code>s[i:l:c]</code> <code>i</code> 是起始偏移的起始位置，<code>l</code> 是起始偏移的长度结束位置， <code>l-i</code> 就是新 <code>slice</code> 的长度， <code>c</code> 是起始偏移的容量结束位置，<code>c-i</code> 就是新 <code>slice</code> 的容量。其中 <code>i</code> 、<code>l</code> 、<code>c</code> 并不是当前 <code>slice</code> 的索引，而是引用底层数组相对当前 <code>slice</code> 起始位置的偏移量，所以是可超出当前 <code>slice</code> 的长度的， 但不能超出当前 <code>slice</code> 的容量，如下操作是合法的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	s[<span class="number">20</span>] = <span class="number">100</span></span><br><span class="line">	s1 := s[<span class="number">10</span>:<span class="number">10</span>]</span><br><span class="line">	s2 := s1[<span class="number">10</span>:<span class="number">20</span>]</span><br><span class="line">	fmt.Println(s1)</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>s1</code> 是 <code>[]</code>；<code>s2</code> 是 <code>[100 0 0 0 0 0 0 0 0 0]</code>, 这里并不会发生下标越界的情况，一个更好的例子在 <a href="#csv-reader-中的一个例子">csv reader 中的一个例子</a></p>
+        
+          <a class="article-more-a" href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">缓存</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">内存池</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
     <article id="post-go/20190112-深入剖析slice和array" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -456,18 +567,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -481,6 +580,18 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -544,18 +655,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">slice</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">compress</a>
               </li>
              
@@ -565,6 +664,18 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">压缩</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
               </li>
              
               <li class="article-tag-list-item">

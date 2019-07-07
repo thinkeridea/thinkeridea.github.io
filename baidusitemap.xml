@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html</loc>
+    <lastmod>2019-07-07</lastmod>
+  </url>  <url>
     <loc>https://blog.thinkeridea.com/201906/go/compress_file_io_optimization1.html</loc>
-    <lastmod>2019-06-30</lastmod>
+    <lastmod>2019-07-07</lastmod>
   </url>  <url>
     <loc>https://blog.thinkeridea.com/201903/go/ip2long.html</loc>
     <lastmod>2019-03-28</lastmod>
