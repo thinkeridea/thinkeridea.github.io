@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="之前发布 【Go】优雅的读取http请求或响应的数据 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-24T12:54:01.258Z">
+<meta property="og:updated_time" content="2019-07-07T13:13:04.851Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】优雅的读取http请求或响应的数据-续">
 <meta name="twitter:description" content="之前发布 【Go】优雅的读取http请求或响应的数据 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，本文源码。 非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 json 序列化的问题。">
@@ -647,11 +647,7 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -659,7 +655,11 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -684,6 +684,18 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">内存池</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">日志</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">csv</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">join</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -6,15 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>Category: go | thinkeridea博客</title>
+  <title>类似csv的数据日志组件设计 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="thinkeridea博客">
-<meta property="og:url" content="https://blog.thinkeridea.com/categories/go/page/2/index.html">
+  <meta name="description" content="我们业务每天需要记录大量的日志数据，且这些数据十分重要，它们是公司收入结算的主要依据，也是数据分析部门主要得数据源，针对这么重要的日志，且高频率的日志，我们需要一个高性能且安全的日志组件，能保证每行日志格式完整性，我们设计了一个类 csv 的日志拼接组件，它的代码在这里 datalog。 它是一个可以保证日志各列完整性且高效拼接字段的组件，支持任意列和行分隔符，而且还支持数组字段，可是实现一对多的">
+<meta name="keywords" content="pool,日志,csv,join">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类似csv的数据日志组件设计">
+<meta property="og:url" content="https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html">
 <meta property="og:site_name" content="thinkeridea博客">
+<meta property="og:description" content="我们业务每天需要记录大量的日志数据，且这些数据十分重要，它们是公司收入结算的主要依据，也是数据分析部门主要得数据源，针对这么重要的日志，且高频率的日志，我们需要一个高性能且安全的日志组件，能保证每行日志格式完整性，我们设计了一个类 csv 的日志拼接组件，它的代码在这里 datalog。 它是一个可以保证日志各列完整性且高效拼接字段的组件，支持任意列和行分隔符，而且还支持数组字段，可是实现一对多的">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-20T14:30:35.275Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="thinkeridea博客">
+<meta name="twitter:title" content="类似csv的数据日志组件设计">
+<meta name="twitter:description" content="我们业务每天需要记录大量的日志数据，且这些数据十分重要，它们是公司收入结算的主要依据，也是数据分析部门主要得数据源，针对这么重要的日志，且高频率的日志，我们需要一个高性能且安全的日志组件，能保证每行日志格式完整性，我们设计了一个类 csv 的日志拼接组件，它的代码在这里 datalog。 它是一个可以保证日志各列完整性且高效拼接字段的组件，支持任意列和行分隔符，而且还支持数组字段，可是实现一对多的">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -172,253 +177,180 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-go/20190717-类似csv的数据日志组件设计" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html" class="archive-article-date">
-  	<time datetime="2019-01-26T08:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-26</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html">【Go】优雅的读取http请求或响应的数据</a>
+    <h1 class="article-title" itemprop="name">
+      类似csv的数据日志组件设计
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/201907/go/csv_like_data_logs.html" class="archive-article-date">
+  	<time datetime="2019-07-16T22:52:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们业务每天需要记录大量的日志数据，且这些数据十分重要，它们是公司收入结算的主要依据，也是数据分析部门主要得数据源，针对这么重要的日志，且高频率的日志，我们需要一个高性能且安全的日志组件，能保证每行日志格式完整性，我们设计了一个类 csv 的日志拼接组件，它的代码在这里 <a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a>。</p>
+<p>它是一个可以保证日志各列完整性且高效拼接字段的组件，支持任意列和行分隔符，而且还支持数组字段，可是实现一对多的日志需求，不用记录多个日志，也不用记录多行。它响应一个 <code>[]byte</code> 数据，方便结合其它主键写入数据到日志文件或者网络中。</p>
+<a id="more"></a>
+
+<h2 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h2><h3 id="API-列表"><a href="#API-列表" class="headerlink" title="API 列表"></a>API 列表</h3><ul>
+<li><p><code>NewRecord(len int) Record</code> 创建长度固定的日志记录</p>
+</li>
+<li><p><code>NewRecordPool(len int) *sync.Pool</code> 创建长度固定的日志记录缓存池</p>
+</li>
+<li><p><code>ToBytes(sep, newline string) []byte</code> 使用 sep 连接 Record，并在末尾添加 newline 换行符</p>
+</li>
+<li><p><code>ArrayJoin(sep string) string</code> 使用 sep 连接 Record，其结果作为数组字段的值</p>
+</li>
+<li><p><code>ArrayFieldJoin(fieldSep, arraySep string) string</code> 使用 fieldSep 连接 Record，其结果作为一个数组的单元</p>
+</li>
+<li><p><code>Clean()</code> 清空 Record 中的所有元素，如果使用 sync.Pool 在放回 Pool 之前应该清空 Record，避免内存泄漏</p>
+</li>
+<li><p><code>UnsafeToBytes(sep, newline string) []byte</code> 使用 sep 连接 Record，并在末尾添加 newline 换行符， 使用原地替换会破坏日志字段引用的字符串</p>
+</li>
+<li><p><code>UnsafeArrayFieldJoin(fieldSep, arraySep string) string</code> 使用 fieldSep 连接 Record，其结果作为一个数组的单元， 使用原地替换会破坏日志字段引用的字符串</p>
+</li>
+</ul>
+<p>底层使用 <code>type Record []string</code> 字符串切片作为一行或者一个数组字段，在使用时它应该是定长的，因为数据日志往往是格式化的，每列都有自己含义，使用 <code>NewRecord(len int) Record</code> 或者 <code>NewRecordPool(len int) *sync.Pool</code> 创建组件，我建议每个日志使用 <code>NewRecordPool</code> 在程序初始化时创建一个缓存池，程序运行时从缓存次获取 <code>Record</code> 将会更加高效，但是每次放回 <code>Pool</code> 时需要调用 <code>Clean</code> 清空 <code>Record</code> 避免引用字符串无法被回收，而导致内存泄漏。</p>
+<h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><p>我们需要保证日志每列数据的含义一至，我们创建了定长的 <code>Record</code>，但是如何保证每列数据一致性，利用go 的常量枚举可以很好的保证，例如我们定义日志列常量：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	LogVersion = <span class="string">"v1.0.0"</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	LogVer = <span class="literal">iota</span></span><br><span class="line">	LogTime</span><br><span class="line">	LogUid</span><br><span class="line">	LogUserName</span><br><span class="line">	LogFriends</span><br><span class="line"></span><br><span class="line">	LogFieldNumber</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>LogFieldNumber</code> 就是日志的列数量，也就是 <code>Record</code> 的长度，之后使用 <code>NewRecordPool</code> 创建缓存池，然后使用常量名称作为下标记录日志，这样就不用担心因为检查或者疏乎导致日志列错乱的问题了。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> w bytes.Buffer <span class="comment">// 一个日志写组件</span></span><br><span class="line"><span class="keyword">var</span> pool = datalog.NewRecordPool(LogFieldNumber) <span class="comment">// 创建一个缓存池</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  r := pool.Get().(datalog.Record)</span><br><span class="line">  r[LogVer] = LogVersion</span><br><span class="line">  r[LogTime] = time.Now().Format(<span class="string">"2006-01-02 15:04:05"</span>)</span><br><span class="line">  <span class="comment">// 检查用户数据是否存在</span></span><br><span class="line">  <span class="comment">//if user ！=nil&#123;</span></span><br><span class="line">    r[LogUid] = <span class="string">"Uid"</span></span><br><span class="line">    r[LogUserName] = <span class="string">"UserNmae"</span></span><br><span class="line">  <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 拼接一行日志数据</span></span><br><span class="line">  data := r.Join(datalog.FieldSep, datalog.NewLine)</span><br><span class="line">  r.Clean() <span class="comment">// 清空 Record</span></span><br><span class="line">  pool.Put(r) <span class="comment">// 放回到缓存池</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 写入到日志中</span></span><br><span class="line">  <span class="keyword">if</span> _, err := w.Write(data); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 打印出日志数据</span></span><br><span class="line">  fmt.Println(<span class="string">"'"</span> + w.String() + <span class="string">"'"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序运行会输出：</p>
+<blockquote>
+<p>因为分隔符是不可见字符，下面使用,代替字段分隔符，使用;\n代替换行符， 使用/代替数组字段分隔符，是-代替数组分隔符。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">'v1.0.0,2019-07-18,11:39:09,Uid,UserNmae,;\n'</span><br></pre></td></tr></table></figure>
+
+<p>即使我们没有记录 <code>LogFriends</code> 列的数据，但是在日志中它仍然有一个占位符，如果 <code>user</code> 是 <code>nil</code>，<code>LogUid</code> 和 <code>LogUserName</code> 不需要特殊处理，也不需要写入数据，它依然占据自己的位置，不用担心日志因此而错乱。</p>
+<p>使用 pool 可以很好的利用内存，不会带来过多的内存分配，而且 Record 的每个字段值都是字符串，简单的赋值并不会带来太大的开销，它会指向字符串本身的数据，不会有额外的内存分配，详细参见<a href="https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html">string 优化误区及建议</a>。<br>使用 <code>Record.Join</code> 可以高效的连接一行日志记录，便于我们快速的写入的日志文件中，后面<a href="#设计讲解">设计讲解</a>部分会详细介绍 <code>Join</code> 的设计。</p>
+<h3 id="包含数组的日志"><a href="#包含数组的日志" class="headerlink" title="包含数组的日志"></a>包含数组的日志</h3><p>有时候也并非都是记录一些单一的值，比如上面 LogFriends 会记录当前记录相关的朋友信息，这可能是一组数据，<a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a> 也提供了一些简单的辅助函数，可以结合下面的实例实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义 LogFriends 数组各列的数据</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	LogFriendUid = <span class="literal">iota</span></span><br><span class="line">	LogFriendUserName</span><br><span class="line"></span><br><span class="line">	LogFriendFieldNumber</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> w bytes.Buffer <span class="comment">// 一个日志写组件</span></span><br><span class="line"><span class="keyword">var</span> pool = datalog.NewRecordPool(LogFieldNumber) <span class="comment">// 每行日志的 pool</span></span><br><span class="line"><span class="keyword">var</span> frPool = datalog.NewRecordPool(LogFriendFieldNumber) <span class="comment">// LogFriends 数组字段的 pool</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="comment">// 程序运行时</span></span><br><span class="line">  r := pool.Get().(datalog.Record)</span><br><span class="line">  r[LogVer] = LogVersion</span><br><span class="line">  r[LogTime] = time.Now().Format(<span class="string">"2006-01-02 15:04:05"</span>)</span><br><span class="line">  <span class="comment">// 检查用户数据是否存在</span></span><br><span class="line">  <span class="comment">//if user ！=nil&#123;</span></span><br><span class="line">    r[LogUid] = <span class="string">"Uid"</span></span><br><span class="line">    r[LogUserName] = <span class="string">"UserNmae"</span></span><br><span class="line">  <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 拼接一个数组字段，其长度是不固定的</span></span><br><span class="line">  r[LogFriends] = GetLogFriends(rand.Intn(<span class="number">3</span>))</span><br><span class="line">  <span class="comment">// 拼接一行日志数据</span></span><br><span class="line">  data := r.Join(datalog.FieldSep, datalog.NewLine)</span><br><span class="line">  r.Clean() <span class="comment">// 清空 Record</span></span><br><span class="line">  pool.Put(r) <span class="comment">// 放回到缓存池</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 写入到日志中</span></span><br><span class="line">  <span class="keyword">if</span> _, err := w.Write(data); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 打印出日志数据</span></span><br><span class="line">  fmt.Println(<span class="string">"'"</span> + w.String() + <span class="string">"'"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个函数来拼接 LogFriends </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetLogFriends</span><span class="params">(friendNum <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">  <span class="comment">// 根据数组长度创建一个 Record，数组的个数往往是不固定的，它整体作为一行日志的一个字段，所以并不会破坏数据</span></span><br><span class="line">	fs := datalog.NewRecord(friendNum) </span><br><span class="line"> 	<span class="comment">// 这里只需要中 pool 中获取一个实例，它可以反复复用</span></span><br><span class="line">	fr := frPool.Get().(datalog.Record)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; friendNum; i++ &#123;</span><br><span class="line">    <span class="comment">// fr.Clean() 如果不是每个字段都赋值，应该在使用前或者使用后清空它们便于后面复用</span></span><br><span class="line">		fr[LogFriendUid] = <span class="string">"FUid"</span></span><br><span class="line">		fr[LogFriendUserName] = <span class="string">"FUserName"</span></span><br><span class="line">    </span><br><span class="line">     <span class="comment">// 连接一个数组中各个字段，作为一个数组单元</span></span><br><span class="line">		fs[i] = fr.ArrayFieldJoin(datalog.ArrayFieldSep, datalog.ArraySep)</span><br><span class="line">	&#125;</span><br><span class="line">	fr.Clean() <span class="comment">// 清空 Record</span></span><br><span class="line">	frPool.Put(fr)  <span class="comment">// 放回到缓存池</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 连接数组的各个单元，返回一个字符串作为一行日志的一列</span></span><br><span class="line">	<span class="keyword">return</span> fs.ArrayJoin(datalog.ArraySep)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序运行会输出：</p>
+<blockquote>
+<p>因为分隔符是不可见字符，下面使用,代替字段分隔符，使用;\n代替换行符， 使用/代替数组字段分隔符，是-代替数组分隔符。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">'v1.0.0,2019-07-18,11:39:09,Uid,UserNmae,FUid/FUserName-FUid/FUserName;\n'</span><br></pre></td></tr></table></figure>
+
+<p>这样在解析时可以把某一字段当做数组解析，这极大的极大的提高了数据日志的灵活性，<br>但是并不建议使用过多的层级，数据日志应当清晰简洁，但是有些特殊场景可以使用一层嵌套。</p>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><p>使用 <code>ToBytes</code> 和 <code>ArrayFieldJoin</code> 时会把数据字段中的连接字符串替换一个空字符串，所以在 <a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a> 里面定义了4个分隔符，它们都是不可见字符，极少会出现在数据中，但是我们还需要替换数据中的这些连接字符，避免破坏日志结构。</p>
+<p>虽然组件支持各种连接符，但是为了避免数据被破坏，我们应该选择一些不可见且少见的单字节字符作为分隔符。换行符比较特殊，因为大多数日志读取组件都是用 <code>\n</code> 作为行分隔符，如果数据中极少出现 <code>\n</code> 那就可以使用 <code>\n</code>， <a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a> 中定义 <code>\x03\n</code> 作为换行符，它兼容一般的日志读取组件，只需要我们做少量的工作就可以正确的解析日志了。</p>
+<p><code>UnsafeToBytes</code> 和 <code>UnsafeArrayFieldJoin</code> 性能会更好，和它们的名字一样，他们并不安全，因为它们使用 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#Replace" target="_blank" rel="noopener">exbytes.Replace</a> 做原地替换分隔符，这会破坏数据所指向的原始字符串。除非我们日志数据中会出现极多的分隔符需要替换，否者并不建议使用它们，因为它们只在替换时提升性能。</p>
+<p>我在服务中大量使用 <code>UnsafeToBytes</code> 和 <code>UnsafeArrayFieldJoin</code> ，我总是在一个请求结束时记录日志，我确保所有相关的数据不会再使用，所以不用担心原地替换导致其它数据被无感知改变的问题，这也许是一个很好的实践，但是我仍然不推荐使用它们。</p>
+<h2 id="设计讲解"><a href="#设计讲解" class="headerlink" title="设计讲解"></a>设计讲解</h2><p><a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a> 并没有提供太多的约束很功能，它仅仅包含一种实践和一组辅助工具，在使用它之前，我们需要了解这些实践。</p>
+<p>它帮我们创建一个定长的日志行或者一个<code>sync.Pool</code>，我们需要结合常量枚举记录数据，它帮我们把各列数据连接成记录日志需要的数据格式。</p>
+<p>它所提供的辅助方法都经过实际项目的考验，考量诸多细节，以高性能为核心目标所设计，使用它可以极大的降低相关组件的开发成本，接下来这节将分析它的各个部分。</p>
+<p>我认为值得说道的是它提供的一个 <code>Join</code> 方法，相对于 <code>strings.Join</code> 可以节省两次的内存分配，现从它开始分析。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Join 使用 sep 连接 Record， 并在末尾追加 suffix</span></span><br><span class="line"><span class="comment">// 这个类似 strings.Join 方法，但是避免了连接后追加后缀（往往是换行符）导致的内存分配</span></span><br><span class="line"><span class="comment">// 这个方法直接返回需要的 []byte 类型， 可以减少类型转换，降低内存分配导致的性能问题</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l Record)</span> <span class="title">Join</span><span class="params">(sep, suffix <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(l) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> []<span class="keyword">byte</span>(suffix)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	n := <span class="built_in">len</span>(sep) * (<span class="built_in">len</span>(l) - <span class="number">1</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(l); i++ &#123;</span><br><span class="line">		n += <span class="built_in">len</span>(l[i])</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	n += <span class="built_in">len</span>(suffix)</span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, n)</span><br><span class="line">	bp := <span class="built_in">copy</span>(b, l[<span class="number">0</span>])</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="built_in">len</span>(l); i++ &#123;</span><br><span class="line">		bp += <span class="built_in">copy</span>(b[bp:], sep)</span><br><span class="line">		bp += <span class="built_in">copy</span>(b[bp:], l[i])</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">copy</span>(b[bp:], suffix)</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>日志组件往往输入的参数是 <code>[]byte</code> 类型，所以它直接返回一个 <code>[]byte</code> ，而不像 <code>strings.Join</code> 响应一个字符串，在末尾是需要对内部的 <code>buf</code> 进行类型转换，导致额外的内存开销。我们每行日志不仅需要使用分隔符连接各列，还需要一个行分隔符作为结尾，它提供一个后缀 <code>suffix</code>，不用我们之后在 <code>Join</code> 结果后再次拼接行分隔符，这样也能减少一个额外的内存分配。</p>
+<p>这恰恰是 <a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a>  设计的精髓，它并没有大量使用标准库的方法，而是设计更符合该场景的方法，以此来获得更高的性能和更好的使用体验。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ToBytes 使用 sep 连接 Record，并在末尾添加 newline 换行符</span></span><br><span class="line"><span class="comment">// 注意：这个方法会替换 sep 与 newline 为空字符串</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l Record)</span> <span class="title">ToBytes</span><span class="params">(sep, newline <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> i := <span class="built_in">len</span>(l) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">      <span class="comment">// 提前检查是否包含特殊字符，以便跳过字符串替换</span></span><br><span class="line">      <span class="keyword">if</span> strings.Index(l[i], sep) &lt; <span class="number">0</span> &amp;&amp; strings.Index(l[i], newline) &lt; <span class="number">0</span> &#123;</span><br><span class="line">         <span class="keyword">continue</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      b := []<span class="keyword">byte</span>(l[i]) <span class="comment">// 这会重新分配内存，避免原地替换导致引用字符串被修改</span></span><br><span class="line">      b = exbytes.Replace(b, exstrings.UnsafeToBytes(sep), []<span class="keyword">byte</span>&#123;<span class="string">' '</span>&#125;, <span class="number">-1</span>)</span><br><span class="line">      b = exbytes.Replace(b, exstrings.UnsafeToBytes(newline), []<span class="keyword">byte</span>&#123;<span class="string">' '</span>&#125;, <span class="number">-1</span>)</span><br><span class="line">      l[i] = exbytes.ToString(b)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> l.Join(sep, newline)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ToBytes</code> 作为很重要的交互函数，也是该组件使用频率最高的函数，它在连接各个字段之前替换每个字段中的字段和行分隔符，这里提前做了一个检查字段中是否包含分隔符，如果包含使用 <code>[]byte(l[i])</code> 拷贝该列的数据，然后使用 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#Replace" target="_blank" rel="noopener">exbytes.Replace</a> 提供高性能的原地替换，因为输入数据是拷贝重新分配的，所以不用担心原地替换会影响其它数据。</p>
+<p>之后使用之前介绍的 <code>Join</code> 方法连接各列数据，如果使用 <code>strings.Join</code> 将会是 <code>[]byte(strings.Join([]string(l), sep) + newline)</code> 这其中会增加很多次内存分配，该组件通过巧妙的设计规避这些额外的开销，以提升性能。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UnsafeToBytes 使用 sep 连接 Record，并在末尾添加 newline 换行符</span></span><br><span class="line"><span class="comment">// 注意：这个方法会替换 sep 与 newline 为空字符串，替换采用原地替换，这会导致所有引用字符串被修改</span></span><br><span class="line"><span class="comment">// 必须明白其作用，否者将会导致意想不到的结果。但是这会大幅度减少内存分配，提升程序性能</span></span><br><span class="line"><span class="comment">// 我在项目中大量使用，我总是在请求最后记录日志，这样我不会再访问引用的字符串</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l Record)</span> <span class="title">UnsafeToBytes</span><span class="params">(sep, newline <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> i := <span class="built_in">len</span>(l) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">      b := exstrings.UnsafeToBytes(l[i])</span><br><span class="line">      b = exbytes.Replace(b, exstrings.UnsafeToBytes(sep), []<span class="keyword">byte</span>&#123;<span class="string">' '</span>&#125;, <span class="number">-1</span>)</span><br><span class="line">      b = exbytes.Replace(b, exstrings.UnsafeToBytes(newline), []<span class="keyword">byte</span>&#123;<span class="string">' '</span>&#125;, <span class="number">-1</span>)</span><br><span class="line">      l[i] = exbytes.ToString(b)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> l.Join(sep, newline)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>UnsafeToBytes</code> 和 <code>ToBytes</code> 相似只是没有分割符检查，因为<a href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#Replace" target="_blank" rel="noopener">exbytes.Replace</a> 中已经包含了检查，而且直接使用 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings#UnsafeToBytes" target="_blank" rel="noopener">exstrings.UnsafeToBytes</a> 把字符串转成  <code>[]byte</code>  这不会发生数据拷贝，非常的高效，但是它不支持字面量字符串，不过我相信日志中的数据均来自运行时分配，如果不幸包含字面量字符串，也不用太过担心，只要使用一个特殊的字符作为分隔符，往往我们编程字面量字符串并不会包含这些字符，执行 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#Replace" target="_blank" rel="noopener">exbytes.Replace</a> 没有发生替换也是安全的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Clean 清空 Record 中的所有元素，如果使用 sync.Pool 在放回 Pool 之前应该清空 Record，避免内存泄漏</span></span><br><span class="line"><span class="comment">// 该方法没有太多的开销，可以放心的使用，只是为 Record 中的字段赋值为空字符串，空字符串会在编译时处理，没有额外的内存分配</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l Record)</span> <span class="title">Clean</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> i := <span class="built_in">len</span>(l) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">      l[i] = <span class="string">""</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Clean</code> 方法更简单，它只是把各个列的数据替换为空字符串，空字符串做为一个特殊的字符，会在编译时处理，并不会有额外的开销，它们都指向同一块内存。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ArrayJoin 使用 sep 连接 Record，其结果作为数组字段的值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l Record)</span> <span class="title">ArrayJoin</span><span class="params">(sep <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> exstrings.Join(l, sep)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ArrayFieldJoin 使用 fieldSep 连接 Record，其结果作为一个数组的单元</span></span><br><span class="line"><span class="comment">// 注意：这个方法会替换 fieldSep 与 arraySep 为空字符串，替换采用原地替换</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l Record)</span> <span class="title">ArrayFieldJoin</span><span class="params">(fieldSep, arraySep <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> i := <span class="built_in">len</span>(l) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">      <span class="comment">// 提前检查是否包含特殊字符，以便跳过字符串替换</span></span><br><span class="line">      <span class="keyword">if</span> strings.Index(l[i], fieldSep) &lt; <span class="number">0</span> &amp;&amp; strings.Index(l[i], arraySep) &lt; <span class="number">0</span> &#123;</span><br><span class="line">         <span class="keyword">continue</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      b := []<span class="keyword">byte</span>(l[i]) <span class="comment">// 这会重新分配内存，避免原地替换导致引用字符串被修改</span></span><br><span class="line">      b = exbytes.Replace(b, exstrings.UnsafeToBytes(fieldSep), []<span class="keyword">byte</span>&#123;<span class="string">' '</span>&#125;, <span class="number">-1</span>)</span><br><span class="line">      b = exbytes.Replace(b, exstrings.UnsafeToBytes(arraySep), []<span class="keyword">byte</span>&#123;<span class="string">' '</span>&#125;, <span class="number">-1</span>)</span><br><span class="line">      l[i] = exbytes.ToString(b)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> exstrings.Join(l, fieldSep)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ArrayFieldJoin</code> 在连接各个字符串时会直接替换数组单元分隔符，之后直接使用 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings#Join" target="_blank" rel="noopener">exstrings.Join</a> 进行连接字符串，<a href="[exstrings.Join](https://godoc.org/github.com/thinkeridea/go-extend/exstrings#Join)">exstrings.Join</a> 相对 <code>strings.Join</code> 的一个改进函数，因为它只有一次内存分配，较 <code>strings.Join</code> 节省一次，有兴趣可以去看它的源码实现。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a> 提供了一种实践以及一些辅助工具，可以帮助我们快速的记录数据日志，更关心数据本身。具体程序性能可以交给 <a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a> 来实现，它保证程序的性能。</p>
+<p>后期我会计划提供一个高效的日志读取组件，以便于读取解析数据日志，它较与一般文件读取会更加高效且便捷，有针对性的优化日志解析效率，敬请关注吧。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/alipay.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+            <ul class="post-copyright">
+  <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      <a href="https://blog.thinkeridea.com">戚银（thinkeridea）</a>
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html" title="类似csv的数据日志组件设计">https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明：</strong>
+    本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net.http</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">http</a>
-        		</li>
-      		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">pool</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">日志</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">buffer</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">csv</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">makeSlice</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">ioutil</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">join</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html" class="archive-article-date">
-  	<time datetime="2019-01-22T22:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-23</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html">【Go】slice的一些使用技巧</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">缓存</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">内存池</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201901/go/shen_ru_pou_xi_slice_he_array.html" class="archive-article-date">
-  	<time datetime="2019-01-11T22:36:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201901/go/shen_ru_pou_xi_slice_he_array.html">【Go】深入剖析slice和array</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">array</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
       
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html" class="archive-article-date">
-  	<time datetime="2018-12-25T14:30:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html">【go】一次读锁重入导致的死锁故障</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">读写锁</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">死锁</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -431,20 +363,149 @@ var _hmt = _hmt || [];
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=类似csv的数据日志组件设计&url=https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html&via=https://blog.thinkeridea.com" target="_blank">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://qr.liantu.com/api.php?text=https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/201907/go/compress_file_io_optimization2.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【Go】使用压缩文件优化io (二)</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用说明"><span class="toc-number">1.</span> <span class="toc-text">使用说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#API-列表"><span class="toc-number">1.1.</span> <span class="toc-text">API 列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实践"><span class="toc-number">1.2.</span> <span class="toc-text">实践</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#包含数组的日志"><span class="toc-number">1.3.</span> <span class="toc-text">包含数组的日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最佳实践"><span class="toc-number">2.</span> <span class="toc-text">最佳实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设计讲解"><span class="toc-number">3.</span> <span class="toc-text">设计讲解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
   
 
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/categories/go/">&laquo; Prev</a><a class="page-number" href="/categories/go/">1</a><span class="page-number current">2</span>
-    </nav>
+  
+
+  
+
+  
+  <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<script>
+
+var host = window.location.host;
+var clientID = "";
+var clientSecret = "";
+
+if (host == "blog.thinkeridea.com") {
+  clientID = "b8fca21d422014fd7188";
+  clientSecret = "8eb706695ec3ce6048336dcfc9777a33ad6d2ca0";
+}else if (host == "thinkeridea.github.io"){
+  clientID = "ab68110ba3fd03446617";
+  clientSecret = "e5670d61cc887297ef20daef384d51c27d8c042c";
+}
+
+if (clientID != "" && clientSecret != ""){
+  var gitalk = new Gitalk({
+    clientID: clientID,
+    clientSecret: clientSecret,
+    repo: 'thinkeridea.github.io',
+    owner: 'thinkeridea',
+    admin: ['thinkeridea'],
+    id: '2fb6b97ab1df103b2e62d4a66048a794'
+  })
+
+  gitalk.render('gitalk-container')
+}else{
+  console.log(host)
+}
+</script>
+
   
 
 
@@ -469,10 +530,10 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
-		isCategory: true,
+		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
 		root: "/",

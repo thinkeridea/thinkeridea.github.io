@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="上一篇文章《使用压缩文件优化io (一)》中记录了日志备份 io 优化方案，使用文件流数据压缩方案优化 io 性能，效果十分显著。这篇文章记录数据分析前置清洗、格式化数据的 io 优化方案，我们有一台专用的日志前置处理服务器，所有业务日志通过这台机器从 OSS 拉取回来清洗、格式化，最后进入到数据仓储中便于后续的分析。 随着业务扩展这台服务器压力越来越大，高峰时数据延迟越来越厉害，早期也是使用 P">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-07T12:25:11.383Z">
+<meta property="og:updated_time" content="2019-07-08T01:52:16.134Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】使用压缩文件优化io (二)">
 <meta name="twitter:description" content="上一篇文章《使用压缩文件优化io (一)》中记录了日志备份 io 优化方案，使用文件流数据压缩方案优化 io 性能，效果十分显著。这篇文章记录数据分析前置清洗、格式化数据的 io 优化方案，我们有一台专用的日志前置处理服务器，所有业务日志通过这台机器从 OSS 拉取回来清洗、格式化，最后进入到数据仓储中便于后续的分析。 随着业务扩展这台服务器压力越来越大，高峰时数据延迟越来越厉害，早期也是使用 P">
@@ -455,6 +455,15 @@ var _hmt = _hmt || [];
   
 <nav id="article-nav">
   
+    <a href="/201907/go/csv_like_data_logs.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          类似csv的数据日志组件设计
+        
+      </div>
+    </a>
+  
   
     <a href="/201906/go/compress_file_io_optimization1.html" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">【Go】使用压缩文件优化io (一)</div>
@@ -698,11 +707,7 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -710,7 +715,11 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -735,6 +744,18 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">内存池</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">日志</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">csv</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">join</a>
               </li>
              
               <li class="article-tag-list-item">
