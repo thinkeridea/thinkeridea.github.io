@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.thinkeridea.com/"/>
-  <updated>2019-07-20T14:34:13.425Z</updated>
+  <updated>2019-07-21T09:28:25.361Z</updated>
   <id>https://blog.thinkeridea.com/</id>
   
   <author>
@@ -15,6 +15,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【ChatOps系列】ChatOps简介</title>
+    <link href="https://blog.thinkeridea.com/201907/chatops/introduction.html"/>
+    <id>https://blog.thinkeridea.com/201907/chatops/introduction.html</id>
+    <published>2019-07-21T08:17:01.000Z</published>
+    <updated>2019-07-21T09:28:25.361Z</updated>
+    
+    <content type="html"><![CDATA[<p>要说 ChatOps 就不得不说 DevOps，DevOps 是来源于 Development 和 Operations 的一个组合词，顾名思义，是一系列过程、方法与系统的统称，旨在促进开发、测试和运维人员之间的沟通与协作。简单来说，是通过引入一系列的「工具」，通过三种不同角色的开发成员间的「协作」而实现的一种「自动化」的工作模式。这种工作方式带来的好处显而易见：</p><ul><li>实现持续快速交付</li><li>能够降低人力成本</li></ul><p>但很大程度上，DevOps 更多是指开发群体之间的一种协作模式（通常也在开发人员中实施），随着全行业的发展和人力成本的攀升，在团队所有角色间贯通的升级版「DevOps」逐渐登场，也就是我们将要重点介绍的 ChatOps。</p><p><img src="/assets/image/201907/devops.png" alt="devops"></p><a id="more"></a><h2 id="ChatOps介绍"><a href="#ChatOps介绍" class="headerlink" title="ChatOps介绍"></a>ChatOps介绍</h2><p>ChatOps 的历史相对短暂，2013 年 GitHub 内部最早开始推行 ChatOps，希望能以聊天的方式更容易更快速的去完成 DevOps 承载的工作。</p><p>ChatOps 以聊天室，即沟通平台为中心，通过一系列的机器人去对接后台的各种服务，工作人员只需要在聊天窗口中与机器人对话，即可与后台服务进行交互，整个工作的展开就像是使唤一个智能助手那样简单自然。</p><p><img src="/assets/image/201907/chatops_devops.png" alt="chatops_devops"></p><p>ChatOps 站在巨人的肩膀上发展，也为工作带来了显而易见的好处：</p><ul><li>公开透明。所有的工作消息都在同一个聊天平台中沉淀并公开给所有相关成员，消除沟通壁垒，工作历史有迹可循，团队合作更加顺畅。</li><li>上下文共享。减少因工作台切换等对消息的截断，保证消息的完整性，让工作承接有序，各角色，各工具都成为完成工作流中的一环，打造真正流畅的工作体验。</li><li>移动友好。只需要在前台与预设好的机器人对话即可完成与后台工具、系统的交互，在移动环境下无需再与众多复杂的工具直接对接，大大提升移动办公的可行性。</li><li>DevOps 文化打造。用与机器人对话这种简单的方式降低 DevOps 的接受门槛，让这种自动化办公的理念更容易的扩展到团队的每一个角落。</li></ul><p><img src="/assets/image/201907/chatops.png" alt="chatops"></p><p>ChatOps 主要由三个部分构成：聊天室（控制中心）、机器人（连接中心）、基础设施，基础设施主要是支撑我们业务运行的各种服务与工具，在构建 ChatOps 时主要需要选择聊天室和机器人，国外早期的工作沟通工具 HipChat，新秀 Slack 都是作为 ChatOps 承载平台的好选择，在中文的环境下，则可以选择 BearyChat（倍洽）等等。</p><p>聊天室选择：</p><ul><li>功能完备</li><li>操作交互友好</li><li>多平台支持</li><li>API 丰富</li><li>三方工具支持丰富</li><li>机器人支持程度</li></ul><p>机器人选择：</p><ul><li>功能完备</li><li>易扩展（我们可能需要根据基础设施编写大量机器人扩展）</li><li>编程语言熟悉（因为我们需要编写扩展）</li><li>开源扩展丰富（可以极大减少开发工作量）</li></ul><p>聊天室主要有：Slack、HipChat、BearyChat（倍洽）、Rocket.Chat、钉钉（机器人支持程度不够，不太支持）。机器人主要有：Hubot（javascript/CoffeeScript）、Lita（Ruby），Errbot（python）。</p><p>机器人我推荐使用 Hubot，后面所有的实验都使用 Hubot 展开。 GitHub 团队内部实现的 ChatOps 与一个叫做 Hubot 的机器人框架密切相关，Hubot 提供很多聊天机器人所需的基础设施，借助 Hubot 框架能比较方便的和自己编写的功能或自己的系统对接。目前，Hubot 已经发展出了较好的生态圈，有很多开源插件可以借用。</p><p><img src="/assets/image/201907/hubot.png" alt="chatops"></p><h2 id="ChatOps实现"><a href="#ChatOps实现" class="headerlink" title="ChatOps实现"></a>ChatOps实现</h2><p>本系列专题主要讲两种实现，一种是基于 GitHub+Hubot+Slack 实现，一种基于开源体系的 GitLab + Hubot + Rocket.Chat，它们功能完善且有良好的扩展及丰富的API，只要爱倒腾一定会有意想不到的收获。</p><p>GitHub 体系：</p><ul><li>slack  聊天室</li><li>Hubot  机器人</li><li>GitHub 代码管理</li><li>Travis CI 自动化测试</li><li>heaven 自动部署</li><li>hubot-deploy 连接 Hubot 与 heaven</li></ul><p>GitLab 体系：</p><ul><li>Recket.chat 聊天室</li><li>Hubot  机器人</li><li>GitLab 代码管理</li><li>GitLab CI 自动化测试</li><li>hubot-gitlab-deploy 自动化部署（计划重构中）</li><li>fabric-deploy-script 基于配置的 fabric 自动部署实现 (计划开源中)</li></ul><p>本系列会介绍各种设计服务安装、配置，以及各种服务组件之间连接配置等，同时会涉及到项目配置管理、密钥管理等相关知识。</p><h2 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h2><p>本系列主要涉及 ChatOps 环境搭建、工具配置，以及项目的持续集成、持续部署的实现，持续部署过程会涉及到密钥管理、配置管理等等。</p><p>本系列计划一至两周一篇文章，每篇文章介绍一个点，两种体系都会讲到，大约20~30篇文章，优先讲解开源体系的 GitLab 篇。</p><p>在这期间会开发相关机器人脚本及相关服务组件，可以形成项目会发布在 GitHub 上，不能形成项目的会在文章中，最后所有实验相关代码均可在 GitHub 上 <a href="https://github.com/thinkeridea/chatops_experiment" target="_blank" rel="noopener">chatops_experiment</a> 中获取。</p><p>测试中需要自动部署的项目会单独存储在一个账号/组织下面，具体详见每个章节。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;要说 ChatOps 就不得不说 DevOps，DevOps 是来源于 Development 和 Operations 的一个组合词，顾名思义，是一系列过程、方法与系统的统称，旨在促进开发、测试和运维人员之间的沟通与协作。简单来说，是通过引入一系列的「工具」，通过三种不同角色的开发成员间的「协作」而实现的一种「自动化」的工作模式。这种工作方式带来的好处显而易见：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;实现持续快速交付&lt;/li&gt;
+&lt;li&gt;能够降低人力成本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但很大程度上，DevOps 更多是指开发群体之间的一种协作模式（通常也在开发人员中实施），随着全行业的发展和人力成本的攀升，在团队所有角色间贯通的升级版「DevOps」逐渐登场，也就是我们将要重点介绍的 ChatOps。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/image/201907/devops.png&quot; alt=&quot;devops&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="chatops" scheme="https://blog.thinkeridea.com/categories/chatops/"/>
+    
+    
+      <category term="chatops" scheme="https://blog.thinkeridea.com/tags/chatops/"/>
+    
+      <category term="devops" scheme="https://blog.thinkeridea.com/tags/devops/"/>
+    
+      <category term="hubot" scheme="https://blog.thinkeridea.com/tags/hubot/"/>
+    
+      <category term="github" scheme="https://blog.thinkeridea.com/tags/github/"/>
+    
+      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
+    
+      <category term="slack" scheme="https://blog.thinkeridea.com/tags/slack/"/>
+    
+      <category term="rocket.chat" scheme="https://blog.thinkeridea.com/tags/rocket-chat/"/>
+    
+  </entry>
   
   <entry>
     <title>【Go】类似csv的数据日志组件设计</title>
