@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.thinkeridea.com/"/>
-  <updated>2019-07-21T09:28:25.361Z</updated>
+  <updated>2019-07-27T11:34:02.998Z</updated>
   <id>https://blog.thinkeridea.com/</id>
   
   <author>
@@ -15,6 +15,47 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【ChatOps系列】GitLab系列环境准备</title>
+    <link href="https://blog.thinkeridea.com/201907/chatops/gitlab_environmental_preparation.html"/>
+    <id>https://blog.thinkeridea.com/201907/chatops/gitlab_environmental_preparation.html</id>
+    <published>2019-07-27T02:18:01.000Z</published>
+    <updated>2019-07-27T11:34:02.998Z</updated>
+    
+    <content type="html"><![CDATA[<p>在搭建 GitLab 系列 ChatOps 时需要掌握一些基础的技能知识，整个 ChatOps 涉及到很多方面，我们至少需要掌握以下技能：</p><ul><li>Linux 示例中我们主要以 CentOS 7 为主，但是容器内的系统会多种多样</li><li>Docker 所有的环境都整合在 Docker 容器中，这能简化搭建的过程以及提升交流的效率</li><li>Docker Compose 所有的容器我们均使用 Docker Compose 进行构建，很方便分享</li><li>Python 这个很重要，不能忽视它，整个自动部署均是 Pyhon 实现</li><li>Fabric 这个是 Python 基于 SSH 的应用部署和系统管理的库，我们基于这库实现从部署机到服务器</li><li>JavaScript/CoffeeScript 机器人 hubot 需要这些语言知识来扩展，当然还有一些其它地方会用到这些。</li><li>VMware/VirtualBox 需要搭建本地虚拟机模拟环境，示例使用 VirtualBox 演示</li></ul><a id="more"></a><p>需要掌握的技能会很多，如果你已经掌握，那么跟着教程可以很快的完成 ChatOps 的部署，如果还没有掌握，可以找时间简单学习一下。其中一些组件是可以替换的，比如 ：Fabric 就有很多选择，例如：Ansible、Shell 等可以用来操作远程机器的工具。当然也可以使用机器人连接 Jenkins、Kubernetes 等支持自动部署的服务，本系列中使用 <code>hubot-gitlab-deploy</code> 结合 <code>Fabric</code> 来实现自动部署。</p><h2 id="虚拟机搭建"><a href="#虚拟机搭建" class="headerlink" title="虚拟机搭建"></a>虚拟机搭建</h2><p>我下载的是 <a href="http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso" target="_blank" rel="noopener">CentOS7 Minimal ISO</a> 版本的镜像，如果对 linux 比较熟悉，那么安装任何版本系统都是可以的，这里并不详细讲解 Liunx 的全部安装过程，只讲解虚拟机配置及系统相关配置，供大家搭建时做参考。</p><p>VirtualBox 分配 4G 内存、500G 磁盘，同时添加两块网卡，一个是 Host-Only 模式，一个是 NAT 模式。</p><p>Host-Only 模式网卡可以给主机和虚拟机之间提供私有的虚拟网络，我们实验环境需要一个稳定的不受实际网络影响的虚拟网络，我是笔记本经常办公司到家里，网络环境会改变，但是我主机和虚拟机通信网络不会变化。</p><p>NAT 模式网卡是为了虚拟机可以上网，实际 Host-Only 的网卡也可以上网，但是它只能是使用有线连接时可以，我的笔记本大多数都是 WiFi 连接网络，这导致我没有办法上网，增加这块网卡可以实现上网，但是主机无法访问虚拟机，所以我需要两块网卡结合使用。</p><p>大家只需要能够让主机访问虚拟机，虚拟机可以访问虚拟机，虚拟机可以访问网络（我们需要安装一些东西）。</p><p><img src="/assets/image/201907/20190727165524385.png" alt="VirtualBox详细配置"></p><p>系统分区可以根据自己的喜好进行，我尽量模拟真实的生成环境，一个较小的系统盘，阿里云服务器是 40G，一块数据盘，我把其它容量都分配给 <code>/data</code> 数据盘。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> df -h</span><br><span class="line">文件系统        容量  已用  可用 已用% 挂载点</span><br><span class="line">/dev/sda1        40G  1.2G   39G    3% /  # 系统盘</span><br><span class="line">devtmpfs        1.9G     0  1.9G    0% /dev</span><br><span class="line">tmpfs           1.9G     0  1.9G    0% /dev/shm</span><br><span class="line">tmpfs           1.9G  8.5M  1.9G    1% /run</span><br><span class="line">tmpfs           1.9G     0  1.9G    0% /sys/fs/cgroup</span><br><span class="line">/dev/sda3       452G   33M  452G    1% /data  # 数据盘</span><br><span class="line">tmpfs           379M     0  379M    0% /run/user/0</span><br></pre></td></tr></table></figure><p>安装完成系统，登陆之后需要给虚拟机设置一个固定 ip。使用 <code>ip address</code> 查看网卡信息，找到 <code>192.168.*.*</code> 的网卡，记录下网卡名称，我的是 <code>enp0s3</code>，然后编辑网卡对应的配置文件 <code>/etc/sysconfig/network-scripts/ifcfg-enp0s3</code>，具体如下：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">TYPE="Ethernet"</span><br><span class="line">PROXY_METHOD="none"</span><br><span class="line">BROWSER_ONLY="no"</span><br><span class="line">BOOTPROTO="static"  # 使用静态网络</span><br><span class="line">DEFROUTE="yes"</span><br><span class="line">IPV4_FAILURE_FATAL="no"</span><br><span class="line">IPV6INIT="yes"</span><br><span class="line">IPV6_AUTOCONF="yes"</span><br><span class="line">IPV6_DEFROUTE="yes"</span><br><span class="line">IPV6_FAILURE_FATAL="no"</span><br><span class="line">IPV6_ADDR_GEN_MODE="stable-privacy"</span><br><span class="line">NAME="enp0s3"</span><br><span class="line">UUID="6f19c6e8-87de-42a5-afdb-2fe8a8bc74a8"</span><br><span class="line">DEVICE="enp0s3"</span><br><span class="line">ONBOOT="yes" # 开机启动</span><br><span class="line">IPADDR=192.168.56.6  # 网络地址，根据之前查询的网段分配</span><br><span class="line">NETMASK=255.255.255.0 # 子网掩码</span><br><span class="line"><span class="meta">#</span>GATEWAY=192.168.56.1 #默认网关，如果和我的网络配置一致就不用配置了</span><br><span class="line"><span class="meta">#</span>DNS1=192.168.7.1 #DNS 配置，如果和我的网络配置一致就不用配置了</span><br></pre></td></tr></table></figure><p>重启网卡 <code>systemctl restart network</code> 使配置生效，然后在主机使用 ssh 登陆虚拟机，确定网络畅通，<code>ssh root@192.168.56.6</code>。</p><p>之后我们就可以使用 “无界面” 启动虚拟机，使用 ssh 登陆虚拟机进行配置。</p><h2 id="Docker-环境安装"><a href="#Docker-环境安装" class="headerlink" title="Docker 环境安装"></a>Docker 环境安装</h2><p>官网有完整的安装教程在：<a href="https://docs.docker.com/install/linux/docker-ce/centos/" target="_blank" rel="noopener">https://docs.docker.com/install/linux/docker-ce/centos/</a> ，有两种安装方式，我使用在线安装的方式，由于官方镜像无法访问，这里采用阿里云的镜像，只需要执行以下命令即可：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">......</span><br><span class="line"><span class="meta">$</span> yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br><span class="line">......</span><br><span class="line"><span class="meta">$</span> yum install docker-ce docker-ce-cli containerd.io</span><br><span class="line">......</span><br><span class="line"><span class="meta">$</span> systemctl enable docker</span><br><span class="line">......</span><br><span class="line"><span class="meta">$</span> systemctl start docker</span><br><span class="line">......</span><br><span class="line"><span class="meta">$</span> docker version</span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           19.03.1</span><br><span class="line"> API version:       1.40</span><br><span class="line"> Go version:        go1.12.5</span><br><span class="line"> Git commit:        74b1e89</span><br><span class="line"> Built:             Thu Jul 25 21:21:07 2019</span><br><span class="line"> OS/Arch:           linux/amd64</span><br><span class="line"> Experimental:      false</span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          19.03.1</span><br><span class="line">  API version:      1.40 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.12.5</span><br><span class="line">  Git commit:       74b1e89</span><br><span class="line">  Built:            Thu Jul 25 21:19:36 2019</span><br><span class="line">  OS/Arch:          linux/amd64</span><br><span class="line">  Experimental:     false</span><br><span class="line"> containerd:</span><br><span class="line">  Version:          1.2.6</span><br><span class="line">  GitCommit:        894b81a4b802e4eb2a91d1ce216b8817763c29fb</span><br><span class="line"> runc:</span><br><span class="line">  Version:          1.0.0-rc8</span><br><span class="line">  GitCommit:        425e105d5a03fabd737a126ad93d62a9eeede87f</span><br><span class="line"> docker-init:</span><br><span class="line">  Version:          0.18.0</span><br><span class="line">  GitCommit:        fec3683</span><br></pre></td></tr></table></figure><p>Docker 已经安装完成了，但是还需要配置一下，首先建议去阿里云申请一个 Docker 镜像加速器地址，去 <a href="https://links.jianshu.com/go?to=https%3A%2F%2Fcr.console.aliyun.com%2Fundefined%2Finstances%2Fmirrors" target="_blank" rel="noopener">https://cr.console.aliyun.com/undefined/instances/mirrors</a>  申请，然后配置 <code>/etc/docker/daemon.json</code> 文件：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> vi /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">"data-root": "/data/docker",</span><br><span class="line">"registry-mirrors": [</span><br><span class="line">"https://yourcode.mirror.aliyuncs.com" # 替换成你申请到地址</span><br><span class="line">]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span> make /data/docker</span><br><span class="line"><span class="meta">$</span> systemctl restart docker</span><br></pre></td></tr></table></figure><h2 id="Docker-Compose-安装"><a href="#Docker-Compose-安装" class="headerlink" title="Docker Compose 安装"></a>Docker Compose 安装</h2><p>相关的文档在 <a href="https://docs.docker.com/compose/install/" target="_blank" rel="noopener">https://docs.docker.com/compose/install/</a> ，安装比较简单，执行下面的命令即可：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span> chmod +x /usr/local/bin/docker-compose</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span> docker-compose version</span><br><span class="line">docker-compose version 1.24.1, build 4667896b</span><br><span class="line">docker-py version: 3.7.3</span><br><span class="line">CPython version: 3.6.8</span><br><span class="line">OpenSSL version: OpenSSL 1.1.0j  20 Nov 2018</span><br></pre></td></tr></table></figure><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>基础环境配置还是比较简单的，配置过程中遇到任何问题多 google 或者在文末留言。</p><p>整个体系涉及的技术点比较宽泛，学习者需要多准备和学习。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在搭建 GitLab 系列 ChatOps 时需要掌握一些基础的技能知识，整个 ChatOps 涉及到很多方面，我们至少需要掌握以下技能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Linux 示例中我们主要以 CentOS 7 为主，但是容器内的系统会多种多样&lt;/li&gt;
+&lt;li&gt;Docker 所有的环境都整合在 Docker 容器中，这能简化搭建的过程以及提升交流的效率&lt;/li&gt;
+&lt;li&gt;Docker Compose 所有的容器我们均使用 Docker Compose 进行构建，很方便分享&lt;/li&gt;
+&lt;li&gt;Python 这个很重要，不能忽视它，整个自动部署均是 Pyhon 实现&lt;/li&gt;
+&lt;li&gt;Fabric 这个是 Python 基于 SSH 的应用部署和系统管理的库，我们基于这库实现从部署机到服务器&lt;/li&gt;
+&lt;li&gt;JavaScript/CoffeeScript 机器人 hubot 需要这些语言知识来扩展，当然还有一些其它地方会用到这些。&lt;/li&gt;
+&lt;li&gt;VMware/VirtualBox 需要搭建本地虚拟机模拟环境，示例使用 VirtualBox 演示&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+      <category term="chatops" scheme="https://blog.thinkeridea.com/categories/chatops/"/>
+    
+    
+      <category term="chatops" scheme="https://blog.thinkeridea.com/tags/chatops/"/>
+    
+      <category term="devops" scheme="https://blog.thinkeridea.com/tags/devops/"/>
+    
+      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
+    
+      <category term="linux" scheme="https://blog.thinkeridea.com/tags/linux/"/>
+    
+      <category term="centos" scheme="https://blog.thinkeridea.com/tags/centos/"/>
+    
+      <category term="VirtualBox" scheme="https://blog.thinkeridea.com/tags/virtualbox/"/>
+    
+  </entry>
   
   <entry>
     <title>【ChatOps系列】ChatOps简介</title>
@@ -319,9 +360,9 @@
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
     
-      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
-    
       <category term="string" scheme="https://blog.thinkeridea.com/tags/string/"/>
+    
+      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
   </entry>
   
@@ -354,11 +395,11 @@
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
     
+      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
+    
       <category term="strings" scheme="https://blog.thinkeridea.com/tags/strings/"/>
     
       <category term="replace" scheme="https://blog.thinkeridea.com/tags/replace/"/>
-    
-      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
   </entry>
   
