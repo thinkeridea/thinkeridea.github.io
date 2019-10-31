@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="最近我在 Go Forum 中发现了 [SOLVED] String size of 20 character 的问题，“hollowaykeanho” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。 字节切片截取这正是 “hollowaykeanho” 给出的第一个方案，我想也是很多人想到的第一个方">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-31T01:08:36.456Z">
+<meta property="og:updated_time" content="2019-10-31T09:53:34.666Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】高效截取字符串的一些思考">
 <meta name="twitter:description" content="最近我在 Go Forum 中发现了 [SOLVED] String size of 20 character 的问题，“hollowaykeanho” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。 字节切片截取这正是 “hollowaykeanho” 给出的第一个方案，我想也是很多人想到的第一个方">
@@ -269,6 +269,7 @@ var _hmt = _hmt || [];
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当看到有疑问的代码，即使它十分的简单，依然值得深究，并不停的探索它，这并不枯燥和乏味，反而会有极多收获。</p>
 <p>从起初 <code>[]rune</code> 类型转换到最后自己造轮子，不仅得到了<strong>16倍</strong>的性能提升，我还学习了<code>utf8</code>包、加深了<code>range</code> 遍历字符串的特性 以及为 <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener">go-extend</a> 仓库收录了多个实用高效的解决方案，让更多  <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener">go-extend</a> 的用户得到成果。</p>
 <p> <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener">go-extend</a> 是一个收录实用、高效方法的仓库，读者们如果好的函数和通用高效的解决方案，期待你们不吝啬给我发送 <code>Pull request</code>，你也可以使用这个仓库加快功能实现及提升性能。</p>
+<p>我的博客即将同步至腾讯云+社区，邀请大家一同入驻：<a href="https://cloud.tencent.com/developer/support-plan?invite_code=2r4rosheqq68k" target="_blank" rel="noopener">https://cloud.tencent.com/developer/support-plan?invite_code=2r4rosheqq68k</a></p>
 
       
 
@@ -623,18 +624,6 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">int</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">numerical</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">uintptr</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">proxy</a>
               </li>
              
@@ -651,15 +640,7 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">client</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">net</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -668,6 +649,34 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">int</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">numerical</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">uintptr</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">client</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -699,14 +708,6 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">strings</a>
               </li>
              
@@ -723,18 +724,6 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">compress</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">io</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">压缩</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">substring</a>
               </li>
              
@@ -748,6 +737,18 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">中文字符串截取</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">compress</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">压缩</a>
               </li>
              
               <li class="article-tag-list-item">
