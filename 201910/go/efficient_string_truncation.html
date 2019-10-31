@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="最近我在 Go Forum 中发现了 [SOLVED] String size of 20 character 的问题，“hollowaykeanho” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。 字节切片截取这正是 “hollowaykeanho” 给出的第一个方案，我想也是很多人想到的第一个方">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-31T00:27:12.581Z">
+<meta property="og:updated_time" content="2019-10-31T01:08:36.456Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Go】高效截取字符串的一些思考">
 <meta name="twitter:description" content="最近我在 Go Forum 中发现了 [SOLVED] String size of 20 character 的问题，“hollowaykeanho” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。 字节切片截取这正是 “hollowaykeanho” 给出的第一个方案，我想也是很多人想到的第一个方">
@@ -196,7 +196,7 @@ var _hmt = _hmt || [];
 
         
         <a href="/201910/go/efficient_string_truncation.html" class="archive-article-date">
-  	<time datetime="2019-09-30T22:35:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-01</time>
+  	<time datetime="2019-10-30T22:35:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-31</time>
 </a>
         
       </header>
@@ -651,7 +651,15 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">client</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">net</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -660,22 +668,6 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">client</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -704,6 +696,14 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ioutil</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
