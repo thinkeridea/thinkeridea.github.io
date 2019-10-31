@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.thinkeridea.com/201910/go/efficient_string_truncation.html</loc>
+    <lastmod>2019-10-31</lastmod>
+  </url>  <url>
+    <loc>https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html</loc>
+    <lastmod>2019-10-30</lastmod>
+  </url>  <url>
     <loc>https://blog.thinkeridea.com/201907/chatops/gitlab_environmental_preparation.html</loc>
     <lastmod>2019-07-27</lastmod>
   </url>  <url>
     <loc>https://blog.thinkeridea.com/201907/chatops/introduction.html</loc>
     <lastmod>2019-07-21</lastmod>
-  </url>  <url>
-    <loc>https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html</loc>
-    <lastmod>2019-07-20</lastmod>
   </url>  <url>
     <loc>https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html</loc>
     <lastmod>2019-07-08</lastmod>
