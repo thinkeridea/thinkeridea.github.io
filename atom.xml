@@ -80,11 +80,11 @@
     
       <category term="devops" scheme="https://blog.thinkeridea.com/tags/devops/"/>
     
-      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
-    
       <category term="linux" scheme="https://blog.thinkeridea.com/tags/linux/"/>
     
       <category term="centos" scheme="https://blog.thinkeridea.com/tags/centos/"/>
+    
+      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
     
       <category term="VirtualBox" scheme="https://blog.thinkeridea.com/tags/virtualbox/"/>
     
@@ -118,11 +118,11 @@
     
       <category term="devops" scheme="https://blog.thinkeridea.com/tags/devops/"/>
     
+      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
+    
       <category term="hubot" scheme="https://blog.thinkeridea.com/tags/hubot/"/>
     
       <category term="github" scheme="https://blog.thinkeridea.com/tags/github/"/>
-    
-      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
     
       <category term="slack" scheme="https://blog.thinkeridea.com/tags/slack/"/>
     
@@ -245,9 +245,9 @@
     
       <category term="ip" scheme="https://blog.thinkeridea.com/tags/ip/"/>
     
-      <category term="net" scheme="https://blog.thinkeridea.com/tags/net/"/>
-    
       <category term="client" scheme="https://blog.thinkeridea.com/tags/client/"/>
+    
+      <category term="net" scheme="https://blog.thinkeridea.com/tags/net/"/>
     
       <category term="RemoteAddr" scheme="https://blog.thinkeridea.com/tags/remoteaddr/"/>
     
@@ -389,11 +389,11 @@
       <category term="go" scheme="https://blog.thinkeridea.com/categories/go/"/>
     
     
-      <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
-    
       <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
+    
+      <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
     
       <category term="string" scheme="https://blog.thinkeridea.com/tags/string/"/>
     
@@ -424,11 +424,11 @@
       <category term="go" scheme="https://blog.thinkeridea.com/categories/go/"/>
     
     
-      <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
-    
       <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
+    
+      <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
     
       <category term="strings" scheme="https://blog.thinkeridea.com/tags/strings/"/>
     
@@ -535,9 +535,9 @@
       <category term="go" scheme="https://blog.thinkeridea.com/categories/go/"/>
     
     
-      <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
-    
       <category term="slice" scheme="https://blog.thinkeridea.com/tags/slice/"/>
+    
+      <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
     
       <category term="缓存" scheme="https://blog.thinkeridea.com/tags/%E7%BC%93%E5%AD%98/"/>
     
