@@ -80,11 +80,11 @@
     
       <category term="devops" scheme="https://blog.thinkeridea.com/tags/devops/"/>
     
+      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
+    
       <category term="linux" scheme="https://blog.thinkeridea.com/tags/linux/"/>
     
       <category term="centos" scheme="https://blog.thinkeridea.com/tags/centos/"/>
-    
-      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
     
       <category term="VirtualBox" scheme="https://blog.thinkeridea.com/tags/virtualbox/"/>
     
@@ -118,11 +118,11 @@
     
       <category term="devops" scheme="https://blog.thinkeridea.com/tags/devops/"/>
     
-      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
-    
       <category term="hubot" scheme="https://blog.thinkeridea.com/tags/hubot/"/>
     
       <category term="github" scheme="https://blog.thinkeridea.com/tags/github/"/>
+    
+      <category term="gitlab" scheme="https://blog.thinkeridea.com/tags/gitlab/"/>
     
       <category term="slack" scheme="https://blog.thinkeridea.com/tags/slack/"/>
     
@@ -389,9 +389,9 @@
       <category term="go" scheme="https://blog.thinkeridea.com/categories/go/"/>
     
     
-      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
-    
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
+    
+      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
       <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
     
@@ -424,9 +424,9 @@
       <category term="go" scheme="https://blog.thinkeridea.com/categories/go/"/>
     
     
-      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
-    
       <category term="bytes" scheme="https://blog.thinkeridea.com/tags/bytes/"/>
+    
+      <category term="unsafe" scheme="https://blog.thinkeridea.com/tags/unsafe/"/>
     
       <category term="go" scheme="https://blog.thinkeridea.com/tags/go/"/>
     

@@ -9,7 +9,7 @@
   <title>【Go】strings.Replace 与 bytes.Replace 调优 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="标准库中函数大多数情况下更通用，性能并非最好的，还是不能过于迷信标准库，最近又有了新发现，strings.Replace 这个函数自身的效率已经很好了，但是在特定情况下效率并不是最好的，分享一下我如何优化的吧。 我的服务中有部分代码使用 strings.Replace 把一个固定的字符串删除或者替换成另一个字符串，它们有几个特点：  旧的字符串大于或等于新字符串 (len(old) &amp;gt;= l">
-<meta name="keywords" content="unsafe,bytes,go,strings,replace">
+<meta name="keywords" content="bytes,unsafe,go,strings,replace">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go】strings.Replace 与 bytes.Replace 调优">
 <meta property="og:url" content="https://blog.thinkeridea.com/201902/go/replcae_you_hua.html">
@@ -327,11 +327,11 @@ var _hmt = _hmt || [];
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">bytes</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -524,7 +524,7 @@ if (clientID != "" && clientSecret != ""){
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 戚银 京ICP备17038866号
+    		&copy; 2020 戚银 京ICP备17038866号
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -589,35 +589,11 @@ if (clientID != "" && clientSecret != ""){
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">chatops</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">devops</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">centos</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gitlab</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">VirtualBox</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -629,6 +605,10 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gitlab</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">slack</a>
               </li>
              
@@ -637,15 +617,23 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">array</a>
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
+                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">centos</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">VirtualBox</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -677,6 +665,18 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">unsafe</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">go</a>
               </li>
              
@@ -686,14 +686,6 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">内存池</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -709,7 +701,11 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -722,6 +718,10 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -741,6 +741,14 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">compress</a>
               </li>
              
@@ -750,26 +758,6 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">压缩</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">日志</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">csv</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">join</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -786,6 +774,18 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">中文字符串截取</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">日志</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">csv</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">join</a>
               </li>
             
             <div class="clearfix"></div>
