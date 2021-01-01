@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
   <title>thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,9 +12,9 @@
 <meta property="og:title" content="thinkeridea博客">
 <meta property="og:url" content="https://blog.thinkeridea.com/index.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="戚银">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="thinkeridea博客">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -42,8 +42,8 @@ var _hmt = _hmt || [];
 </script>
 
 
-</head>
-</html>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
 <body>
   <div id="container" q-class="show:isCtnShow">
     <canvas id="anm-canvas" class="anm-canvas"></canvas>
@@ -56,10 +56,8 @@ var _hmt = _hmt || [];
 			<img src="/assets/avatar.jpg" class="js-avatar">
 		</a>
 		<hgroup>
-		  <h1 class="header-author"><a href="/">戚银</a></h1>
+		  <h1 class="header-author"><a href="/"></a></h1>
 		</hgroup>
-		
-		<p class="header-subtitle">thinkeridea</p>
 		
 
 		<nav class="header-menu">
@@ -116,10 +114,8 @@ var _hmt = _hmt || [];
 				<img src="/assets/avatar.jpg" class="js-avatar">
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author">戚银</h1>
+			  <h1 class="header-author js-header-author"></h1>
 			</hgroup>
-			
-			<p class="header-subtitle"><i class="icon icon-quo-left"></i>thinkeridea<i class="icon icon-quo-right"></i></p>
 			
 			
 			
@@ -180,6 +176,123 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-go/20210101-我与sync.Once的爱恨纠缠" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/202101/go/exsync/once.html">【Go】我与sync.Once的爱恨纠缠</a>
+    </h1>
+  
+
+        
+        <a href="/202101/go/exsync/once.html" class="archive-article-date">
+  	<time datetime="2021-01-01T07:26:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>官方描述 <code>Once is an object that will perform exactly one action</code>, 即 <code>Once</code> 是一个对象,它提供了保证某个动作只被执行一次功能，最典型的场景就是单例模式，<code>Once</code> 可用于任何符合 “exactly once” 语义的场景。</p>
+<h2 id="sync-Once-的用法"><a href="#sync-Once-的用法" class="headerlink" title="sync.Once 的用法"></a>sync.Once 的用法</h2><p>在多数情况下，<code>sync.Once</code> 被用于控制变量的初始化，这个变量的读写通常遵循单例模式，满足这三个条件：</p>
+<ul>
+<li>当且仅当第一次读某个变量时，进行初始化（写操作）</li>
+<li>变量被初始化过程中，所有读都被阻塞（读操作；当变量初始化完成后，读操作继续进行）</li>
+<li>变量仅初始化一次，初始化完成后驻留在内存里</li>
+</ul>
+        
+          <a class="article-more-a" href="/202101/go/exsync/once.html#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">sync</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">once</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OncePointer</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">BufferPool</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">strings.Replacer</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">closeOnce</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/202101/go/exsync/once.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
     <article id="post-go/20191031-高效截取字符串的一些思考" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -200,12 +313,11 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近我在 <a href="https://forum.golangbridge.org" target="_blank" rel="noopener">Go Forum</a> 中发现了 <a href="https://forum.golangbridge.org/t/solved-string-size-of-20-character/15783" target="_blank" rel="noopener">[SOLVED] String size of 20 character</a> 的问题，“<strong>hollowaykeanho</strong>” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。</p>
+        <p>最近我在 <a target="_blank" rel="noopener" href="https://forum.golangbridge.org">Go Forum</a> 中发现了 <a target="_blank" rel="noopener" href="https://forum.golangbridge.org/t/solved-string-size-of-20-character/15783">[SOLVED] String size of 20 character</a> 的问题，“<strong>hollowaykeanho</strong>” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。</p>
 <h2 id="字节切片截取"><a href="#字节切片截取" class="headerlink" title="字节切片截取"></a>字节切片截取</h2><p>这正是 “<strong>hollowaykeanho</strong>” 给出的第一个方案，我想也是很多人想到的第一个方案，利用 go 的内置切片语法截取字符串：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">"abcdef"</span></span><br><span class="line">fmt.Println(s[<span class="number">1</span>:<span class="number">4</span>])</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">&quot;abcdef&quot;</span></span><br><span class="line">fmt.Println(s[<span class="number">1</span>:<span class="number">4</span>])</span><br></pre></td></tr></table></figure>
 <p>我们很快就了解到这是按字节截取，在处理 <code>ASCII</code> 单字节字符串截取，没有什么比这更完美的方案了，中文往往占多个字节，在 <code>utf8</code> 编码中是3个字节，如下程序我们将获得乱码数据：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">"Go 语言"</span></span><br><span class="line">fmt.Println(s[<span class="number">1</span>:<span class="number">4</span>])</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">&quot;Go 语言&quot;</span></span><br><span class="line">fmt.Println(s[<span class="number">1</span>:<span class="number">4</span>])</span><br></pre></td></tr></table></figure>
         
           <a class="article-more-a" href="/201910/go/efficient_string_truncation.html#more">more >></a>
         
@@ -537,7 +649,7 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>我们业务每天需要记录大量的日志数据，且这些数据十分重要，它们是公司收入结算的主要依据，也是数据分析部门主要得数据源，针对这么重要的日志，且高频率的日志，我们需要一个高性能且安全的日志组件，能保证每行日志格式完整性，我们设计了一个类 csv 的日志拼接组件，它的代码在这里 <a href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go" target="_blank" rel="noopener">datalog</a>。</p>
+        <p>我们业务每天需要记录大量的日志数据，且这些数据十分重要，它们是公司收入结算的主要依据，也是数据分析部门主要得数据源，针对这么重要的日志，且高频率的日志，我们需要一个高性能且安全的日志组件，能保证每行日志格式完整性，我们设计了一个类 csv 的日志拼接组件，它的代码在这里 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/datalog/record.go">datalog</a>。</p>
 <p>它是一个可以保证日志各列完整性且高效拼接字段的组件，支持任意列和行分隔符，而且还支持数组字段，可是实现一对多的日志需求，不用记录多个日志，也不用记录多行。它响应一个 <code>[]byte</code> 数据，方便结合其它主键写入数据到日志文件或者网络中。</p>
         
           <a class="article-more-a" href="/201907/go/csv_like_data_logs.html#more">more >></a>
@@ -836,7 +948,7 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>用户请求到达提供服务的服务器中间有很多的环节，导致服务获取用户真实的 ip 非常困难，大多数的框架及工具库都会封装各种获取用户真实 ip 的方法，在  <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 包中也封装了各种 ip 相关的操作，其中就包含获取客户端 ip 的方法，比较实用的方法如下：</p>
+        <p>用户请求到达提供服务的服务器中间有很多的环节，导致服务获取用户真实的 ip 非常困难，大多数的框架及工具库都会封装各种获取用户真实 ip 的方法，在  <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 包中也封装了各种 ip 相关的操作，其中就包含获取客户端 ip 的方法，比较实用的方法如下：</p>
 <ul>
 <li><code>func ClientIP(r *http.Request) string</code> ClientIP 尽最大努力实现获取客户端 IP 的算法。 解析 X-Real-IP 和 X-Forwarded-For 以便于反向代理（nginx 或 haproxy）可以正常工作。</li>
 <li><code>func ClientPublicIP(r *http.Request) string</code> ClientPublicIP 尽最大努力实现获取客户端公网 IP 的算法。 解析 X-Real-IP 和 X-Forwarded-For 以便于反向代理（nginx 或 haproxy）可以正常工作。</li>
@@ -868,11 +980,11 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">client</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">client</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -947,7 +1059,7 @@ var _hmt = _hmt || [];
     <div class="article-entry" itemprop="articleBody">
       
         <p>IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。</p>
-<p>针对这一个问题我在 <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 扩展包里面实现可两者的转换的快捷方法：</p>
+<p>针对这一个问题我在 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 扩展包里面实现可两者的转换的快捷方法：</p>
 <ul>
 <li><code>func IP2Long(ip net.IP) (uint, error)</code>  IP2Long 把 net.IP 转为数值</li>
 <li><code>func Long2IP(i uint) (net.IP, error)</code>  Long2IP 把数值转为 net.IP</li>
@@ -955,7 +1067,7 @@ var _hmt = _hmt || [];
 <li><code>func Long2IPString(i uint) (string, error)</code> Long2IPString 把数值转为 ip 字符串</li>
 </ul>
 <p>使用示例：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/thinkeridea/go-extend/exnet"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ip := <span class="string">"192.168.1.1"</span></span><br><span class="line"></span><br><span class="line">	n, _ := exnet.IPString2Long(ip)</span><br><span class="line">	s, _ := exnet.Long2IPString(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, s == ip)</span><br><span class="line"></span><br><span class="line">	Ip1 := net.ParseIP(ip) <span class="comment">// 会得到一个16字节的byte，主要为了兼容ipv6</span></span><br><span class="line">	n, _ = exnet.IP2Long(Ip1)</span><br><span class="line"></span><br><span class="line">	Ip2, _ := exnet.Long2IP(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, reflect.DeepEqual(Ip1[<span class="number">12</span>:], Ip2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/thinkeridea/go-extend/exnet&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ip := <span class="string">&quot;192.168.1.1&quot;</span></span><br><span class="line"></span><br><span class="line">	n, _ := exnet.IPString2Long(ip)</span><br><span class="line">	s, _ := exnet.Long2IPString(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, s == ip)</span><br><span class="line"></span><br><span class="line">	Ip1 := net.ParseIP(ip) <span class="comment">// 会得到一个16字节的byte，主要为了兼容ipv6</span></span><br><span class="line">	n, _ = exnet.IP2Long(Ip1)</span><br><span class="line"></span><br><span class="line">	Ip2, _ := exnet.Long2IP(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, reflect.DeepEqual(Ip1[<span class="number">12</span>:], Ip2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
           <a class="article-more-a" href="/201903/go/ip2long.html#more">more >></a>
         
@@ -1061,7 +1173,7 @@ var _hmt = _hmt || [];
         <p>最近发现技术交流群里很多人在询问 go get 墙外包失败的问题，大家给了很多解决方案：</p>
 <ul>
 <li>从 Github 的代码库 clone</li>
-<li>设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=<a href="https://goproxy.io" target="_blank" rel="noopener">https://goproxy.io</a></li>
+<li>设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=<a target="_blank" rel="noopener" href="https://goproxy.io">https://goproxy.io</a></li>
 <li>配置命令行代理，https_proxy 环境变量</li>
 <li>使用 go mod replace</li>
 <li>使用 Gopm 类似的工具</li>
@@ -1147,111 +1259,9 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-go/20190319-那么多数值类型，应该选哪个" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/201903/go/selection_of_numerical_types.html">【Go】那么多数值类型，应该选哪个？</a>
-    </h1>
-  
-
-        
-        <a href="/201903/go/selection_of_numerical_types.html" class="archive-article-date">
-  	<time datetime="2019-03-18T23:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>Go</code> 内置很多种数值类型，往往初学者不知道编写程序如何选择，使用哪种数值类型更有优势。</p>
-<p>内置的数值类型有：<code>uint8</code>、 <code>uint16</code>、 <code>uint32</code>、 <code>uint64</code>、 <code>uint</code>、 <code>int8</code>、 <code>int16</code>、 <code>int32</code>、 <code>int64</code>、 <code>int</code>。</p>
-<p>从类型名称上可以很好了解到类型的大小，这个非常直观，<code>uint</code> 和 <code>int</code> 这两种类型是不带大小的，那么它们的大小会根据编译参数 <code>GOARCH=amd64</code> 平台决定的。</p>
-<p>我最早设计的一个go的项目，当时设计系统使用采用最小类型原则，几乎使用了大多数数值类型，很少使用 <code>uint</code> 和 <code>int</code> 类型，后来遇到很多问题，标准库和三方库函数都接收 <code>int</code>、 <code>uint</code>、 <code>int64</code>、<code>uint64</code>, 一些代码生成工具, 比如 <code>protobuf</code> 生成类型是 <code>int32</code>，一些三方系统大多数也是 <code>int</code> 类型，这时候与其它组件件的交互就需要 <span style="color:red">类型转换</span>, 类型转换成本是很高的，导致程序性能并没有预期的好。</p>
-        
-          <a class="article-more-a" href="/201903/go/selection_of_numerical_types.html#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">int</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">numerical</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">uintptr</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/201903/go/selection_of_numerical_types.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1263,7 +1273,7 @@ var _hmt = _hmt || [];
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2020 戚银 京ICP备17038866号
+    		&copy; 2021 戚银 京ICP备17038866号
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1356,14 +1366,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
              
@@ -1373,6 +1375,14 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">VirtualBox</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1404,11 +1414,15 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+                <a href="javascript:void(0)" class="js-tag color3">go</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">array</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1416,15 +1430,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1440,11 +1446,19 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+                <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color4">net</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1460,31 +1474,11 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">client</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">net</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1513,6 +1507,46 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">中文字符串截取</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">sync</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">once</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OncePointer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">BufferPool</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">strings.Replacer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">closeOnce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
               </li>
              
               <li class="article-tag-list-item">

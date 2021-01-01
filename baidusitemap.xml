@@ -1,55 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.thinkeridea.com/202101/go/exsync/once.html</loc>
+    <lastmod>2021-01-01</lastmod>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201910/go/efficient_string_truncation.html</loc>
     <lastmod>2019-12-10</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html</loc>
     <lastmod>2019-10-30</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201907/chatops/gitlab_environmental_preparation.html</loc>
     <lastmod>2019-07-27</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201907/chatops/introduction.html</loc>
     <lastmod>2019-07-21</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html</loc>
     <lastmod>2019-07-08</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html</loc>
     <lastmod>2019-07-07</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201906/go/compress_file_io_optimization1.html</loc>
     <lastmod>2019-07-07</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201903/go/ip2long.html</loc>
     <lastmod>2019-03-28</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201903/go/get_client_ip.html</loc>
     <lastmod>2019-03-28</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201903/go/go_get_proxy.html</loc>
     <lastmod>2019-03-22</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201903/go/selection_of_numerical_types.html</loc>
     <lastmod>2019-03-19</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html</loc>
     <lastmod>2019-02-26</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201902/go/replcae_you_hua.html</loc>
     <lastmod>2019-02-24</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html</loc>
     <lastmod>2019-02-24</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html</loc>
     <lastmod>2019-02-24</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201901/go/shen_ru_pou_xi_slice_he_array.html</loc>
     <lastmod>2019-02-24</lastmod>
-  </url>  <url>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</loc>
     <lastmod>2019-02-24</lastmod>
   </url>
-</urlset>
+</urlset> 

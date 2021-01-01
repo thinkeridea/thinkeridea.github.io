@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
   <title>【Go】IP地址转换：数字与字符串之间的转换 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。 针对这一个问题我在 exnet 扩展包里面实现可两者的转换的快捷方法：  func IP2Long(ip net.IP) (uint, error)  IP2Long 把 net.IP 转为数值 func Long2IP">
-<meta name="keywords" content="go,ip,net,ip2long,ip2number">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go】IP地址转换：数字与字符串之间的转换">
 <meta property="og:url" content="https://blog.thinkeridea.com/201903/go/ip2long.html">
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。 针对这一个问题我在 exnet 扩展包里面实现可两者的转换的快捷方法：  func IP2Long(ip net.IP) (uint, error)  IP2Long 把 net.IP 转为数值 func Long2IP">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-28T02:23:22.664Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-03-24T23:34:57.000Z">
+<meta property="article:modified_time" content="2019-03-28T02:23:22.664Z">
+<meta property="article:author" content="戚银">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="ip">
+<meta property="article:tag" content="net">
+<meta property="article:tag" content="ip2long">
+<meta property="article:tag" content="ip2number">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【Go】IP地址转换：数字与字符串之间的转换">
-<meta name="twitter:description" content="IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。 针对这一个问题我在 exnet 扩展包里面实现可两者的转换的快捷方法：  func IP2Long(ip net.IP) (uint, error)  IP2Long 把 net.IP 转为数值 func Long2IP">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -47,8 +51,8 @@ var _hmt = _hmt || [];
 </script>
 
 
-</head>
-</html>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
 <body>
   <div id="container" q-class="show:isCtnShow">
     <canvas id="anm-canvas" class="anm-canvas"></canvas>
@@ -61,10 +65,8 @@ var _hmt = _hmt || [];
 			<img src="/assets/avatar.jpg" class="js-avatar">
 		</a>
 		<hgroup>
-		  <h1 class="header-author"><a href="/">戚银</a></h1>
+		  <h1 class="header-author"><a href="/"></a></h1>
 		</hgroup>
-		
-		<p class="header-subtitle">thinkeridea</p>
 		
 
 		<nav class="header-menu">
@@ -121,10 +123,8 @@ var _hmt = _hmt || [];
 				<img src="/assets/avatar.jpg" class="js-avatar">
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author">戚银</h1>
+			  <h1 class="header-author js-header-author"></h1>
 			</hgroup>
-			
-			<p class="header-subtitle"><i class="icon icon-quo-left"></i>thinkeridea<i class="icon icon-quo-right"></i></p>
 			
 			
 			
@@ -204,7 +204,7 @@ var _hmt = _hmt || [];
     <div class="article-entry" itemprop="articleBody">
       
         <p>IP 地址库中 IP 地址的保存格式一般有两种，一种是点分十进制形式(192.168.1.1)，另一种是数字形式(3232235777)，应用中，经常需要在这两种格式之间做转换。</p>
-<p>针对这一个问题我在 <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 扩展包里面实现可两者的转换的快捷方法：</p>
+<p>针对这一个问题我在 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 扩展包里面实现可两者的转换的快捷方法：</p>
 <ul>
 <li><code>func IP2Long(ip net.IP) (uint, error)</code>  IP2Long 把 net.IP 转为数值</li>
 <li><code>func Long2IP(i uint) (net.IP, error)</code>  Long2IP 把数值转为 net.IP</li>
@@ -212,8 +212,7 @@ var _hmt = _hmt || [];
 <li><code>func Long2IPString(i uint) (string, error)</code> Long2IPString 把数值转为 ip 字符串</li>
 </ul>
 <p>使用示例：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/thinkeridea/go-extend/exnet"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ip := <span class="string">"192.168.1.1"</span></span><br><span class="line"></span><br><span class="line">	n, _ := exnet.IPString2Long(ip)</span><br><span class="line">	s, _ := exnet.Long2IPString(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, s == ip)</span><br><span class="line"></span><br><span class="line">	Ip1 := net.ParseIP(ip) <span class="comment">// 会得到一个16字节的byte，主要为了兼容ipv6</span></span><br><span class="line">	n, _ = exnet.IP2Long(Ip1)</span><br><span class="line"></span><br><span class="line">	Ip2, _ := exnet.Long2IP(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, reflect.DeepEqual(Ip1[<span class="number">12</span>:], Ip2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/thinkeridea/go-extend/exnet&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ip := <span class="string">&quot;192.168.1.1&quot;</span></span><br><span class="line"></span><br><span class="line">	n, _ := exnet.IPString2Long(ip)</span><br><span class="line">	s, _ := exnet.Long2IPString(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, s == ip)</span><br><span class="line"></span><br><span class="line">	Ip1 := net.ParseIP(ip) <span class="comment">// 会得到一个16字节的byte，主要为了兼容ipv6</span></span><br><span class="line">	n, _ = exnet.IP2Long(Ip1)</span><br><span class="line"></span><br><span class="line">	Ip2, _ := exnet.Long2IP(n)</span><br><span class="line"></span><br><span class="line">	fmt.Println(n, reflect.DeepEqual(Ip1[<span class="number">12</span>:], Ip2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 
 <p>那么是如何将点分十进制的IP地址转为数字？<br>IPv4 地址有4个字节，样式如下：<br>MSB————–LSB<br>b4 b3 b2 b1</p>
@@ -225,12 +224,10 @@ var _hmt = _hmt || [];
 <li>byte1: 256(1&lt;&lt;8)</li>
 </ul>
 <p>通用公式：<code>b4&lt;&lt;24 | b3&lt;&lt;16 | b2&lt;&lt;8 | b1</code><br>例如，222.173.108.86<br>转换方法：<code>222&lt;&lt;24 | 173&lt;&lt;16 | 108&lt;&lt;8 | 86 = 3735907414</code><br>再例如，1.0.1.1<br>转换方法：<code>1&lt;&lt;24 | 0&lt;&lt;16 | 1&lt;&lt;8 | 1 = 16777473</code></p>
-<p> <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 中实现如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IPString2Long 把ip字符串转为数值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IPString2Long</span><span class="params">(ip <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">uint</span>, error)</span></span> &#123;</span><br><span class="line">	b := net.ParseIP(ip).To4()</span><br><span class="line">	<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">"invalid ipv4 format"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">uint</span>(b[<span class="number">3</span>]) | <span class="keyword">uint</span>(b[<span class="number">2</span>])&lt;&lt;<span class="number">8</span> | <span class="keyword">uint</span>(b[<span class="number">1</span>])&lt;&lt;<span class="number">16</span> | <span class="keyword">uint</span>(b[<span class="number">0</span>])&lt;&lt;<span class="number">24</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>把数值转换为字符串的逻辑翻转过来即可， <a href="https://github.com/thinkeridea/go-extend/blob/master/exnet" target="_blank" rel="noopener">exnet</a> 中实现如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Long2IPString 把数值转为ip字符串</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Long2IPString</span><span class="params">(i <span class="keyword">uint</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> i &gt; math.MaxUint32 &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span>, errors.New(<span class="string">"beyond the scope of ipv4"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip := <span class="built_in">make</span>(net.IP, net.IPv4len)</span><br><span class="line">	ip[<span class="number">0</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">24</span>)</span><br><span class="line">	ip[<span class="number">1</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">16</span>)</span><br><span class="line">	ip[<span class="number">2</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">8</span>)</span><br><span class="line">	ip[<span class="number">3</span>] = <span class="keyword">byte</span>(i)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ip.String(), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<p> <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 中实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IPString2Long 把ip字符串转为数值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IPString2Long</span><span class="params">(ip <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">uint</span>, error)</span></span> &#123;</span><br><span class="line">	b := net.ParseIP(ip).To4()</span><br><span class="line">	<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">&quot;invalid ipv4 format&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">uint</span>(b[<span class="number">3</span>]) | <span class="keyword">uint</span>(b[<span class="number">2</span>])&lt;&lt;<span class="number">8</span> | <span class="keyword">uint</span>(b[<span class="number">1</span>])&lt;&lt;<span class="number">16</span> | <span class="keyword">uint</span>(b[<span class="number">0</span>])&lt;&lt;<span class="number">24</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>把数值转换为字符串的逻辑翻转过来即可， <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 中实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Long2IPString 把数值转为ip字符串</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Long2IPString</span><span class="params">(i <span class="keyword">uint</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> i &gt; math.MaxUint32 &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span>, errors.New(<span class="string">&quot;beyond the scope of ipv4&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip := <span class="built_in">make</span>(net.IP, net.IPv4len)</span><br><span class="line">	ip[<span class="number">0</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">24</span>)</span><br><span class="line">	ip[<span class="number">1</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">16</span>)</span><br><span class="line">	ip[<span class="number">2</span>] = <span class="keyword">byte</span>(i &gt;&gt; <span class="number">8</span>)</span><br><span class="line">	ip[<span class="number">3</span>] = <span class="keyword">byte</span>(i)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ip.String(), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
 
@@ -489,7 +486,7 @@ if (clientID != "" && clientSecret != ""){
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2020 戚银 京ICP备17038866号
+    		&copy; 2021 戚银 京ICP备17038866号
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -582,14 +579,6 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
              
@@ -599,6 +588,14 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">VirtualBox</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -630,11 +627,15 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+                <a href="javascript:void(0)" class="js-tag color3">go</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">array</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -642,15 +643,7 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -666,11 +659,19 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+                <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color4">net</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -686,31 +687,11 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">client</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">net</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -739,6 +720,46 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">中文字符串截取</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">sync</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">once</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OncePointer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">BufferPool</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">strings.Replacer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">closeOnce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
               </li>
              
               <li class="article-tag-list-item">

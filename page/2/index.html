@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
   <title>thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,9 +12,9 @@
 <meta property="og:title" content="thinkeridea博客">
 <meta property="og:url" content="https://blog.thinkeridea.com/page/2/index.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="戚银">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="thinkeridea博客">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
   
@@ -42,8 +42,8 @@ var _hmt = _hmt || [];
 </script>
 
 
-</head>
-</html>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
 <body>
   <div id="container" q-class="show:isCtnShow">
     <canvas id="anm-canvas" class="anm-canvas"></canvas>
@@ -56,10 +56,8 @@ var _hmt = _hmt || [];
 			<img src="/assets/avatar.jpg" class="js-avatar">
 		</a>
 		<hgroup>
-		  <h1 class="header-author"><a href="/">戚银</a></h1>
+		  <h1 class="header-author"><a href="/"></a></h1>
 		</hgroup>
-		
-		<p class="header-subtitle">thinkeridea</p>
 		
 
 		<nav class="header-menu">
@@ -116,10 +114,8 @@ var _hmt = _hmt || [];
 				<img src="/assets/avatar.jpg" class="js-avatar">
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author">戚银</h1>
+			  <h1 class="header-author js-header-author"></h1>
 			</hgroup>
-			
-			<p class="header-subtitle"><i class="icon icon-quo-left"></i>thinkeridea<i class="icon icon-quo-right"></i></p>
 			
 			
 			
@@ -180,6 +176,108 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-go/20190319-那么多数值类型，应该选哪个" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/201903/go/selection_of_numerical_types.html">【Go】那么多数值类型，应该选哪个？</a>
+    </h1>
+  
+
+        
+        <a href="/201903/go/selection_of_numerical_types.html" class="archive-article-date">
+  	<time datetime="2019-03-18T23:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>Go</code> 内置很多种数值类型，往往初学者不知道编写程序如何选择，使用哪种数值类型更有优势。</p>
+<p>内置的数值类型有：<code>uint8</code>、 <code>uint16</code>、 <code>uint32</code>、 <code>uint64</code>、 <code>uint</code>、 <code>int8</code>、 <code>int16</code>、 <code>int32</code>、 <code>int64</code>、 <code>int</code>。</p>
+<p>从类型名称上可以很好了解到类型的大小，这个非常直观，<code>uint</code> 和 <code>int</code> 这两种类型是不带大小的，那么它们的大小会根据编译参数 <code>GOARCH=amd64</code> 平台决定的。</p>
+<p>我最早设计的一个go的项目，当时设计系统使用采用最小类型原则，几乎使用了大多数数值类型，很少使用 <code>uint</code> 和 <code>int</code> 类型，后来遇到很多问题，标准库和三方库函数都接收 <code>int</code>、 <code>uint</code>、 <code>int64</code>、<code>uint64</code>, 一些代码生成工具, 比如 <code>protobuf</code> 生成类型是 <code>int32</code>，一些三方系统大多数也是 <code>int</code> 类型，这时候与其它组件件的交互就需要 <span style="color:red">类型转换</span>, 类型转换成本是很高的，导致程序性能并没有预期的好。</p>
+        
+          <a class="article-more-a" href="/201903/go/selection_of_numerical_types.html#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">int</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">numerical</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">uintptr</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/201903/go/selection_of_numerical_types.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
     <article id="post-go/20190223-string优化误区及建议" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -204,12 +302,10 @@ var _hmt = _hmt || [];
 <p> 本文原标题为 《string 也是引用类型》，经过 <strong>郝林</strong> 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。</p>
 </blockquote>
 <p>初学 <code>Go</code> 语言的朋友总会在传 <code>[]byte</code> 和 <code>string</code> 之间有着很多纠结，实际上是没有了解 <code>string</code> 与 <code>slice</code> 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"bytes"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xxx"</span></span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(xx([]<span class="keyword">byte</span>(s)))</span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(bytes.Replace([]<span class="keyword">byte</span>(s), []<span class="keyword">byte</span>(<span class="string">"x"</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;bytes&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">&quot;xxx&quot;</span></span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(xx([]<span class="keyword">byte</span>(s)))</span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(bytes.Replace([]<span class="keyword">byte</span>(s), []<span class="keyword">byte</span>(<span class="string">&quot;x&quot;</span>), []<span class="keyword">byte</span>(<span class="string">&quot;&quot;</span>), <span class="number">-1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>虽然这样的代码并不是来自真实的项目，但是确实有人这样设计，单从设计上看就很糟糕了，这样设计的原因很多人说：“<code>slice</code> 是引用类型，传递引用类型效率高呀”，主要原因不了解两者的本质。</p>
 <p>上面这个例子如果觉得有点基础和可爱，下面这个例子貌似并不那么容易说明其存在的问题了吧。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s *<span class="keyword">string</span>)</span> *<span class="title">string</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xx"</span></span><br><span class="line">    </span><br><span class="line">    s = *xx(&amp;s)</span><br><span class="line">    </span><br><span class="line">    ss :=[]*<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    ss = <span class="built_in">append</span>(ss, &amp;s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s *<span class="keyword">string</span>)</span> *<span class="title">string</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">&quot;xx&quot;</span></span><br><span class="line">    </span><br><span class="line">    s = *xx(&amp;s)</span><br><span class="line">    </span><br><span class="line">    ss :=[]*<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    ss = <span class="built_in">append</span>(ss, &amp;s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>指针效率高，我就用指针多好，可以减少内存分配呀，设计函数都接收指针变量，程序性能会有很大提升，在实际的项目中这种例子也不少见，我想通过这篇文档来帮助初学者走出误区，减少适得其反的优化技巧。</p>
         
           <a class="article-more-a" href="/201902/go/string_ye_shi_yin_yong_lei_xing.html#more">more >></a>
@@ -231,11 +327,11 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -316,7 +412,7 @@ var _hmt = _hmt || [];
 <li>源字符串的生命周期很短，替换后就不再使用替换前的字符串</li>
 <li>它们都比较大，往往超过 2k~4k</li>
 </ul>
-<p>本博文中使用函数均在 <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener"><strong>go-extend</strong></a> 中，优化后的函数在 <a href="https://github.com/thinkeridea/go-extend/blob/master/exbytes/bytes.go" target="_blank" rel="noopener">exbytes.Replace</a> 中。</p>
+<p>本博文中使用函数均在 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend"><strong>go-extend</strong></a> 中，优化后的函数在 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exbytes/bytes.go">exbytes.Replace</a> 中。</p>
         
           <a class="article-more-a" href="/201902/go/replcae_you_hua.html#more">more >></a>
         
@@ -337,10 +433,6 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
         		</li>
       		 
@@ -350,6 +442,10 @@ var _hmt = _hmt || [];
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">replace</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
         		</li>
       		
 		</ul>
@@ -419,7 +515,7 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>之前发布 <a href="https://blog.thinkeridea.com/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html">【Go】优雅的读取http请求或响应的数据</a> 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，<a href="https://github.com/thinkeridea/example/tree/master/iouitl_readall" target="_blank" rel="noopener">本文源码</a>。</p>
+        <p>之前发布 <a href="https://blog.thinkeridea.com/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html">【Go】优雅的读取http请求或响应的数据</a> 文章，网友 “wxe” 咨询：“优化前后的请求耗时变化有多大”，之前只分析了内存分配，这篇文章用单元测试的方式分析优化前后的耗时情况，<a target="_blank" rel="noopener" href="https://github.com/thinkeridea/example/tree/master/iouitl_readall">本文源码</a>。</p>
 <p>非常感谢 “wxe” 网友的提问，让我在测试过程中发现一个 <code>json</code> 序列化的问题。</p>
         
           <a class="article-more-a" href="/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html#more">more >></a>
@@ -652,8 +748,7 @@ var _hmt = _hmt || [];
 <li><code>s=ss[0:10:20]</code> 从切片或数组引用指定长度和容量的切片</li>
 </ul>
 <p>下标索引操作的一些误区 <code>s[i:l:c]</code> <code>i</code> 是起始偏移的起始位置，<code>l</code> 是起始偏移的长度结束位置， <code>l-i</code> 就是新 <code>slice</code> 的长度， <code>c</code> 是起始偏移的容量结束位置，<code>c-i</code> 就是新 <code>slice</code> 的容量。其中 <code>i</code> 、<code>l</code> 、<code>c</code> 并不是当前 <code>slice</code> 的索引，而是引用底层数组相对当前 <code>slice</code> 起始位置的偏移量，所以是可超出当前 <code>slice</code> 的长度的， 但不能超出当前 <code>slice</code> 的容量，如下操作是合法的：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	s[<span class="number">20</span>] = <span class="number">100</span></span><br><span class="line">	s1 := s[<span class="number">10</span>:<span class="number">10</span>]</span><br><span class="line">	s2 := s1[<span class="number">10</span>:<span class="number">20</span>]</span><br><span class="line">	fmt.Println(s1)</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	s[<span class="number">20</span>] = <span class="number">100</span></span><br><span class="line">	s1 := s[<span class="number">10</span>:<span class="number">10</span>]</span><br><span class="line">	s2 := s1[<span class="number">10</span>:<span class="number">20</span>]</span><br><span class="line">	fmt.Println(s1)</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其中 <code>s1</code> 是 <code>[]</code>；<code>s2</code> 是 <code>[100 0 0 0 0 0 0 0 0 0]</code>, 这里并不会发生下标越界的情况，一个更好的例子在 <a href="#csv-reader-中的一个例子">csv reader 中的一个例子</a></p>
         
           <a class="article-more-a" href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html#more">more >></a>
@@ -671,11 +766,11 @@ var _hmt = _hmt || [];
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -770,15 +865,15 @@ var _hmt = _hmt || [];
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">slice</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">array</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
         		</li>
       		
 		</ul>
@@ -922,7 +1017,7 @@ var _hmt = _hmt || [];
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
     </nav>
   
 
@@ -934,7 +1029,7 @@ var _hmt = _hmt || [];
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2020 戚银 京ICP备17038866号
+    		&copy; 2021 戚银 京ICP备17038866号
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1027,14 +1122,6 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
              
@@ -1044,6 +1131,14 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">VirtualBox</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1075,11 +1170,15 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+                <a href="javascript:void(0)" class="js-tag color3">go</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">array</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1087,15 +1186,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1111,11 +1202,19 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+                <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color4">net</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1131,31 +1230,11 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">client</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">net</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1184,6 +1263,46 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">中文字符串截取</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">sync</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">once</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OncePointer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">BufferPool</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">strings.Replacer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">closeOnce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.9.0">
+<head>
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
   <title>【Go】string 优化误区及建议 | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="本文原标题为 《string 也是引用类型》，经过 郝林 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。  初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很">
-<meta name="keywords" content="bytes,unsafe,go,string">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go】string 优化误区及建议">
 <meta property="og:url" content="https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html">
 <meta property="og:site_name" content="thinkeridea博客">
 <meta property="og:description" content="本文原标题为 《string 也是引用类型》，经过 郝林 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。  初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_1.jpg">
-<meta property="og:updated_time" content="2019-02-26T03:20:37.204Z">
+<meta property="article:published_time" content="2019-02-22T22:34:57.000Z">
+<meta property="article:modified_time" content="2019-02-26T03:20:37.204Z">
+<meta property="article:author" content="戚银">
+<meta property="article:tag" content="bytes">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="unsafe">
+<meta property="article:tag" content="string">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【Go】string 优化误区及建议">
-<meta name="twitter:description" content="本文原标题为 《string 也是引用类型》，经过 郝林 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。  初学 Go 语言的朋友总会在传 []byte 和 string 之间有着很">
 <meta name="twitter:image" content="https://blog.thinkeridea.com/assets/image/20190111/slice_1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
@@ -49,8 +52,8 @@ var _hmt = _hmt || [];
 </script>
 
 
-</head>
-</html>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
 <body>
   <div id="container" q-class="show:isCtnShow">
     <canvas id="anm-canvas" class="anm-canvas"></canvas>
@@ -63,10 +66,8 @@ var _hmt = _hmt || [];
 			<img src="/assets/avatar.jpg" class="js-avatar">
 		</a>
 		<hgroup>
-		  <h1 class="header-author"><a href="/">戚银</a></h1>
+		  <h1 class="header-author"><a href="/"></a></h1>
 		</hgroup>
-		
-		<p class="header-subtitle">thinkeridea</p>
 		
 
 		<nav class="header-menu">
@@ -123,10 +124,8 @@ var _hmt = _hmt || [];
 				<img src="/assets/avatar.jpg" class="js-avatar">
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author">戚银</h1>
+			  <h1 class="header-author js-header-author"></h1>
 			</hgroup>
-			
-			<p class="header-subtitle"><i class="icon icon-quo-left"></i>thinkeridea<i class="icon icon-quo-right"></i></p>
 			
 			
 			
@@ -209,57 +208,45 @@ var _hmt = _hmt || [];
 <p> 本文原标题为 《string 也是引用类型》，经过 <strong>郝林</strong> 大佬指点原标题存在诱导性，这里解释一下 “引用类型” 有两个特征：1、多个变量引用一块内存数据，不创建变量的副本，2、修改任意变量的数据，其它变量可见。显然字符串只满足了 “引用类型” 的第一个特点，不能满足第二个特点，顾不能说字符串是引用类型，感谢大佬指正。</p>
 </blockquote>
 <p>初学 <code>Go</code> 语言的朋友总会在传 <code>[]byte</code> 和 <code>string</code> 之间有着很多纠结，实际上是没有了解 <code>string</code> 与 <code>slice</code> 的本质，而且读了一些程序源码，也发现很多与之相关的问题，下面类似的代码估计很多初学者都写过，也充分说明了作者当时内心的纠结：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"bytes"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xxx"</span></span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(xx([]<span class="keyword">byte</span>(s)))</span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(bytes.Replace([]<span class="keyword">byte</span>(s), []<span class="keyword">byte</span>(<span class="string">"x"</span>), []<span class="keyword">byte</span>(<span class="string">""</span>), <span class="number">-1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;bytes&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">&quot;xxx&quot;</span></span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(xx([]<span class="keyword">byte</span>(s)))</span><br><span class="line">    </span><br><span class="line">    s = <span class="keyword">string</span>(bytes.Replace([]<span class="keyword">byte</span>(s), []<span class="keyword">byte</span>(<span class="string">&quot;x&quot;</span>), []<span class="keyword">byte</span>(<span class="string">&quot;&quot;</span>), <span class="number">-1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>虽然这样的代码并不是来自真实的项目，但是确实有人这样设计，单从设计上看就很糟糕了，这样设计的原因很多人说：“<code>slice</code> 是引用类型，传递引用类型效率高呀”，主要原因不了解两者的本质。</p>
 <p>上面这个例子如果觉得有点基础和可爱，下面这个例子貌似并不那么容易说明其存在的问题了吧。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s *<span class="keyword">string</span>)</span> *<span class="title">string</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">"xx"</span></span><br><span class="line">    </span><br><span class="line">    s = *xx(&amp;s)</span><br><span class="line">    </span><br><span class="line">    ss :=[]*<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    ss = <span class="built_in">append</span>(ss, &amp;s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s *<span class="keyword">string</span>)</span> *<span class="title">string</span></span>&#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    s := <span class="string">&quot;xx&quot;</span></span><br><span class="line">    </span><br><span class="line">    s = *xx(&amp;s)</span><br><span class="line">    </span><br><span class="line">    ss :=[]*<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    ss = <span class="built_in">append</span>(ss, &amp;s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>指针效率高，我就用指针多好，可以减少内存分配呀，设计函数都接收指针变量，程序性能会有很大提升，在实际的项目中这种例子也不少见，我想通过这篇文档来帮助初学者走出误区，减少适得其反的优化技巧。</p>
 <a id="more"></a>
 
 <h2 id="slice-的定义"><a href="#slice-的定义" class="headerlink" title="slice 的定义"></a>slice 的定义</h2><p>在之前 “<a href="https://blog.thinkeridea.com/201901/go/shen_ru_pou_xi_slice_he_array.html">【Go】深入剖析slice和array</a>” 一文中说了 <code>slice</code> 在内存中的存储模式，<code>slice</code> 本身包含一个指向底层数组的指针，一个 <code>int</code> 类型的长度和一个 <code>int</code> 类型的容量， 这就是 <code>slice</code> 的本质， <code>[]byte</code> 本身也是一个 <code>slice</code>，只是底层数组存储的元素是 <code>byte</code>。下面这个图就是 <code>slice</code> 的在内存中的状态：</p>
-<p><img src="/assets/image/20190111/slice_1.jpg" alt></p>
+<p><img src="/assets/image/20190111/slice_1.jpg" alt=""></p>
 <p>看一下 <code>reflect.SliceHeader</code> 如何定义 <code>slice</code> 在内存中的结构吧：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SliceHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">	Data <span class="keyword">uintptr</span></span><br><span class="line">	Len  <span class="keyword">int</span></span><br><span class="line">	Cap  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p><code>slice</code> 是引用类型是 <code>slice</code> 本身会包含一个地址，在传递 <code>slice</code> 时只需要分配 <code>SliceHeader</code> 就好了， 而 <code>SliceHeader</code> 只包含了三个 <code>int</code> 类型，相当于传递一个 <code>slice</code> 就只需要拷贝 <code>SliceHeader</code>，而不用拷贝整个底层数组，所以才说 <code>slice</code> 是引用类型的。</p>
 <p>那么字符串呢，计算机中我们处理的大多数问题都和字符串有关，难道传递字符串真的需要那么高的成本，需要借助 <code>slice</code> 和指针来减少内存开销吗。</p>
 <h2 id="string-的定义"><a href="#string-的定义" class="headerlink" title="string 的定义"></a>string 的定义</h2><p><code>reflect</code> 包里面也定义了一个 <code>StringHeader</code> 看一下吧：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> StringHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">	Data <span class="keyword">uintptr</span></span><br><span class="line">	Len  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>字符串只包含了两个 <code>int</code> 类型的数据，其中一个是指针，一个是字符串的长度，从 <code>StringHeader</code> 定义来看 <code>string</code> 并不会发生拷贝的，传递 <code>string</code> 只会拷贝 <code>StringHeader</code> 而已。</p>
 <p>借助 <code>unsafe</code> 来分析一下情况是不是这样吧：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line">	<span class="string">"unsafe"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/davecgh/go-spew/spew"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	sh := *(*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	spew.Dump(sh)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">"xx"</span></span><br><span class="line"></span><br><span class="line">	sh := *(*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	spew.Dump(sh)</span><br><span class="line"></span><br><span class="line">	xx(s)</span><br><span class="line">	xx(s[:<span class="number">1</span>])</span><br><span class="line">	xx(s[<span class="number">1</span>:])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/davecgh/go-spew/spew&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">xx</span><span class="params">(s <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	sh := *(*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	spew.Dump(sh)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">&quot;xx&quot;</span></span><br><span class="line"></span><br><span class="line">	sh := *(*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	spew.Dump(sh)</span><br><span class="line"></span><br><span class="line">	xx(s)</span><br><span class="line">	xx(s[:<span class="number">1</span>])</span><br><span class="line">	xx(s[<span class="number">1</span>:])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面这段代码的输出如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(reflect.StringHeader) &#123;</span><br><span class="line"> Data: (uintptr) 0x10f5ee0,</span><br><span class="line"> Len: (int) 2</span><br><span class="line">&#125;</span><br><span class="line">(reflect.StringHeader) &#123;</span><br><span class="line"> Data: (uintptr) 0x10f5ee0,</span><br><span class="line"> Len: (int) 2</span><br><span class="line">&#125;</span><br><span class="line">(reflect.StringHeader) &#123;</span><br><span class="line"> Data: (uintptr) 0x10f5ee0,</span><br><span class="line"> Len: (int) 1</span><br><span class="line">&#125;</span><br><span class="line">(reflect.StringHeader) &#123;</span><br><span class="line"> Data: (uintptr) 0x10f5ee1,</span><br><span class="line"> Len: (int) 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>可以发现前三个输出的指针都是同一个地址，第四个的地址发生了一个字节的偏移，分析来看传递字符串确实没有分配新的内存，同时和 <code>slice</code> 一样即使传递字符串的子串也不会分配新的内存空间，而是指向原字符串的中的一个位置。</p>
 <p>这样说来把 <code>string</code> 转成 <code>[]byte</code> 还浪费的一个 <code>int</code> 的空间呢，需要分配更多的内存，真是适得其反呀，而且类型转换会发生内存拷贝，从 <code>string</code> 转为 <code>[]byte</code> 才是真的把 <code>string</code> 底层数据全部拷贝一遍呢，真是得不偿失呀。</p>
 <h2 id="string-的两个小特性"><a href="#string-的两个小特性" class="headerlink" title="string 的两个小特性"></a>string 的两个小特性</h2><p>字符串还有两个小特性，针对字面量(就是直接写在程序中的字符串)，会创建在只读空间上，并且被复用，看一下下面的一个小例子：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line">	<span class="string">"unsafe"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/davecgh/go-spew/spew"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">"xx"</span></span><br><span class="line">	b := <span class="string">"xx"</span></span><br><span class="line">	c := <span class="string">"xxx"</span></span><br><span class="line">	spew.Dump(*(*reflect.StringHeader)(unsafe.Pointer(&amp;a)))</span><br><span class="line">	spew.Dump(*(*reflect.StringHeader)(unsafe.Pointer(&amp;b)))</span><br><span class="line">	spew.Dump(*(*reflect.StringHeader)(unsafe.Pointer(&amp;c)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/davecgh/go-spew/spew&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;xx&quot;</span></span><br><span class="line">	b := <span class="string">&quot;xx&quot;</span></span><br><span class="line">	c := <span class="string">&quot;xxx&quot;</span></span><br><span class="line">	spew.Dump(*(*reflect.StringHeader)(unsafe.Pointer(&amp;a)))</span><br><span class="line">	spew.Dump(*(*reflect.StringHeader)(unsafe.Pointer(&amp;b)))</span><br><span class="line">	spew.Dump(*(*reflect.StringHeader)(unsafe.Pointer(&amp;c)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>从输出可以了解到，相同的字面量会被复用，但是子串是不会复用空间的，这就是编译器给我们带来的福利了，可以减少字面量字符串占用的内存空间。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(reflect.StringHeader) &#123;</span><br><span class="line"> Data: (uintptr) 0x10f5ea0,</span><br><span class="line"> Len: (int) 2</span><br><span class="line">&#125;</span><br><span class="line">(reflect.StringHeader) &#123;</span><br><span class="line"> Data: (uintptr) 0x10f5ea0,</span><br><span class="line"> Len: (int) 2</span><br><span class="line">&#125;</span><br><span class="line">(reflect.StringHeader) &#123;</span><br><span class="line"> Data: (uintptr) 0x10f5f2e,</span><br><span class="line"> Len: (int) 3</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>另一个小特性大家都知道，就是字符串是不能修改的，如果我们不希望调用函数修改我们的数据，最好传递字符串，高效有安全。</p>
 <p>不过有了 <code>unsafe</code> 这个黑魔法，字符串的这一个特性也就不那么可靠了。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line">	<span class="string">"strings"</span></span><br><span class="line">	<span class="string">"unsafe"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := strings.Repeat(<span class="string">"x"</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">	strHeader := *(*reflect.StringHeader)(unsafe.Pointer(&amp;a))</span><br><span class="line"></span><br><span class="line">	sliceHeader := reflect.SliceHeader&#123;</span><br><span class="line">		Data: strHeader.Data,</span><br><span class="line">		Len:  strHeader.Len,</span><br><span class="line">		Cap:  strHeader.Len,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	b := *(*[]<span class="keyword">byte</span>)(unsafe.Pointer(&amp;sliceHeader))</span><br><span class="line"></span><br><span class="line">	b[<span class="number">1</span>] = <span class="string">'a'</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := strings.Repeat(<span class="string">&quot;x&quot;</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">	strHeader := *(*reflect.StringHeader)(unsafe.Pointer(&amp;a))</span><br><span class="line"></span><br><span class="line">	sliceHeader := reflect.SliceHeader&#123;</span><br><span class="line">		Data: strHeader.Data,</span><br><span class="line">		Len:  strHeader.Len,</span><br><span class="line">		Cap:  strHeader.Len,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	b := *(*[]<span class="keyword">byte</span>)(unsafe.Pointer(&amp;sliceHeader))</span><br><span class="line"></span><br><span class="line">	b[<span class="number">1</span>] = <span class="string">&#x27;a&#x27;</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>从输出里面居然发现字符串被修改了, 我们没有办法直接修改字符串，但是可以利用 <code>slice</code> 和 <code>string</code> 本身结构的特性，创建一个 <code>slice</code> 让它的指针指向 <code>string</code> 的指针位置，然后借助 <code>unsafe</code> 把这个 <code>SliceHeader</code> 转成 <code>[]byte</code> 来修改字符串，字符串确实被修改了。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xxxxxxxxxx</span><br><span class="line">xaxxxxxxxx</span><br></pre></td></tr></table></figure>
-
 <p>看了上面的例子是不是开始担心把字符串传给其它函数真的不会更改吗？感觉很不放心的样子，难道使用任何函数都要了解它的内部实现吗，其实这种情况极少发生，还记得之前说的那个字符串特性吗，字面量字符串会放到只读空间中，这个很重要，可以保证不是任何函数想修改我们的字符串就可以修改的。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line">	<span class="string">"unsafe"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="built_in">recover</span>()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	a := <span class="string">"xx"</span></span><br><span class="line"></span><br><span class="line">	strHeader := *(*reflect.StringHeader)(unsafe.Pointer(&amp;a))</span><br><span class="line">	sliceHeader := reflect.SliceHeader&#123;</span><br><span class="line">		Data: strHeader.Data,</span><br><span class="line">		Len:  strHeader.Len,</span><br><span class="line">		Cap:  strHeader.Len,</span><br><span class="line">	&#125;</span><br><span class="line">	b := *(*[]<span class="keyword">byte</span>)(unsafe.Pointer(&amp;sliceHeader))</span><br><span class="line">	b[<span class="number">1</span>] = <span class="string">'a'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="built_in">recover</span>()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	a := <span class="string">&quot;xx&quot;</span></span><br><span class="line"></span><br><span class="line">	strHeader := *(*reflect.StringHeader)(unsafe.Pointer(&amp;a))</span><br><span class="line">	sliceHeader := reflect.SliceHeader&#123;</span><br><span class="line">		Data: strHeader.Data,</span><br><span class="line">		Len:  strHeader.Len,</span><br><span class="line">		Cap:  strHeader.Len,</span><br><span class="line">	&#125;</span><br><span class="line">	b := *(*[]<span class="keyword">byte</span>)(unsafe.Pointer(&amp;sliceHeader))</span><br><span class="line">	b[<span class="number">1</span>] = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>运行上面的代码发生了一个运行时不可修复的错误，就是这个特性其它函数不能确保输入字符串是否是字面量，也是不会恶意修改我们字符串的了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">unexpected fault address 0x1095dd5</span><br><span class="line">fatal error: fault</span><br><span class="line">[signal SIGBUS: bus error code=0x2 addr=0x1095dd5 pc=0x106c804]</span><br><span class="line"></span><br><span class="line">goroutine 1 [running]:</span><br><span class="line">runtime.throw(0x1095fde, 0x5)</span><br><span class="line">	/usr/local/go/src/runtime/panic.go:608 +0x72 fp=0xc000040700 sp=0xc0000406d0 pc=0x10248d2</span><br><span class="line">runtime.sigpanic()</span><br><span class="line">	/usr/local/go/src/runtime/signal_unix.go:387 +0x2d7 fp=0xc000040750 sp=0xc000040700 pc=0x1037677</span><br><span class="line">main.main()</span><br><span class="line">	/Users/qiyin/project/go/src/github.com/yumimobi/test/a.go:22 +0x84 fp=0xc000040798 sp=0xc000040750 pc=0x106c804</span><br><span class="line">runtime.main()</span><br><span class="line">	/usr/local/go/src/runtime/proc.go:201 +0x207 fp=0xc0000407e0 sp=0xc000040798 pc=0x1026247</span><br><span class="line">runtime.goexit()</span><br><span class="line">	/usr/local/go/src/runtime/asm_amd64.s:1333 +0x1 fp=0xc0000407e8 sp=0xc0000407e0 pc=0x104da51</span><br></pre></td></tr></table></figure>
-
-<p><strong>关于字符串转 <code>[]byte</code> 在 <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener">go-extend</a> 扩展包中有直接的实现，这种用法在 <a href="https://github.com/thinkeridea/go-extend" target="_blank" rel="noopener">go-extend</a> 内部方法实现中也有大量使用， 实际上因为原数据类型和处理数据的函数类型不一致，使用这种方法转换字符串和 <code>[]byte</code> 可以极大的提升程序性能</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">unexpected fault address 0x1095dd5</span><br><span class="line">fatal error: fault</span><br><span class="line">[signal SIGBUS: bus error code&#x3D;0x2 addr&#x3D;0x1095dd5 pc&#x3D;0x106c804]</span><br><span class="line"></span><br><span class="line">goroutine 1 [running]:</span><br><span class="line">runtime.throw(0x1095fde, 0x5)</span><br><span class="line">	&#x2F;usr&#x2F;local&#x2F;go&#x2F;src&#x2F;runtime&#x2F;panic.go:608 +0x72 fp&#x3D;0xc000040700 sp&#x3D;0xc0000406d0 pc&#x3D;0x10248d2</span><br><span class="line">runtime.sigpanic()</span><br><span class="line">	&#x2F;usr&#x2F;local&#x2F;go&#x2F;src&#x2F;runtime&#x2F;signal_unix.go:387 +0x2d7 fp&#x3D;0xc000040750 sp&#x3D;0xc000040700 pc&#x3D;0x1037677</span><br><span class="line">main.main()</span><br><span class="line">	&#x2F;Users&#x2F;qiyin&#x2F;project&#x2F;go&#x2F;src&#x2F;github.com&#x2F;yumimobi&#x2F;test&#x2F;a.go:22 +0x84 fp&#x3D;0xc000040798 sp&#x3D;0xc000040750 pc&#x3D;0x106c804</span><br><span class="line">runtime.main()</span><br><span class="line">	&#x2F;usr&#x2F;local&#x2F;go&#x2F;src&#x2F;runtime&#x2F;proc.go:201 +0x207 fp&#x3D;0xc0000407e0 sp&#x3D;0xc000040798 pc&#x3D;0x1026247</span><br><span class="line">runtime.goexit()</span><br><span class="line">	&#x2F;usr&#x2F;local&#x2F;go&#x2F;src&#x2F;runtime&#x2F;asm_amd64.s:1333 +0x1 fp&#x3D;0xc0000407e8 sp&#x3D;0xc0000407e0 pc&#x3D;0x104da51</span><br></pre></td></tr></table></figure>
+<p><strong>关于字符串转 <code>[]byte</code> 在 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend">go-extend</a> 扩展包中有直接的实现，这种用法在 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend">go-extend</a> 内部方法实现中也有大量使用， 实际上因为原数据类型和处理数据的函数类型不一致，使用这种方法转换字符串和 <code>[]byte</code> 可以极大的提升程序性能</strong></p>
 <ul>
-<li><a href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#ToString" target="_blank" rel="noopener">exbytes.ToString</a> 零成本的把 <code>[]byte</code> 转为 <code>string</code>。</li>
-<li><a href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings#UnsafeToBytes" target="_blank" rel="noopener">exstrings.UnsafeToBytes</a> 零成本的把 <code>[]byte</code> 转为 <code>string</code>。</li>
+<li><a target="_blank" rel="noopener" href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#ToString">exbytes.ToString</a> 零成本的把 <code>[]byte</code> 转为 <code>string</code>。</li>
+<li><a target="_blank" rel="noopener" href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings#UnsafeToBytes">exstrings.UnsafeToBytes</a> 零成本的把 <code>[]byte</code> 转为 <code>string</code>。</li>
 </ul>
 <p>上面这两个函数用的好，可以极大的提升我们程序的性能，关于 <code>exstrings.UnsafeToBytes</code> 我们转换不确定是否是字面量的字符串时就需要确保调用的函数不会修改我们的数据，这往常在调用 <code>bytes</code> 里面的方法十分有效。</p>
 <h2 id="传字符串和字符串指针的区别"><a href="#传字符串和字符串指针的区别" class="headerlink" title="传字符串和字符串指针的区别"></a>传字符串和字符串指针的区别</h2><p>之前分析了传递 <code>slice</code> 并没有 <code>string</code> 高效，何况转换数据类型本身就会发生数据拷贝。</p>
@@ -268,29 +255,24 @@ var _hmt = _hmt || [];
 <p>我们想一下转换数据类型是会发生数据拷贝，这个成本可是大的多呀，如果我们数据本身就是 <code>[]byte</code> 类型，使用 <code>strings</code> 包就需要转换数据类型了。</p>
 <p>另外我们对比两个函数来看下一下即使传递 <code>[]byte</code> 没有 <code>string</code> 效率好，但是标准库实现上却会导致两个函数有很大的性能差异的。</p>
 <p><code>strings.Repeat</code> 函数：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Repeat</span><span class="params">(s <span class="keyword">string</span>, count <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="comment">// Since we cannot return an error on overflow,</span></span><br><span class="line">	<span class="comment">// we should panic if the repeat will generate</span></span><br><span class="line">	<span class="comment">// an overflow.</span></span><br><span class="line">	<span class="comment">// See Issue golang.org/issue/16237</span></span><br><span class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"strings: negative Repeat count"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> count &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(s)*count/count != <span class="built_in">len</span>(s) &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"strings: Repeat count causes overflow"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(s)*count)</span><br><span class="line">	bp := <span class="built_in">copy</span>(b, s)</span><br><span class="line">	<span class="keyword">for</span> bp &lt; <span class="built_in">len</span>(b) &#123;</span><br><span class="line">		<span class="built_in">copy</span>(b[bp:], b[:bp])</span><br><span class="line">		bp *= <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Repeat</span><span class="params">(s <span class="keyword">string</span>, count <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="comment">// Since we cannot return an error on overflow,</span></span><br><span class="line">	<span class="comment">// we should panic if the repeat will generate</span></span><br><span class="line">	<span class="comment">// an overflow.</span></span><br><span class="line">	<span class="comment">// See Issue golang.org/issue/16237</span></span><br><span class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;strings: negative Repeat count&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> count &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(s)*count/count != <span class="built_in">len</span>(s) &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;strings: Repeat count causes overflow&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(s)*count)</span><br><span class="line">	bp := <span class="built_in">copy</span>(b, s)</span><br><span class="line">	<span class="keyword">for</span> bp &lt; <span class="built_in">len</span>(b) &#123;</span><br><span class="line">		<span class="built_in">copy</span>(b[bp:], b[:bp])</span><br><span class="line">		bp *= <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>bytes.Repeat</code> 函数：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Repeat</span><span class="params">(b []<span class="keyword">byte</span>, count <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="comment">// Since we cannot return an error on overflow,</span></span><br><span class="line">	<span class="comment">// we should panic if the repeat will generate</span></span><br><span class="line">	<span class="comment">// an overflow.</span></span><br><span class="line">	<span class="comment">// See Issue golang.org/issue/16237.</span></span><br><span class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"bytes: negative Repeat count"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> count &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(b)*count/count != <span class="built_in">len</span>(b) &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"bytes: Repeat count causes overflow"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	nb := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(b)*count)</span><br><span class="line">	bp := <span class="built_in">copy</span>(nb, b)</span><br><span class="line">	<span class="keyword">for</span> bp &lt; <span class="built_in">len</span>(nb) &#123;</span><br><span class="line">		<span class="built_in">copy</span>(nb[bp:], nb[:bp])</span><br><span class="line">		bp *= <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> nb</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Repeat</span><span class="params">(b []<span class="keyword">byte</span>, count <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="comment">// Since we cannot return an error on overflow,</span></span><br><span class="line">	<span class="comment">// we should panic if the repeat will generate</span></span><br><span class="line">	<span class="comment">// an overflow.</span></span><br><span class="line">	<span class="comment">// See Issue golang.org/issue/16237.</span></span><br><span class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;bytes: negative Repeat count&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> count &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(b)*count/count != <span class="built_in">len</span>(b) &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;bytes: Repeat count causes overflow&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	nb := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(b)*count)</span><br><span class="line">	bp := <span class="built_in">copy</span>(nb, b)</span><br><span class="line">	<span class="keyword">for</span> bp &lt; <span class="built_in">len</span>(nb) &#123;</span><br><span class="line">		<span class="built_in">copy</span>(nb[bp:], nb[:bp])</span><br><span class="line">		bp *= <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> nb</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面两个函数的实现非常相似，除了类型不同 <code>strings</code> 包在处理完数据发生了一次类型转换，使用 <code>bytes</code> 只有一次内存分配，而 <code>strings</code> 是两次。</p>
-<p>我们可以借助 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#ToString" target="_blank" rel="noopener">exbytes.ToString</a> 函数把 <code>bytes.Repeat</code> 的返回没有任何成本的转换会我们需要的字符串，如果我们输入也是一个字符串的话，还可以借助 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings#UnsafeToBytes" target="_blank" rel="noopener">exstrings.UnsafeToBytes</a> 来转换输入的数据类型。</p>
+<p>我们可以借助 <a target="_blank" rel="noopener" href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#ToString">exbytes.ToString</a> 函数把 <code>bytes.Repeat</code> 的返回没有任何成本的转换会我们需要的字符串，如果我们输入也是一个字符串的话，还可以借助 <a target="_blank" rel="noopener" href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings#UnsafeToBytes">exstrings.UnsafeToBytes</a> 来转换输入的数据类型。</p>
 <p>例如：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s := exbytes.ToString(bytes.Repeat(exstrings.UnsafeToBytes(<span class="string">"x"</span>), <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
-
-<p>不过这样写有点太麻烦了，实际上 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings" target="_blank" rel="noopener">exstrings</a> 包里面正在修改 <code>strings</code> 里面一些类似函数的问题，所有的实现基本和标准库一致，只是把其中类型转换的部分用 <a href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#ToString" target="_blank" rel="noopener">exbytes.ToString</a> 优化了一下，可以提升性能，也能提升开发效率。</p>
-<p><a href="https://github.com/thinkeridea/go-extend/blob/master/exstrings/unsafe.go#L35" target="_blank" rel="noopener">exstrings.UnsafeRepeat</a> 函数：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UnsafeRepeat</span><span class="params">(s <span class="keyword">string</span>, count <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="comment">// Since we cannot return an error on overflow,</span></span><br><span class="line">	<span class="comment">// we should panic if the repeat will generate</span></span><br><span class="line">	<span class="comment">// an overflow.</span></span><br><span class="line">	<span class="comment">// See Issue golang.org/issue/16237</span></span><br><span class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"strings: negative Repeat count"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> count &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(s)*count/count != <span class="built_in">len</span>(s) &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"strings: Repeat count causes overflow"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(s)*count)</span><br><span class="line">	bp := <span class="built_in">copy</span>(b, s)</span><br><span class="line">	<span class="keyword">for</span> bp &lt; <span class="built_in">len</span>(b) &#123;</span><br><span class="line">		<span class="built_in">copy</span>(b[bp:], b[:bp])</span><br><span class="line">		bp *= <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> exbytes.ToString(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s := exbytes.ToString(bytes.Repeat(exstrings.UnsafeToBytes(<span class="string">&quot;x&quot;</span>), <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
+<p>不过这样写有点太麻烦了，实际上 <a target="_blank" rel="noopener" href="https://godoc.org/github.com/thinkeridea/go-extend/exstrings">exstrings</a> 包里面正在修改 <code>strings</code> 里面一些类似函数的问题，所有的实现基本和标准库一致，只是把其中类型转换的部分用 <a target="_blank" rel="noopener" href="https://godoc.org/github.com/thinkeridea/go-extend/exbytes#ToString">exbytes.ToString</a> 优化了一下，可以提升性能，也能提升开发效率。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exstrings/unsafe.go#L35">exstrings.UnsafeRepeat</a> 函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UnsafeRepeat</span><span class="params">(s <span class="keyword">string</span>, count <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="comment">// Since we cannot return an error on overflow,</span></span><br><span class="line">	<span class="comment">// we should panic if the repeat will generate</span></span><br><span class="line">	<span class="comment">// an overflow.</span></span><br><span class="line">	<span class="comment">// See Issue golang.org/issue/16237</span></span><br><span class="line">	<span class="keyword">if</span> count &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;strings: negative Repeat count&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> count &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(s)*count/count != <span class="built_in">len</span>(s) &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;strings: Repeat count causes overflow&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>(s)*count)</span><br><span class="line">	bp := <span class="built_in">copy</span>(b, s)</span><br><span class="line">	<span class="keyword">for</span> bp &lt; <span class="built_in">len</span>(b) &#123;</span><br><span class="line">		<span class="built_in">copy</span>(b[bp:], b[:bp])</span><br><span class="line">		bp *= <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> exbytes.ToString(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果用上面的函数只需要下面这样写就可以了：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s:=exstrings.UnsafeRepeat(<span class="string">"x"</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-
-<p><a href="https://github.com/thinkeridea/go-extend/" target="_blank" rel="noopener">go-extend</a> 里面还收录了很多实用的方法，大家也可以多关注。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s:=exstrings.UnsafeRepeat(<span class="string">&quot;x&quot;</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/">go-extend</a> 里面还收录了很多实用的方法，大家也可以多关注。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
 <li>千万不要为了使用 <code>[]byte</code> 来优化 <code>string</code> 传递，类型转换成本很高，且 <code>slice</code> 本身也比 <code>string</code> 更大一些。</li>
 <li>程序中是使用 <code>string</code> 还是 <code>[]byte</code> 需要根据数据来源和处理数据的函数来决定，一定要减少类型转换。</li>
 <li>关于使用 <code>strings</code> 还是 <code>bytes</code> 包的问题，主要关注点是数据原始类型以及想获得的数据类型来选择。</li>
-<li>减少使用字符串指针来优化字符串，这会增加 <code>GC</code> 的开销，具体可以参考 <a href="https://blog.gopheracademy.com/advent-2018/avoid-gc-overhead-large-heaps/" target="_blank" rel="noopener">大堆中避免大量的GC开销</a> 一文。</li>
+<li>减少使用字符串指针来优化字符串，这会增加 <code>GC</code> 的开销，具体可以参考 <a target="_blank" rel="noopener" href="https://blog.gopheracademy.com/advent-2018/avoid-gc-overhead-large-heaps/">大堆中避免大量的GC开销</a> 一文。</li>
 </ul>
 
       
@@ -357,11 +339,11 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">unsafe</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -485,7 +467,7 @@ var _hmt = _hmt || [];
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#slice-的定义"><span class="toc-number">1.</span> <span class="toc-text">slice 的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#string-的定义"><span class="toc-number">2.</span> <span class="toc-text">string 的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#string-的两个小特性"><span class="toc-number">3.</span> <span class="toc-text">string 的两个小特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#传字符串和字符串指针的区别"><span class="toc-number">4.</span> <span class="toc-text">传字符串和字符串指针的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#疑惑"><span class="toc-number">5.</span> <span class="toc-text">疑惑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#slice-%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">slice 的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#string-%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">2.</span> <span class="toc-text">string 的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#string-%E7%9A%84%E4%B8%A4%E4%B8%AA%E5%B0%8F%E7%89%B9%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">string 的两个小特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%A0%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">4.</span> <span class="toc-text">传字符串和字符串指针的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%96%91%E6%83%91"><span class="toc-number">5.</span> <span class="toc-text">疑惑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -546,7 +528,7 @@ if (clientID != "" && clientSecret != ""){
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2020 戚银 京ICP备17038866号
+    		&copy; 2021 戚银 京ICP备17038866号
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -639,14 +621,6 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
              
@@ -656,6 +630,14 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">VirtualBox</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">读写锁</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">死锁</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -687,11 +669,15 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+                <a href="javascript:void(0)" class="js-tag color3">go</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">array</a>
+                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">replace</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -699,15 +685,7 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
+                <a href="javascript:void(0)" class="js-tag color2">string</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -723,11 +701,19 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">strings</a>
+                <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">replace</a>
+                <a href="javascript:void(0)" class="js-tag color4">net</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -743,31 +729,11 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">string</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">client</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">net</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">RemoteAddr</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">ip2long</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -796,6 +762,46 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">中文字符串截取</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">sync</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">once</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OncePointer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">BufferPool</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">strings.Replacer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">closeOnce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">slice</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">array</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">内存池</a>
               </li>
              
               <li class="article-tag-list-item">
