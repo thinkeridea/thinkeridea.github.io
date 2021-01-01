@@ -4,141 +4,558 @@
   <url>
     <loc>https://blog.thinkeridea.com/202101/go/exsync/once.html</loc>
     
-    <lastmod>2021-01-01T11:46:58.226Z</lastmod>
+    <lastmod>2021-01-01</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201910/go/efficient_string_truncation.html</loc>
     
-    <lastmod>2019-12-10T06:53:28.520Z</lastmod>
+    <lastmod>2019-12-10</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201907/go/csv_like_data_logs.html</loc>
     
-    <lastmod>2019-10-30T22:43:57.418Z</lastmod>
+    <lastmod>2019-10-30</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201907/chatops/gitlab_environmental_preparation.html</loc>
     
-    <lastmod>2019-07-27T11:34:02.998Z</lastmod>
+    <lastmod>2019-07-27</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201907/chatops/introduction.html</loc>
     
-    <lastmod>2019-07-21T09:28:25.361Z</lastmod>
+    <lastmod>2019-07-21</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201907/go/compress_file_io_optimization2.html</loc>
     
-    <lastmod>2019-07-08T01:52:16.134Z</lastmod>
+    <lastmod>2019-07-08</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201902/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju_2.html</loc>
     
-    <lastmod>2019-07-07T13:13:04.851Z</lastmod>
+    <lastmod>2019-07-07</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201906/go/compress_file_io_optimization1.html</loc>
     
-    <lastmod>2019-07-07T09:28:21.569Z</lastmod>
+    <lastmod>2019-07-07</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201903/go/ip2long.html</loc>
     
-    <lastmod>2019-03-28T02:23:22.664Z</lastmod>
+    <lastmod>2019-03-28</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201903/go/get_client_ip.html</loc>
     
-    <lastmod>2019-03-28T00:19:21.695Z</lastmod>
+    <lastmod>2019-03-28</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201903/go/go_get_proxy.html</loc>
     
-    <lastmod>2019-03-22T02:15:33.706Z</lastmod>
+    <lastmod>2019-03-22</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201903/go/selection_of_numerical_types.html</loc>
     
-    <lastmod>2019-03-19T01:00:46.558Z</lastmod>
+    <lastmod>2019-03-19</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html</loc>
     
-    <lastmod>2019-02-26T03:20:37.204Z</lastmod>
+    <lastmod>2019-02-26</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201902/go/replcae_you_hua.html</loc>
     
-    <lastmod>2019-02-24T12:54:05.247Z</lastmod>
+    <lastmod>2019-02-24</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201901/go/you_ya_de_du_qu_http_qing_qiu_huo_xiang_ying_de_shu_ju.html</loc>
     
-    <lastmod>2019-02-24T12:53:52.573Z</lastmod>
+    <lastmod>2019-02-24</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html</loc>
     
-    <lastmod>2019-02-24T12:53:49.161Z</lastmod>
+    <lastmod>2019-02-24</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201901/go/shen_ru_pou_xi_slice_he_array.html</loc>
     
-    <lastmod>2019-02-24T12:53:45.782Z</lastmod>
+    <lastmod>2019-02-24</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</loc>
     
-    <lastmod>2019-02-24T12:53:42.492Z</lastmod>
+    <lastmod>2019-02-24</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/404.html</loc>
     
-    <lastmod>2018-12-18T19:06:50.117Z</lastmod>
+    <lastmod>2018-12-18</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.thinkeridea.com/about/index.html</loc>
     
-    <lastmod>2018-12-07T10:54:47.000Z</lastmod>
+    <lastmod>2018-12-07</lastmod>
     
+  </url>
+  
+
+  <url>
+    <loc>https://blog.thinkeridea.com/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/chatops/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/devops/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/hubot/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/github/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/gitlab/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/slack/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/rocket-chat/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/linux/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/centos/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/virtualbox/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/%E8%AF%BB%E5%86%99%E9%94%81/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/%E6%AD%BB%E9%94%81/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/net-http/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/http/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/pool/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/bytes/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/buffer/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/makeslice/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/ioutil/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/go/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/strings/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/replace/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/unsafe/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/string/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/int/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/numerical/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/uintptr/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/ip/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/net/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/ip2long/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/ip2number/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/proxy/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/git/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/shell/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/client/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/remoteaddr/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/compress/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/io/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/%E5%8E%8B%E7%BC%A9/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/substring/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/substr/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/utf8/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%88%AA%E5%8F%96/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/sync/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/once/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/oncepointer/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/bufferpool/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/strings-replacer/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/closeonce/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/slice/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/array/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/%E7%BC%93%E5%AD%98/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/%E5%86%85%E5%AD%98%E6%B1%A0/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/%E6%97%A5%E5%BF%97/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/csv/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/tags/join/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/categories/chatops/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.thinkeridea.com/categories/go/</loc>
+    <lastmod>2021-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
   </url>
   
 </urlset>
