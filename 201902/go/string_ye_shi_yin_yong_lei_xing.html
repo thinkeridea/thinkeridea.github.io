@@ -216,7 +216,7 @@ var _hmt = _hmt || [];
 <a id="more"></a>
 
 <h2 id="slice-的定义"><a href="#slice-的定义" class="headerlink" title="slice 的定义"></a>slice 的定义</h2><p>在之前 “<a href="https://blog.thinkeridea.com/201901/go/shen_ru_pou_xi_slice_he_array.html">【Go】深入剖析slice和array</a>” 一文中说了 <code>slice</code> 在内存中的存储模式，<code>slice</code> 本身包含一个指向底层数组的指针，一个 <code>int</code> 类型的长度和一个 <code>int</code> 类型的容量， 这就是 <code>slice</code> 的本质， <code>[]byte</code> 本身也是一个 <code>slice</code>，只是底层数组存储的元素是 <code>byte</code>。下面这个图就是 <code>slice</code> 的在内存中的状态：</p>
-<p><img src="/assets/image/20190111/slice_1.jpg" alt=""></p>
+<p><img src="/assets/image/20190111/slice_1.jpg"></p>
 <p>看一下 <code>reflect.SliceHeader</code> 如何定义 <code>slice</code> 在内存中的结构吧：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SliceHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">	Data <span class="keyword">uintptr</span></span><br><span class="line">	Len  <span class="keyword">int</span></span><br><span class="line">	Cap  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>slice</code> 是引用类型是 <code>slice</code> 本身会包含一个地址，在传递 <code>slice</code> 时只需要分配 <code>SliceHeader</code> 就好了， 而 <code>SliceHeader</code> 只包含了三个 <code>int</code> 类型，相当于传递一个 <code>slice</code> 就只需要拷贝 <code>SliceHeader</code>，而不用拷贝整个底层数组，所以才说 <code>slice</code> 是引用类型的。</p>
@@ -701,6 +701,18 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -714,18 +726,6 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">

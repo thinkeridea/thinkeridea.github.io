@@ -749,7 +749,7 @@ var _hmt = _hmt || [];
 </ul>
 <p>下标索引操作的一些误区 <code>s[i:l:c]</code> <code>i</code> 是起始偏移的起始位置，<code>l</code> 是起始偏移的长度结束位置， <code>l-i</code> 就是新 <code>slice</code> 的长度， <code>c</code> 是起始偏移的容量结束位置，<code>c-i</code> 就是新 <code>slice</code> 的容量。其中 <code>i</code> 、<code>l</code> 、<code>c</code> 并不是当前 <code>slice</code> 的索引，而是引用底层数组相对当前 <code>slice</code> 起始位置的偏移量，所以是可超出当前 <code>slice</code> 的长度的， 但不能超出当前 <code>slice</code> 的容量，如下操作是合法的：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	s[<span class="number">20</span>] = <span class="number">100</span></span><br><span class="line">	s1 := s[<span class="number">10</span>:<span class="number">10</span>]</span><br><span class="line">	s2 := s1[<span class="number">10</span>:<span class="number">20</span>]</span><br><span class="line">	fmt.Println(s1)</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中 <code>s1</code> 是 <code>[]</code>；<code>s2</code> 是 <code>[100 0 0 0 0 0 0 0 0 0]</code>, 这里并不会发生下标越界的情况，一个更好的例子在 <a href="#csv-reader-中的一个例子">csv reader 中的一个例子</a></p>
+<p>其中 <code>s1</code> 是 <code>[]</code>；<code>s2</code> 是 <code>[100 0 0 0 0 0 0 0 0 0]</code>, 这里并不会发生下标越界的情况，一个更好的例子在 <a href="#csv-reader-%E4%B8%AD%E7%9A%84%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90">csv reader 中的一个例子</a></p>
         
           <a class="article-more-a" href="/201901/go/slice_de_yi_xie_shi_yong_ji_qiao.html#more">more >></a>
         
@@ -1202,6 +1202,18 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -1215,18 +1227,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">

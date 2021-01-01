@@ -313,7 +313,7 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近我在 <a target="_blank" rel="noopener" href="https://forum.golangbridge.org">Go Forum</a> 中发现了 <a target="_blank" rel="noopener" href="https://forum.golangbridge.org/t/solved-string-size-of-20-character/15783">[SOLVED] String size of 20 character</a> 的问题，“<strong>hollowaykeanho</strong>” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。</p>
+        <p>最近我在 <a target="_blank" rel="noopener" href="https://forum.golangbridge.org/">Go Forum</a> 中发现了 <a target="_blank" rel="noopener" href="https://forum.golangbridge.org/t/solved-string-size-of-20-character/15783">[SOLVED] String size of 20 character</a> 的问题，“<strong>hollowaykeanho</strong>” 给出了相关的答案，而我从中发现了截取字符串的方案并非最理想的方法，因此做了一系列实验并获得高效截取字符串的方法，这篇文章将逐步讲解我实践的过程。</p>
 <h2 id="字节切片截取"><a href="#字节切片截取" class="headerlink" title="字节切片截取"></a>字节切片截取</h2><p>这正是 “<strong>hollowaykeanho</strong>” 给出的第一个方案，我想也是很多人想到的第一个方案，利用 go 的内置切片语法截取字符串：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">&quot;abcdef&quot;</span></span><br><span class="line">fmt.Println(s[<span class="number">1</span>:<span class="number">4</span>])</span><br></pre></td></tr></table></figure>
 <p>我们很快就了解到这是按字节截取，在处理 <code>ASCII</code> 单字节字符串截取，没有什么比这更完美的方案了，中文往往占多个字节，在 <code>utf8</code> 编码中是3个字节，如下程序我们将获得乱码数据：</p>
@@ -1173,7 +1173,7 @@ var _hmt = _hmt || [];
         <p>最近发现技术交流群里很多人在询问 go get 墙外包失败的问题，大家给了很多解决方案：</p>
 <ul>
 <li>从 Github 的代码库 clone</li>
-<li>设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=<a target="_blank" rel="noopener" href="https://goproxy.io">https://goproxy.io</a></li>
+<li>设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=<a target="_blank" rel="noopener" href="https://goproxy.io/">https://goproxy.io</a></li>
 <li>配置命令行代理，https_proxy 环境变量</li>
 <li>使用 go mod replace</li>
 <li>使用 Gopm 类似的工具</li>
@@ -1446,6 +1446,18 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -1459,18 +1471,6 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">

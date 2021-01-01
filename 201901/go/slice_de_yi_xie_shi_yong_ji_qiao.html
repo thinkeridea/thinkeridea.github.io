@@ -213,7 +213,7 @@ var _hmt = _hmt || [];
 </ul>
 <p>下标索引操作的一些误区 <code>s[i:l:c]</code> <code>i</code> 是起始偏移的起始位置，<code>l</code> 是起始偏移的长度结束位置， <code>l-i</code> 就是新 <code>slice</code> 的长度， <code>c</code> 是起始偏移的容量结束位置，<code>c-i</code> 就是新 <code>slice</code> 的容量。其中 <code>i</code> 、<code>l</code> 、<code>c</code> 并不是当前 <code>slice</code> 的索引，而是引用底层数组相对当前 <code>slice</code> 起始位置的偏移量，所以是可超出当前 <code>slice</code> 的长度的， 但不能超出当前 <code>slice</code> 的容量，如下操作是合法的：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	s[<span class="number">20</span>] = <span class="number">100</span></span><br><span class="line">	s1 := s[<span class="number">10</span>:<span class="number">10</span>]</span><br><span class="line">	s2 := s1[<span class="number">10</span>:<span class="number">20</span>]</span><br><span class="line">	fmt.Println(s1)</span><br><span class="line">	fmt.Println(s2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中 <code>s1</code> 是 <code>[]</code>；<code>s2</code> 是 <code>[100 0 0 0 0 0 0 0 0 0]</code>, 这里并不会发生下标越界的情况，一个更好的例子在 <a href="#csv-reader-中的一个例子">csv reader 中的一个例子</a></p>
+<p>其中 <code>s1</code> 是 <code>[]</code>；<code>s2</code> 是 <code>[100 0 0 0 0 0 0 0 0 0]</code>, 这里并不会发生下标越界的情况，一个更好的例子在 <a href="#csv-reader-%E4%B8%AD%E7%9A%84%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90">csv reader 中的一个例子</a></p>
 <a id="more"></a>
 
 <p><strong>创建 slice</strong></p>
@@ -257,7 +257,7 @@ var _hmt = _hmt || [];
 <p>这里删除了极多的代码，但是能看懂大意，其中 <code>line</code> 是一段 <code>bufio</code> 中的一段引用，所以这块数据不能返回给用户，也不能进行并发读取操作。</p>
 <p><code>r.recordBuffer</code> 和 <code>r.fieldIndexes</code> 是 <code>csv</code> 的缓存，他们初始的时候容量是0，是不是会有些奇怪，之前还建议 <code>slice</code> 初始一个长度，来减少内存分配，<code>csv</code> 这个库的设计非常的巧妙，假设 <code>csv</code> 每行字段的个数一样，数据长度也相近，现实业务确实如此，所以只有读取第一行数据的时候才会发生大量的 <code>slice</code> 扩容， 之后其它行扩容的可能性非常的小，整个文件读取完也不会发生太多次，不得不说设计的太妙了。</p>
 <p><code>r.recordBuffer</code> 用来存储行中除了分隔符的所有数据，<code>r.fieldIndexes</code> 用来存储每个字段数据在 <code>r.recordBuffer</code> 中的索引。每次都通过 <code>r.recordBuffer[:0]</code> 这个的数据获取，读取每行数据都反复使用这块内存，极大的减少内存开销。</p>
-<p>更巧妙的设计是 <code>str := string(r.recordBuffer)</code> 源代码中也有详细的说明，一次性分配足够的内存， 要知道类型转换是会发生内存拷贝的，分配新的内存， 如果每个字段转换一次，会发生很多的内存拷贝和分配，之后通过 <code>dst[i] = str[preIdx:idx]</code> 引用 <code>str</code> 中的数据达到切分字段的效果，因为引用字符串并不会拷贝字符串（字符串不可变，引用字符串的子串是安全的）所以其代价非常的小。</p>
+<p>更巧妙的设计是 <code>str := string(r.recordBuffer) </code> 源代码中也有详细的说明，一次性分配足够的内存， 要知道类型转换是会发生内存拷贝的，分配新的内存， 如果每个字段转换一次，会发生很多的内存拷贝和分配，之后通过 <code>dst[i] = str[preIdx:idx]</code> 引用 <code>str</code> 中的数据达到切分字段的效果，因为引用字符串并不会拷贝字符串（字符串不可变，引用字符串的子串是安全的）所以其代价非常的小。</p>
 <p>这段源码中还有一个很多人都不知道的 <code>slice</code> 特性的例子，<code>dst = dst[:0]; dst = dst[:len(r.fieldIndexes)]</code> 这两句话放到一起是不是感觉很不可思议，明明 <code>dst</code> 的长度被清空了，<code>dst[:len(r.fieldIndexes)]</code> 不是会发生索引越界吗，很多人认为 <code>s[i:l]</code> 这种写法是当前 <code>slice</code> 的索引，实际并非如此，这里面的 <code>i</code> 和 <code>j</code> 是底层引用数组相对当前 <code>slice</code> 引用位置的索引，并不受当前 <code>slice</code> 的长度的影响。</p>
 <p>这里只是简单引用 <code>csv</code> 源码中的一段分析其 <code>slice</code> 的巧妙用法，即把 <code>slice</code> 当做数据缓存，也作为分配内存的一种极佳的方法，这个示例中的关于 <code>slice</code> 的使用值得反复推敲。</p>
 <h2 id="内存池"><a href="#内存池" class="headerlink" title="内存池"></a>内存池</h2><p>早些时间阅读 GitHub 上的一些源码，发现一个实现内存次的例子，里面对 <code>slice</code> 的应用非常有特点，在这里拿来分析一下（<a target="_blank" rel="noopener" href="https://github.com/funny/slab/blob/master/chan_pool.go">GitHub源码</a>）：</p>
@@ -698,6 +698,18 @@ if (clientID != "" && clientSecret != ""){
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">ip</a>
               </li>
              
@@ -711,18 +723,6 @@ if (clientID != "" && clientSecret != ""){
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">ip2number</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">proxy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
