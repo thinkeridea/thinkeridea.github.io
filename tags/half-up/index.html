@@ -6,23 +6,14 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://blog.thinkeridea.com">
-  <title>【Go】获取用户真实的ip地址 | thinkeridea博客</title>
+  <title>Tag: half up | thinkeridea博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="用户请求到达提供服务的服务器中间有很多的环节，导致服务获取用户真实的 ip 非常困难，大多数的框架及工具库都会封装各种获取用户真实 ip 的方法，在  exnet 包中也封装了各种 ip 相关的操作，其中就包含获取客户端 ip 的方法，比较实用的方法如下：  func ClientIP(r *http.Request) string ClientIP 尽最大努力实现获取客户端 IP 的算法。 解析">
-<meta property="og:type" content="article">
-<meta property="og:title" content="【Go】获取用户真实的ip地址">
-<meta property="og:url" content="https://blog.thinkeridea.com/201903/go/get_client_ip.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="thinkeridea博客">
+<meta property="og:url" content="https://blog.thinkeridea.com/tags/half-up/index.html">
 <meta property="og:site_name" content="thinkeridea博客">
-<meta property="og:description" content="用户请求到达提供服务的服务器中间有很多的环节，导致服务获取用户真实的 ip 非常困难，大多数的框架及工具库都会封装各种获取用户真实 ip 的方法，在  exnet 包中也封装了各种 ip 相关的操作，其中就包含获取客户端 ip 的方法，比较实用的方法如下：  func ClientIP(r *http.Request) string ClientIP 尽最大努力实现获取客户端 IP 的算法。 解析">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-03-27T23:02:57.000Z">
-<meta property="article:modified_time" content="2019-03-28T00:19:21.695Z">
 <meta property="article:author" content="戚银">
-<meta property="article:tag" content="go">
-<meta property="article:tag" content="ip">
-<meta property="article:tag" content="net">
-<meta property="article:tag" content="client">
-<meta property="article:tag" content="RemoteAddr">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="thinkeridea博客" type="application/atom+xml">
@@ -183,141 +174,60 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go/20190328-获取用户真实的ip地址" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
+            
+
+
+
+
+
+
+<section class="archives-wrap">
+  <div class="archive-year-wrap">
+    <a href="/archives/2021" class="archive-year">2021</a>
+  </div>
+  <div class="archives">
     
-      <header class="article-header">
-        
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/202101/go/round.html" class="archive-article-date">
+  	<time datetime="2021-01-02T03:57:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-02</time>
+</a>
+        </div>
+    	 
   
-    <h1 class="article-title" itemprop="name">
-      【Go】获取用户真实的ip地址
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/202101/go/round.html">【Go】四舍五入在go语言中为何如此困难</a>
     </h1>
   
 
-        
-        <a href="/201903/go/get_client_ip.html" class="archive-article-date">
-  	<time datetime="2019-03-27T23:02:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>用户请求到达提供服务的服务器中间有很多的环节，导致服务获取用户真实的 ip 非常困难，大多数的框架及工具库都会封装各种获取用户真实 ip 的方法，在  <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 包中也封装了各种 ip 相关的操作，其中就包含获取客户端 ip 的方法，比较实用的方法如下：</p>
-<ul>
-<li><code>func ClientIP(r *http.Request) string</code> ClientIP 尽最大努力实现获取客户端 IP 的算法。 解析 X-Real-IP 和 X-Forwarded-For 以便于反向代理（nginx 或 haproxy）可以正常工作。</li>
-<li><code>func ClientPublicIP(r *http.Request) string</code> ClientPublicIP 尽最大努力实现获取客户端公网 IP 的算法。 解析 X-Real-IP 和 X-Forwarded-For 以便于反向代理（nginx 或 haproxy）可以正常工作。</li>
-<li><code>func HasLocalIP(ip net.IP) bool</code> HasLocalIP 检测 IP 地址是否是内网地址</li>
-<li><code>func HasLocalIPddr(ip string) bool</code> HasLocalIPddr 检测 IP 地址字符串是否是内网地址</li>
-<li><code>func RemoteIP(r *http.Request) string</code> RemoteIP 通过 RemoteAddr 获取 IP 地址， 只是一个快速解析方法。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="获取用户真实ip地址"><a href="#获取用户真实ip地址" class="headerlink" title="获取用户真实ip地址"></a>获取用户真实ip地址</h2><p><code>ClientIP</code> 方法 与 <code>ClientPublicIP</code> 方法的实现类似，只是一个按照 http 协议约定获取客户端 ip， 一个按照约定格式查找到公网 ip。</p>
-<p>在网络与服务架构、业务逻辑复杂的环境中，按照 http 协议约定的方式，并非总能获取到真实的 ip，在我们的业务中用户流量经由三方多层级转发(都是三方自己实现的http client) ，难免会出现一些纰漏，这时越往后的服务获取用户真实 ip 越加困难，你甚至不知道自己获取的 ip 是否是真实的。</p>
-<p>但是我们的客户经由三方转发而来的流量，那么客户极大多数甚至排除测试之外都是公网用户，结合使用 <code>ClientPublicIP</code> 和 <code>ClientIP</code> 方法总能更好的获取用户的真实 ip。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// var r *http.Request</span></span><br><span class="line">ip := exnet.ClientPublicIP(r)</span><br><span class="line"><span class="keyword">if</span> ip == <span class="string">&quot;&quot;</span>&#123;</span><br><span class="line">  ip = exnet.ClientIP(r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>用上面的方法总能有效的获取用户真实的 ip 地址，下面分析下两个方法的具体实现。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ClientIP 尽最大努力实现获取客户端 IP 的算法。</span></span><br><span class="line"><span class="comment">// 解析 X-Real-IP 和 X-Forwarded-For 以便于反向代理（nginx 或 haproxy）可以正常工作。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ClientIP</span><span class="params">(r *http.Request)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	xForwardedFor := r.Header.Get(<span class="string">&quot;X-Forwarded-For&quot;</span>)</span><br><span class="line">	ip := strings.TrimSpace(strings.Split(xForwardedFor, <span class="string">&quot;,&quot;</span>)[<span class="number">0</span>])</span><br><span class="line">	<span class="keyword">if</span> ip != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ip</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip = strings.TrimSpace(r.Header.Get(<span class="string">&quot;X-Real-Ip&quot;</span>))</span><br><span class="line">	<span class="keyword">if</span> ip != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ip</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ip, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr)); err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ip</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>ClientIP</code> 首先读取 <code>X-Forwarded-For</code> header 中用 <code>,</code> 分隔的第一个ip地址，如果这个地址不存在，就会从 <code>X-Real-Ip</code> header 中获取，如果还是不存在，说明流量并非是由反向代理转发而来，而是客户端直接请求服务，这时通过 <code>http.Request.RemoteAddr</code> 字段截取除去端口号的 ip 地址。</p>
-<p>这个方法很简单，就是按照 http 约定的格式获取，其中 <code>X-Forwarded-For</code> 和 <code>X-Real-Ip</code> header 由反向代理填充，例如 nginx 或 haproxy。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ClientPublicIP 尽最大努力实现获取客户端公网 IP 的算法。</span></span><br><span class="line"><span class="comment">// 解析 X-Real-IP 和 X-Forwarded-For 以便于反向代理（nginx 或 haproxy）可以正常工作。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ClientPublicIP</span><span class="params">(r *http.Request)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> ip <span class="keyword">string</span></span><br><span class="line">	<span class="keyword">for</span> _, ip = <span class="keyword">range</span> strings.Split(r.Header.Get(<span class="string">&quot;X-Forwarded-For&quot;</span>), <span class="string">&quot;,&quot;</span>) &#123;</span><br><span class="line">		ip = strings.TrimSpace(ip)</span><br><span class="line">		<span class="keyword">if</span> ip != <span class="string">&quot;&quot;</span> &amp;&amp; !HasLocalIPddr(ip) &#123;</span><br><span class="line">			<span class="keyword">return</span> ip</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip = strings.TrimSpace(r.Header.Get(<span class="string">&quot;X-Real-Ip&quot;</span>))</span><br><span class="line">	<span class="keyword">if</span> ip != <span class="string">&quot;&quot;</span> &amp;&amp; !HasLocalIPddr(ip) &#123;</span><br><span class="line">		<span class="keyword">return</span> ip</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ip, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr)); err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> !HasLocalIPddr(ip) &#123;</span><br><span class="line">			<span class="keyword">return</span> ip</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>ClientPublicIP</code> 很简单，和 <code>ClientIP</code> 方法的读取顺序一样，只是试图中 <code>X-Forwarded-For</code> 列表中找到一个公网ip，如果没有检查 <code>X-Real-Ip</code> 是否是一个公网 ip，其次检查 <code>http.Request.RemoteAddr</code> 是否是公网ip，如果没有找到公网 ip 这返回一个空字符串。</p>
-<p>这个方法可以让我们有机会优先获取到用户的公网 ip，往往公网 ip 对我们来说更有价值。</p>
-<h2 id="检查ip对否是内网地址"><a href="#检查ip对否是内网地址" class="headerlink" title="检查ip对否是内网地址"></a>检查ip对否是内网地址</h2><p> <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 中还提供了检查 ip 地址是否是内网地址，这在有些情况下非常有用，比如：服务中有些接口只能内网访问，也就是只允许管理员访问（例如动态设定日志级别、查看服务 pprof 信息）；我们想隐藏后端服务，只暴露给用户负载均衡(反向代理)，用户无法直接访问我们的服务，这些方法及其有用，下面看看具体实现。</p>
-<p>我的服务提供了动态设置日志级别，以便服务出现问题，可以第一时间查看调试日志分析具体原因，但是这个接口很危险，不应该暴露给公网，所以会用路由中间件检查请求是否来自公网，来自公网则返回 404。</p>
-<p>该方法认为如下地址段都是内网地址：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">8</span></span><br><span class="line"><span class="number">169.254</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">16</span></span><br><span class="line"><span class="number">172.16</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.17</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.18</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.19</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.20</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.21</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.22</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.23</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.24</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.25</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.26</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.27</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.28</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.29</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.30</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">172.31</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">12</span></span><br><span class="line"><span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">16</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HasLocalIPddr 检测 IP 地址字符串是否是内网地址</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HasLocalIPddr</span><span class="params">(ip <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> HasLocalIP(net.ParseIP(ip))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// HasLocalIP 检测 IP 地址是否是内网地址</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HasLocalIP</span><span class="params">(ip net.IP)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> _, network := <span class="keyword">range</span> localNetworks &#123;</span><br><span class="line">		<span class="keyword">if</span> network.Contains(ip) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ip.IsLoopback()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>两个检查方法实现差异仅接受参数类型不一致，检查过程都是逐个对比内网 ip 段是否包含该ip地址，如果不包含则判断该地址是否是回环地址。</p>
-<h2 id="获取反向代理ip"><a href="#获取反向代理ip" class="headerlink" title="获取反向代理ip"></a>获取反向代理ip</h2><p>如何判断改地址来自反向代理服务器呢，不同的反向代理实现都有些差异，4 层反向代理甚至可以提供用户的真实 ip（<code>http.Request.RemoteAddr</code> 是用户的ip，而不是反向代理的）， 而隐藏自己的ip，这里说一下常见的方法。</p>
-<p>往往 <code>http.Request.RemoteAddr</code> 保存最后一个连接服务的客户端 ip，我们获取反向代理的ip地址，最简单有效的方法就是通过 <code>http.Request.RemoteAddr</code>  获取， <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/master/exnet">exnet</a> 中提供了 <code>RemoteIP</code> 的快捷方法，实现如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RemoteIP 通过 RemoteAddr 获取 IP 地址， 只是一个快速解析方法。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RemoteIP</span><span class="params">(r *http.Request)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ip, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr)); err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ip</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这是一个非常方便的脚手架，它仅仅切分 <code>http.Request.RemoteAddr</code> 的 ip 和端口，并返回有效的ip地址，但却可以简化我们的编写业务代码。</p>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    <div class="reward-box-item">
-                      <img class="reward-img" src="/assets/alipay.jpg">
-                      <span class="reward-type">支付宝</span>
-                    </div>
-                    
-                    
-                    <div class="reward-box-item">
-                      <img class="reward-img" src="/assets/weixin.jpg">
-                      <span class="reward-type">微信</span>
-                    </div>
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-            <ul class="post-copyright">
-  <li class="post-copyright-author">
-      <strong>本文作者：</strong>
-      <a href="https://blog.thinkeridea.com">戚银（thinkeridea）</a>
-  </li>
-  <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="https://blog.thinkeridea.com/201903/go/get_client_ip.html" title="【Go】获取用户真实的ip地址">https://blog.thinkeridea.com/201903/go/get_client_ip.html</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>版权声明：</strong>
-    本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-
-      
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">round</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ip</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">half up</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">net</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">exmath</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">client</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">RemoteAddr</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">math</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -330,159 +240,18 @@ var _hmt = _hmt || [];
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="https://twitter.com/intent/tweet?text=【Go】获取用户真实的ip地址&url=https://blog.thinkeridea.com/201903/go/get_client_ip.html&via=https://blog.thinkeridea.com" target="_blank">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="http://qr.liantu.com/api.php?text=https://blog.thinkeridea.com/201903/go/get_client_ip.html" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/201906/go/compress_file_io_optimization1.html" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          【Go】使用压缩文件优化io (一)
-        
-      </div>
-    </a>
-  
-  
-    <a href="/201903/go/ip2long.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">【Go】IP地址转换：数字与字符串之间的转换</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
+    
+    
+  </div>
+</section>
 
 
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E7%9C%9F%E5%AE%9Eip%E5%9C%B0%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">获取用户真实ip地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5ip%E5%AF%B9%E5%90%A6%E6%98%AF%E5%86%85%E7%BD%91%E5%9C%B0%E5%9D%80"><span class="toc-number">2.</span> <span class="toc-text">检查ip对否是内网地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86ip"><span class="toc-number">3.</span> <span class="toc-text">获取反向代理ip</span></a></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
-        
-    </div>
-</aside>
 
-
-  
-
-  
-
-  
-
-  
-  <div id="gitalk-container"></div>
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-
-<script>
-
-var host = window.location.host;
-var clientID = "";
-var clientSecret = "";
-
-if (host == "blog.thinkeridea.com") {
-  clientID = "b8fca21d422014fd7188";
-  clientSecret = "8eb706695ec3ce6048336dcfc9777a33ad6d2ca0";
-}else if (host == "thinkeridea.github.io"){
-  clientID = "ab68110ba3fd03446617";
-  clientSecret = "e5670d61cc887297ef20daef384d51c27d8c042c";
-}
-
-if (clientID != "" && clientSecret != ""){
-  var gitalk = new Gitalk({
-    clientID: clientID,
-    clientSecret: clientSecret,
-    repo: 'thinkeridea.github.io',
-    owner: 'thinkeridea',
-    admin: ['thinkeridea'],
-    id: '2df5055a0dca939e38b4f541ff6b2042'
-  })
-
-  gitalk.render('gitalk-container')
-}else{
-  console.log(host)
-}
-</script>
-
-  
 
 
           </div>
@@ -506,9 +275,9 @@ if (clientID != "" && clientSecret != ""){
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

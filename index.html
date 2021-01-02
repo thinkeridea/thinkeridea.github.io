@@ -176,6 +176,107 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
 
+<article id="post-go/20210102-四舍五入在go语言中为何如此困难" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/202101/go/round.html">【Go】四舍五入在go语言中为何如此困难</a>
+    </h1>
+  
+
+        
+        <a href="/202101/go/round.html" class="archive-article-date">
+  	<time datetime="2021-01-02T03:57:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>四舍五入是一个非常常见的功能，在流行语言标准库中往往存在 <code>Round</code> 的功能，它最少支持常用的 <code>Round half up</code> 算法。</p>
+<p>而在 Go 语言中这似乎成为了难题，在 stackoverflow 上搜索 <code>[go] Round</code> 会存在大量相关提问，Go 1.10 开始才出现 <code>math.Round</code> 的身影，本以为 <code>Round</code> 的疑问就此结束，但是一看函数注释 <code>Round returns the nearest integer, rounding half away from zero</code> ，这是并不常用的 <code>Round half away from zero</code> 实现呀，说白了就是我们理解的 <code>Round</code> 阉割版，精度为 0 的 <code>Round half up</code> 实现，<code>Round half away from zero</code> 的存在是为了提供一种高效的通过二进制方法得结果，可以作为 <code>Round</code> 精度为 0 时的高效实现分支。</p>
+<p>带着对 <code>Round</code> 的‘敬畏’，我在 stackoverflow 翻阅大量关于 <code>Round</code> 问题，开启寻求最佳的答案，本文整理我认为有用的实现，简单分析它们的优缺点，对于不想逐步了解，想直接看结果的小伙伴，可以直接看文末的最佳实现，或者跳转 <a target="_blank" rel="noopener" href="https://github.com/thinkeridea/go-extend/blob/main/exmath/round.go#L12">exmath.Round</a> 直接看源码和使用吧！</p>
+        
+          <a class="article-more-a" href="/202101/go/round.html#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">round</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">half up</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">exmath</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">math</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/202101/go/round.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
 <article id="post-go/20210101-我与sync.Once的爱恨纠缠" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1150,115 +1251,6 @@ var _hmt = _hmt || [];
 
 
 
-<article id="post-go/20190321-go get自动代理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/201903/go/go_get_proxy.html">【Go】go get 自动代理</a>
-    </h1>
-  
-
-        
-        <a href="/201903/go/go_get_proxy.html" class="archive-article-date">
-  	<time datetime="2019-03-20T23:34:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近发现技术交流群里很多人在询问 go get 墙外包失败的问题，大家给了很多解决方案：</p>
-<ul>
-<li>从 Github 的代码库 clone</li>
-<li>设置 GOPROXY 环境变量配置代理, 例如：GOPROXY=<a target="_blank" rel="noopener" href="https://goproxy.io/">https://goproxy.io</a></li>
-<li>配置命令行代理，https_proxy 环境变量</li>
-<li>使用 go mod replace</li>
-<li>使用 Gopm 类似的工具</li>
-<li>……</li>
-</ul>
-<p>Go 的社区很活跃，国内 gopher 对 Go 的热情不会因为墙的存在而减少，从社区想到这么多翻墙方案就能看出来了。</p>
-<p>上面的方法都是可行的，但是总有一些不尽人意，社区也一直在找更好的方法，我一直使用自动代理的方式获取墙外的包，可以支持所有 Go 原生拉取包操作，比如 go get、go mod、dep、godep、glide 等各种方法，只需要配置一次，只要在任何原生命令前加前缀运行命令即可，效率很高。</p>
-        
-          <a class="article-more-a" href="/201903/go/go_get_proxy.html#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">proxy</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shell</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/go/" class="article-tag-list-link color3">go</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/201903/go/go_get_proxy.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
 
 <nav id="page-nav">
   <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next »</a>
@@ -1559,6 +1551,22 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">join</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">round</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">half up</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">exmath</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">math</a>
               </li>
             
             <div class="clearfix"></div>
