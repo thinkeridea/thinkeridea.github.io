@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</loc>
+    <lastmod>2021-01-04</lastmod>
+  </url>
+  <url>
     <loc>https://blog.thinkeridea.com/202101/go/round.html</loc>
     <lastmod>2021-01-02</lastmod>
   </url>
@@ -70,10 +74,6 @@
   </url>
   <url>
     <loc>https://blog.thinkeridea.com/201901/go/shen_ru_pou_xi_slice_he_array.html</loc>
-    <lastmod>2019-02-24</lastmod>
-  </url>
-  <url>
-    <loc>https://blog.thinkeridea.com/201812/go/yi_ci_du_suo_chong_ru_dao_zhi_de_si_suo_gu_zhang.html</loc>
     <lastmod>2019-02-24</lastmod>
   </url>
 </urlset> 
